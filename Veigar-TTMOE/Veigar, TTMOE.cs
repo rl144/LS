@@ -391,9 +391,10 @@ namespace Veigar__TTMOE
 
         public static void CastQ(Obj_AI_Hero target)
         {
-            var prediction = Q.GetPrediction(target, true);
+
 //            var pred = Q.GetPrediction(target, true);
 //            var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
+            var prediction = Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
 
             if (prediction.Hitchance >= HitChance.High && Q.IsReady() && minions <= 1)
@@ -422,15 +423,14 @@ namespace Veigar__TTMOE
             var prediction = Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
 
-            if (minions > 2)
+            if (minions >= 2)
             {
-                return;
-            }
-
             Q.Cast(prediction.CastPosition, Packets());
+//			return;
+            }
         }
 
-        private static void Game_OnGameUpdate(EventArgs args)
+        private +static void Game_OnGameUpdate(EventArgs args)
         {
             #region ComboShetOnUpdate
             if (Delay != 0f)
@@ -1967,11 +1967,11 @@ namespace Veigar__TTMOE
             Vector2 castVec2 = pred.UnitPosition.To2D() -
                               Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
 							  
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) < 350)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 325)
             {
                 E.Cast(castVec, false);
             }
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) >= 350)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 325)
             {
                 E.Cast(castVec2, false);
             }
@@ -1986,11 +1986,11 @@ namespace Veigar__TTMOE
             Vector2 castVec2 = pred.UnitPosition.To2D() -
                               Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
 							  
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) < 350)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 325)
             {
                 E.Cast(castVec, false);
             }
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) >= 350)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 325)
             {
                 E.Cast(castVec2, false);
             }
