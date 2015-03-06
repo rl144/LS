@@ -224,9 +224,9 @@ namespace Veigar__TTMOE
             W.SetSkillshot(1.25f, 230f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(1.00f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 */
-            Q.SetSkillshot(0.25f, 140f, 1750f, false, SkillshotType.SkillshotLine);
-            W.SetSkillshot(1.25f, 225f, float.MaxValue, false, SkillshotType.SkillshotCircle);
-            E.SetSkillshot(1.00f, 375f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            Q.SetSkillshot(0.25f, 70f, 1750f, false, SkillshotType.SkillshotLine);
+            W.SetSkillshot(1.25f, 230f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            E.SetSkillshot(1.00f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 
             SpellList.Add(Q);
             SpellList.Add(W);
@@ -264,7 +264,7 @@ namespace Veigar__TTMOE
 
             //Drawings menu:
             menu.AddSubMenu(new Menu("Drawings", "Drawings"));
-            menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDdisplay", "Heads-up Display").SetValue(true));
+            menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDdisplay", "Heads-up Display").SetValue(false));
             menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDX", "X axis").SetValue(new Slider(67, 0, 100)));
             menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDY", "Y axis").SetValue(new Slider(86, 0, 100)));
             foreach (var hud in HUDlist.Where(hud => hud.MenuText != "Display KS Status" && hud.MenuText != "Display Stun Closest Status" && hud.MenuText != "Display LaneClear Status"))
@@ -343,7 +343,7 @@ namespace Veigar__TTMOE
 
             //Harass menu:
             menu.AddSubMenu(new Menu("Harass", "Harass"));
-            menu.SubMenu("Harass").AddItem(new MenuItem("HarassMode", "Choose Harass Type").SetValue(new StringList(new[] { "E+W+Q", "E+W", "Q", "None" }, 0)));
+            menu.SubMenu("Harass").AddItem(new MenuItem("HarassMode", "Choose Harass Type").SetValue(new StringList(new[] { "E+W+Q", "E+W", "Q", "None" }, 2)));
             menu.SubMenu("Harass").AddItem(new MenuItem("WaitW", "Cast W before Q").SetValue(false));
 
             //Combo menu:
@@ -354,7 +354,7 @@ namespace Veigar__TTMOE
             menu.SubMenu("Combo").AddItem(new MenuItem("CastMode", "E and W settings").SetValue(new StringList(new[] { "Use E before W", "Use W before E", }, 0)));
             menu.SubMenu("Combo").AddSubMenu(new Menu("Smart Combo Settings", "MainCombo"));
             menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("If combo requires successful W hit").AddItem(new MenuItem("ComboWaitMode", "Choosed Mode:").SetValue(new StringList(new[] { "Wait for W to land first", "Don't wait for W to land", }, 0)));
-            menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("If combo requires successful W hit").AddItem(new MenuItem("IgnoreQ", "Allow Q Cast without W Check").SetValue(false));
+            menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("If combo requires successful W hit").AddItem(new MenuItem("IgnoreQ", "Allow Q Cast without W Check").SetValue(true));
             menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("If combo requires successful W hit").AddItem(new MenuItem("IgnoreR", "Allow R Cast without W Check").SetValue(false));
             menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("If combo requires successful W hit").AddItem(new MenuItem("IgnoreIGN", "Allow IGN Cast without W Check").SetValue(false));
 
@@ -366,7 +366,7 @@ namespace Veigar__TTMOE
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.Team != Player.Team))
                 menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("il").AddItem(new MenuItem("il" + enemy.BaseSkinName, enemy.BaseSkinName).SetValue(false));
             menu.SubMenu("Combo").SubMenu("MainCombo").AddItem(new MenuItem("Priority", "Saving priority").SetValue(new StringList(new[] { "IGN > R", "R > IGN" }, 0)));
-            menu.SubMenu("Combo").SubMenu("MainCombo").AddItem(new MenuItem("ComboMode", "Combo config for unkillable targets").SetValue(new StringList(new[] { "None", "Choosed Harass Mode", "Q", "E+W", "E+W+Q", }, 0)));
+            menu.SubMenu("Combo").SubMenu("MainCombo").AddItem(new MenuItem("ComboMode", "Combo config for unkillable targets").SetValue(new StringList(new[] { "None", "Choosed Harass Mode", "Q", "E+W", "E+W+Q", }, 4)));
             menu.SubMenu("Combo").AddSubMenu(new Menu("Dont use R,IGN if target has", "DontRIGN"));
             foreach (var buff in buffList)
                 menu.SubMenu("Combo").SubMenu("DontRIGN").AddItem(new MenuItem("dont" + buff.Name, buff.MenuName).SetValue(true));
@@ -403,11 +403,16 @@ namespace Veigar__TTMOE
             var prediction = Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
 
-            if (prediction.Hitchance >= HitChance.High && Q.IsReady() && minions <= 1)
+            if (minions <= 1 && prediction.Hitchance >= HitChance.High && Q.IsReady())
 //            if (minions <= 1)
             {
             Q.Cast(prediction.CastPosition, Packets());
             }
+			else
+			{
+			return;
+			}
+
 
 /*        }
 		
@@ -1502,7 +1507,7 @@ namespace Veigar__TTMOE
             if (Q.IsReady())
             {
                 if (_m != null)
-                    CastQ((Obj_AI_Base)_m);
+                    CastQ(_m);
             }
         }
 
