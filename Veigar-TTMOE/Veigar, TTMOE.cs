@@ -434,7 +434,7 @@ namespace Veigar__TTMOE
 			{
             Q.Cast(prediction.CastPosition, Packets());
 			}
-}
+		}
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
