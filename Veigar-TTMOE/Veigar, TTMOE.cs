@@ -220,9 +220,13 @@ namespace Veigar__TTMOE
             E = new Spell(SpellSlot.E, 1005);
             R = new Spell(SpellSlot.R, 650);
 
-            Q.SetSkillshot(0.25f, 70f, 1750f, false, SkillshotType.SkillshotLine);
+/*            Q.SetSkillshot(0.25f, 70f, 1750f, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(1.25f, 230f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(1.00f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+*/
+            Q.SetSkillshot(0.25f, 140f, 1750f, false, SkillshotType.SkillshotLine);
+            W.SetSkillshot(1.25f, 225f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            E.SetSkillshot(1.00f, 375f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 
             SpellList.Add(Q);
             SpellList.Add(W);
@@ -420,7 +424,7 @@ namespace Veigar__TTMOE
 */		}
 			
 //q미니언 충돌
-        public static void CastQM(Obj_AI_Base target)
+        public static void CastQ(Obj_AI_Base target)
         {
             var prediction = Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
@@ -1156,13 +1160,13 @@ namespace Veigar__TTMOE
                     {
                         if (menu.Item("IgnoreQ").GetValue<bool>() || !W.IsReady())
                         {
-                            CastQ(T);
+                            CastQ((Obj_AI_Hero)T);
                         }
                     }
                     else
                     {
                         if (T.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && (b.Type == BuffType.Charm || b.Type == BuffType.Knockback || b.Type == BuffType.Stun || b.Type == BuffType.Suppression || b.Type == BuffType.Snare)).Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time >= W.Delay)
-                            CastQ(T);
+                            CastQ((Obj_AI_Hero)T);
                     }
                 }
                 else if (Source != "EWQHarass" && Source != "QHarass")
@@ -1172,12 +1176,12 @@ namespace Veigar__TTMOE
                 else if (Source == "EWQHarass")
                 {
                     if (!menu.Item("WaitW").GetValue<bool>() || !W.IsReady())
-                        CastQ(T);
+                        CastQ((Obj_AI_Hero)T);
                 }
                 else if (Source == "QHarass")
                 {
                     if (Player.Distance(T.Position) <= Q.Range)
-                        CastQ(T);
+                        CastQ((Obj_AI_Hero)T);
                 }
 
             }
@@ -1498,7 +1502,7 @@ namespace Veigar__TTMOE
             if (Q.IsReady())
             {
                 if (_m != null)
-                    CastQM(_m);
+                    CastQ((Obj_AI_Base)_m);
             }
         }
 
