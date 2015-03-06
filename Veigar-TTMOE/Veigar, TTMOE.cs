@@ -215,7 +215,7 @@ namespace Veigar__TTMOE
 
             //Initializing Spells
 			//850으로하면 명중률 너무 떨어짐 825로 수정
-            Q = new Spell(SpellSlot.Q, 825);
+            Q = new Spell(SpellSlot.Q, 850);
             W = new Spell(SpellSlot.W, 900);
             E = new Spell(SpellSlot.E, 1005);
             R = new Spell(SpellSlot.R, 650);
@@ -298,7 +298,7 @@ namespace Veigar__TTMOE
             menu.SubMenu("Other").AddSubMenu(new Menu("Auto W Settings", "wsets"));
             menu.SubMenu("Other").SubMenu("wsets").AddItem(new MenuItem("Wimm", "Enable Auto W on CC'ed targets").SetValue(true));
             menu.SubMenu("Other").SubMenu("wsets").AddItem(new MenuItem("Wimmz", "Use W on invulnerability end").SetValue(true));
-            menu.SubMenu("Other").SubMenu("wsets").AddItem(new MenuItem("DontWimm", "Disable Auto W when comboing").SetValue(true));
+            menu.SubMenu("Other").SubMenu("wsets").AddItem(new MenuItem("DontWimm", "Disable Auto W when comboing").SetValue(false));
             menu.SubMenu("Other").AddItem(new MenuItem("StunUnderTower", "Stun Enemies Attacked by Tower").SetValue(true));
             menu.SubMenu("Other").AddItem(new MenuItem("UseInt", "Use E to Interrupt").SetValue(true));
             menu.SubMenu("Other").AddItem(new MenuItem("UseGap", "Use E against GapClosers").SetValue(true));
@@ -403,15 +403,15 @@ namespace Veigar__TTMOE
             var prediction = Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
 
-            if (minions <= 1 && prediction.Hitchance >= HitChance.High && Q.IsReady())
-//            if (minions <= 1)
-            {
-            Q.Cast(prediction.CastPosition, Packets());
-            }
-			else
+			if (minions >= 2)
 			{
 			return;
 			}
+            else if (prediction.Hitchance >= HitChance.High && Q.IsReady())
+            {
+            Q.Cast(prediction.CastPosition, Packets());
+            }
+		}
 
 
 /*        }
@@ -434,12 +434,12 @@ namespace Veigar__TTMOE
             var prediction = Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
 
-            if (minions >= 1)
+            if (minions >= 2)
             {
-            Q.Cast(prediction.CastPosition, Packets());
-//			return;
+			return;
             }
-        }
+            Q.Cast(prediction.CastPosition, Packets());
+		}
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
@@ -960,7 +960,7 @@ namespace Veigar__TTMOE
             else if (D && DR)
                 NeededRangee = 650;
             else if (A && AR)
-                NeededRangee = 825; //Q리메이크로 사정거리 850됨. 
+                NeededRangee = 850; //Q리메이크로 사정거리 850됨. 
             else if (B && BR)
                 NeededRangee = 900;
             else if (C && CR)
@@ -1176,7 +1176,7 @@ namespace Veigar__TTMOE
                 }
                 else if (Source != "EWQHarass" && Source != "QHarass")
                 {
-                    CastQ(T);
+                    CastQ((Obj_AI_Hero)T);
                 }
                 else if (Source == "EWQHarass")
                 {
