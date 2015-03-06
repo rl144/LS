@@ -407,10 +407,6 @@ namespace Veigar__TTMOE
             {
             Q.Cast(prediction.CastPosition, Packets());
             }
-			else
-			{
-			return;
-			}
 		}
 
 
@@ -426,7 +422,7 @@ namespace Veigar__TTMOE
             {
             Q.Cast(prediction.CastPosition, Packets());
             }
-*/		}
+*/		
 			
 //q미니언 충돌
         public static void CastQ(Obj_AI_Base target)
@@ -437,7 +433,6 @@ namespace Veigar__TTMOE
             if (minions <= 1)
 			{
             Q.Cast(prediction.CastPosition, Packets());
-			return;
 			}
 		}
 
