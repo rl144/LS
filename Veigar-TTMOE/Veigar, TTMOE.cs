@@ -432,7 +432,7 @@ namespace Veigar__TTMOE
             }
         }
 
-        private +static void Game_OnGameUpdate(EventArgs args)
+        private static void Game_OnGameUpdate(EventArgs args)
         {
             #region ComboShetOnUpdate
             if (Delay != 0f)
