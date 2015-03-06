@@ -196,7 +196,7 @@ namespace Veigar__TTMOE
             sprite.VisibleCondition += s => Render.OnScreen(Drawing.WorldToScreen(Player.Position)) && menu.Item("Show").GetValue<bool>();
             sprite.Scale = new Vector2(1f, 1f);
             sprite.Add();
-            Game.OnGameUpdate += eventArgs =>
+            Game.OnUpdate += eventArgs =>
             {
                 if (sprite != null && Game.ClockTime >= 50)
                 {
@@ -268,9 +268,11 @@ namespace Veigar__TTMOE
             foreach (var hud in HUDlist.Where(hud => hud.MenuText == "Display KS Status" || hud.MenuText == "Display Stun Closest Status" || hud.MenuText == "Display LaneClear Status"))
                 menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("U" + hud.MenuText, hud.MenuText).SetValue(false));
 
-            menu.SubMenu("Drawings").AddItem(new MenuItem("QRange", "Q,R range").SetValue(new Circle(true, Color.FromArgb(255, 0, 255, 0))));
+//R범위 추가
+            menu.SubMenu("Drawings").AddItem(new MenuItem("QRange", "Q range").SetValue(new Circle(true, Color.FromArgb(255, 0, 255, 0))));
             menu.SubMenu("Drawings").AddItem(new MenuItem("WRange", "W range").SetValue(new Circle(false, Color.FromArgb(100, 255, 0, 255))));
             menu.SubMenu("Drawings").AddItem(new MenuItem("ERange", "E range").SetValue(new Circle(true, Color.FromArgb(255, 255, 0, 255))));
+            menu.SubMenu("Drawings").AddItem(new MenuItem("RRange", "R range").SetValue(new Circle(true, Color.FromArgb(255, 0, 255, 0))));
             menu.SubMenu("Drawings").AddItem(new MenuItem("MinionMarker", "Mark Q Farm Minions").SetValue(new Circle(true, Color.Green)));
             menu.SubMenu("Drawings").AddItem(new MenuItem("TText", "Mark Targets with Circles").SetValue(true));
             menu.SubMenu("Drawings").AddItem(new MenuItem("LText", "Display Locked Target[HP BAR]").SetValue(true));
@@ -380,7 +382,7 @@ namespace Veigar__TTMOE
             GameObject.OnCreate += OnCreate;
             GameObject.OnDelete += OnDelete;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Game.OnWndProc += Game_OnWndProc;
             GameObject.OnCreate += TowerAttackOnCreate;
             Drawing.OnDraw += Drawing_OnDraw;
@@ -388,7 +390,7 @@ namespace Veigar__TTMOE
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Game.PrintChat("Veigar, TTMOE! Edited by RL");
         }
-
+//Q캐스트 영웅(챔피언)
         public static void CastQ(Obj_AI_Hero target)
         {
 
@@ -418,12 +420,12 @@ namespace Veigar__TTMOE
 */		}
 			
 //q미니언 충돌
-        public static void CastQ(Obj_AI_Base target)
+        public static void CastQM(Obj_AI_Base target)
         {
             var prediction = Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
 
-            if (minions >= 2)
+            if (minions >= 1)
             {
             Q.Cast(prediction.CastPosition, Packets());
 //			return;
@@ -934,7 +936,7 @@ namespace Veigar__TTMOE
                 }
             }
         }
-
+//사거리필요
         private static int NeededRange(bool A, bool B, bool C, bool D, bool F)
         {
             bool AR = Exists(true, false, false, false, false);
@@ -949,7 +951,7 @@ namespace Veigar__TTMOE
             else if (D && DR)
                 NeededRangee = 650;
             else if (A && AR)
-                NeededRangee = 650;
+                NeededRangee = 825; //Q리메이크로 사정거리 850됨. 이전은 650. 다만 명중률 위해 825
             else if (B && BR)
                 NeededRangee = 900;
             else if (C && CR)
@@ -968,7 +970,7 @@ namespace Veigar__TTMOE
         //Use All Available Spells Combo(Independent of CD and target HP)
         private static void AllIn()
         {
-            if (menu.Item("ToOrb").GetValue<bool>()) if (Orb == 2) xSLx_Orbwalker.xSLxOrbwalker.Orbwalk(Game.CursorPos, Target); else if (Orb == 1) Orbwalking.Orbwalk(Target, Game.CursorPos);
+            if (menu.Item("ToOrb").GetValue<bool>()) if (Orb == 2) Orbwalking.Orbwalk(Target, Game.CursorPos); else if (Orb == 1) Orbwalking.Orbwalk(Target, Game.CursorPos);
             UseSpells(Target, "AllIn", true, true, true, true, true);
         }
 
@@ -1496,7 +1498,7 @@ namespace Veigar__TTMOE
             if (Q.IsReady())
             {
                 if (_m != null)
-                    CastQ(_m);
+                    CastQM(_m);
             }
         }
 
