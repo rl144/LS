@@ -191,12 +191,12 @@ namespace Veigar__TTMOE
 
         private static void Main(string[] args)
         {
-            CustomEvents.Game.onLoad += Game_onLoad;
+            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
             var sprite = new Render.Sprite(Properties.Resources.Sprite, new Vector2(Drawing.Width * 0.83f, Drawing.Height * 0.33f));
             sprite.VisibleCondition += s => Render.OnScreen(Drawing.WorldToScreen(Player.Position)) && menu.Item("Show").GetValue<bool>();
             sprite.Scale = new Vector2(1f, 1f);
             sprite.Add();
-            Game.OnUpdate += eventArgs =>
+            Game.OnGameUpdate += eventArgs =>
             {
                 if (sprite != null && Game.ClockTime >= 50)
                 {
@@ -206,7 +206,7 @@ namespace Veigar__TTMOE
             };
         }
 
-        private static void Game_onLoad(EventArgs args)
+        private static void Game_OnGameLoad(EventArgs args)
         {
             Player = ObjectManager.Player;
 
@@ -382,7 +382,7 @@ namespace Veigar__TTMOE
             GameObject.OnCreate += OnCreate;
             GameObject.OnDelete += OnDelete;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
-            Game.OnUpdate += Game_onUpdate;
+            Game.OnGameUpdate += Game_OnGameUpdate;
             Game.OnWndProc += Game_OnWndProc;
             GameObject.OnCreate += TowerAttackOnCreate;
             Drawing.OnDraw += Drawing_OnDraw;
@@ -432,7 +432,7 @@ namespace Veigar__TTMOE
             }
         }
 
-        private +static void Game_onUpdate(EventArgs args)
+        private +static void Game_OnGameUpdate(EventArgs args)
         {
             #region ComboShetOnUpdate
             if (Delay != 0f)
@@ -951,7 +951,7 @@ namespace Veigar__TTMOE
             else if (D && DR)
                 NeededRangee = 650;
             else if (A && AR)
-                NeededRangee = 825; //Q리메이크로 사정거리 850됨. 이전은 650. 다만 명중률 위해 825
+                NeededRangee = 825; //Q리메이크로 사정거리 850됨. 
             else if (B && BR)
                 NeededRangee = 900;
             else if (C && CR)
