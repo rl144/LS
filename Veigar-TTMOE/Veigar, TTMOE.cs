@@ -410,7 +410,7 @@ namespace Veigar__TTMOE
             else if (prediction.Hitchance >= HitChance.High && Q.IsReady())
             {
             Q.Cast(prediction.CastPosition, Packets());
-            }
+            };
 		}
 
 
