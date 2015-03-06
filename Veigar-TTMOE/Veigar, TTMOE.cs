@@ -407,6 +407,10 @@ namespace Veigar__TTMOE
             {
             Q.Cast(prediction.CastPosition, Packets());
             }
+			else
+			{
+			return;
+			}
 		}
 
 
@@ -433,6 +437,7 @@ namespace Veigar__TTMOE
             if (minions <= 1)
 			{
             Q.Cast(prediction.CastPosition, Packets());
+			return;
 			}
 		}
 
