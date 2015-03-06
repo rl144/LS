@@ -403,8 +403,7 @@ namespace Veigar__TTMOE
             var prediction = Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
 
-			if (minions >= 2)	return;
-            else if (prediction.Hitchance >= HitChance.High && Q.IsReady())
+			if (minions <= 1 && prediction.Hitchance >= HitChance.High && Q.IsReady())
             {
             Q.Cast(prediction.CastPosition, Packets());
             }
@@ -431,8 +430,7 @@ namespace Veigar__TTMOE
             var prediction = Q.GetPrediction(target, true);
             var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
 
-            if (minions >= 2)	return;
-			else
+            if (minions <= 1)
 			{
             Q.Cast(prediction.CastPosition, Packets());
 			}
