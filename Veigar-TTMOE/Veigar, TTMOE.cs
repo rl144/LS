@@ -224,9 +224,9 @@ namespace Veigar__TTMOE
             W.SetSkillshot(1.25f, 230f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(1.00f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 */
-            Q.SetSkillshot(0.25f, 140f, 1750f, false, SkillshotType.SkillshotLine);
+            Q.SetSkillshot(0.25f, 100f, 1750f, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(1.25f, 225f, float.MaxValue, false, SkillshotType.SkillshotCircle);
-            E.SetSkillshot(1.00f, 375f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            E.SetSkillshot(1.00f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 
             SpellList.Add(Q);
             SpellList.Add(W);
@@ -1973,11 +1973,11 @@ namespace Veigar__TTMOE
             Vector2 castVec2 = pred.UnitPosition.To2D() -
                               Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
 							  
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 325)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 360)
             {
                 E.Cast(castVec, false);
             }
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 325)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 360)
             {
                 E.Cast(castVec2, false);
             }
@@ -1992,11 +1992,11 @@ namespace Veigar__TTMOE
             Vector2 castVec2 = pred.UnitPosition.To2D() -
                               Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
 							  
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 325)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 360)
             {
                 E.Cast(castVec, false);
             }
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 325)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 360)
             {
                 E.Cast(castVec2, false);
             }
