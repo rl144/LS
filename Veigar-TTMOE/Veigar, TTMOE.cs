@@ -191,7 +191,7 @@ namespace Veigar__TTMOE
 
         private static void Main(string[] args)
         {
-            CustomEvents.Game.OnLoad += Game_OnLoad;
+            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
             var sprite = new Render.Sprite(Properties.Resources.Sprite, new Vector2(Drawing.Width * 0.83f, Drawing.Height * 0.33f));
             sprite.VisibleCondition += s => Render.OnScreen(Drawing.WorldToScreen(Player.Position)) && menu.Item("Show").GetValue<bool>();
             sprite.Scale = new Vector2(1f, 1f);
@@ -206,7 +206,7 @@ namespace Veigar__TTMOE
             };
         }
 
-        private static void Game_OnLoad(EventArgs args)
+        private static void Game_OnGameLoad(EventArgs args)
         {
             Player = ObjectManager.Player;
 
@@ -1056,7 +1056,7 @@ namespace Veigar__TTMOE
         //Uses selected abilities
         private static void UseSpells(Obj_AI_Hero T, string Source, bool QQ, bool WW, bool EE, bool RR, bool IGNN)
         {
-			var Qprediction = Q.GetPrediction(target, true);
+			var Qprediction = Q.GetPrediction(T);
             var minions = Qprediction.CollisionObjects.Count(thing => thing.IsMinion);
             if (Player.Distance(T, true) < Math.Pow(NeededRange(QQ, WW, EE, RR, IGNN), 2) && Player.Distance(T, true) > Math.Pow(NeededRange(QQ, WW, EE, RR, IGNN), 2)) ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, T);
 
