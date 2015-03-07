@@ -191,12 +191,12 @@ namespace Veigar__TTMOE
 
         private static void Main(string[] args)
         {
-            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
+            CustomEvents.Game.OnLoad += Game_OnLoad;
             var sprite = new Render.Sprite(Properties.Resources.Sprite, new Vector2(Drawing.Width * 0.83f, Drawing.Height * 0.33f));
             sprite.VisibleCondition += s => Render.OnScreen(Drawing.WorldToScreen(Player.Position)) && menu.Item("Show").GetValue<bool>();
             sprite.Scale = new Vector2(1f, 1f);
             sprite.Add();
-            Game.OnGameUpdate += eventArgs =>
+            Game.OnUpdate += eventArgs =>
             {
                 if (sprite != null && Game.ClockTime >= 50)
                 {
@@ -206,7 +206,7 @@ namespace Veigar__TTMOE
             };
         }
 
-        private static void Game_OnGameLoad(EventArgs args)
+        private static void Game_OnLoad(EventArgs args)
         {
             Player = ObjectManager.Player;
 
@@ -386,7 +386,7 @@ namespace Veigar__TTMOE
             GameObject.OnCreate += OnCreate;
             GameObject.OnDelete += OnDelete;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnUpdate;
             Game.OnWndProc += Game_OnWndProc;
             GameObject.OnCreate += TowerAttackOnCreate;
             Drawing.OnDraw += Drawing_OnDraw;
@@ -436,7 +436,7 @@ namespace Veigar__TTMOE
 			}
 		}
 
-        private static void Game_OnGameUpdate(EventArgs args)
+        private static void Game_OnUpdate(EventArgs args)
         {
             #region ComboShetOnUpdate
             if (Delay != 0f)
@@ -1052,11 +1052,12 @@ namespace Veigar__TTMOE
                         UseSpells(Target, "NE", true, true, true, false, false);
             }
         }
-
+//테스트용 추가
         //Uses selected abilities
         private static void UseSpells(Obj_AI_Hero T, string Source, bool QQ, bool WW, bool EE, bool RR, bool IGNN)
         {
-
+			var Qprediction = Q.GetPrediction(target, true);
+            var minions = Qprediction.CollisionObjects.Count(thing => thing.IsMinion);
             if (Player.Distance(T, true) < Math.Pow(NeededRange(QQ, WW, EE, RR, IGNN), 2) && Player.Distance(T, true) > Math.Pow(NeededRange(QQ, WW, EE, RR, IGNN), 2)) ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, T);
 
             if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
@@ -1152,7 +1153,7 @@ namespace Veigar__TTMOE
                 }
             }
 
-            if (QQ && T != null && !HasBuffs(T) && DetectCollision(T, Q.Delay))
+            if (QQ && T != null && minions <= 1 && !HasBuffs(T) && DetectCollision(T, Q.Delay))
             {
                 if (Source == "NE" && menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
                 {
