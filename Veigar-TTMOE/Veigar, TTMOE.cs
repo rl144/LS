@@ -400,12 +400,14 @@ namespace Veigar__TTMOE
 
 //            var pred = Q.GetPrediction(target, true);
 //            var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
-            var prediction = Q.GetPrediction(target, true);
-            var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
-
-			if (minions <= 1 && prediction.Hitchance >= HitChance.High && Q.IsReady())
+//            var prediction = Q.GetPrediction(target, true);
+//            var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
+            var qpred = Q.GetPrediction(target, true);
+            var qcollision = Q.GetCollision(player.ServerPosition.To2D(), new List<Vector2> { qpred.CastPosition.To2D() });
+            var minioncol = qcollision.Where(x => !(x is Obj_AI_Hero)).Count(x => x.IsMinion);
+			if (target.IsValidTarget(Q.Range) && minioncol <= 1 && prediction.Hitchance >= HitChance.High)
             {
-            Q.Cast(prediction.CastPosition, Packets());
+            Q.Cast(qpred.CastPosition, Packets());
             }
 		}
 
