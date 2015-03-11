@@ -624,7 +624,7 @@ index = 15
             else
             {
                 spawn = new Vector3(415.33f, 453.38f, 182.66f);
-                enemy_spawnenemy_spawn = new Vector3(14318f, 14354, 171.97f);
+                enemy_spawn = new Vector3(14318f, 14354, 171.97f);
                 Game.PrintChat("Set BlueTeam Spawn");
                 IsBlueTeam = true;
                 MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 6;
