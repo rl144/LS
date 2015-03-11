@@ -217,16 +217,16 @@ namespace Veigar__TTMOE
 			//850으로하면 명중률 너무 떨어짐 825로 수정
             Q = new Spell(SpellSlot.Q, 850);
             W = new Spell(SpellSlot.W, 900);
-            E = new Spell(SpellSlot.E, 1005);
+            E = new Spell(SpellSlot.E, 1060);
             R = new Spell(SpellSlot.R, 650);
 
 /*            Q.SetSkillshot(0.25f, 70f, 1750f, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(1.25f, 230f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(1.00f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
-*/
-            Q.SetSkillshot(0.25f, 70f, 1750f, false, SkillshotType.SkillshotLine);
+5.5패치로 q탄속 1750에서 2200으로 변경 및 e 1초에서 0.75초*/
+            Q.SetSkillshot(0.25f, 70f, 2200f, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(1.25f, 225f, float.MaxValue, false, SkillshotType.SkillshotCircle);
-            E.SetSkillshot(1.00f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            E.SetSkillshot(0.75f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 
             SpellList.Add(Q);
             SpellList.Add(W);
@@ -448,8 +448,8 @@ namespace Veigar__TTMOE
                 if (Ccombo.Contains("IGN"))
                 {
                     int I = 0;
-                    if (Ccombo.Contains("E")) I += 1000;
-                    if (Ccombo.Contains("W")) I += 1400;
+                    if (Ccombo.Contains("E")) I += 750;
+                    if (Ccombo.Contains("W")) I += 1250;
                     if (Ccombo.Contains("Q")) I += 600;
                     if (Ccombo.Contains("R")) I += 600;
                     if (Environment.TickCount - Delay1 > I && Player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready)
@@ -960,7 +960,7 @@ namespace Veigar__TTMOE
             else if (B && BR)
                 NeededRangee = 900;
             else if (C && CR)
-                NeededRangee = 1050;
+                NeededRangee = 1060;
             return NeededRangee;
         }
 
@@ -1775,7 +1775,7 @@ namespace Veigar__TTMOE
             float time = 0f;
             if (A) time += 0.6f * 1000;
             if (B) time += 1.2f * 1000;
-            if (C) time += 1.0f * 1000;
+            if (C) time += 0.75f * 1000;
             if (D) time += 0.6f * 1000;
             if (F) time += 1f * 1000;
             return time;
@@ -1787,7 +1787,7 @@ namespace Veigar__TTMOE
             float time = 0f;
             if (combo.Contains("Q")) time += 0.6f * 1000;
             if (combo.Contains("W")) time += 1.2f * 1000;
-            if (combo.Contains("E")) time += 1.0f * 1000;
+            if (combo.Contains("E")) time += 0.75f * 1000;
             if (combo.Contains("R")) time += 0.6f * 1000;
             if (combo.Contains("IGN")) time += 3f * 1000;
             return time;
@@ -1906,7 +1906,7 @@ namespace Veigar__TTMOE
             Obj_AI_Hero Target = null;
             if (ChoosedTarget == null)
             {
-                Target = TargetSelector.GetTarget(1050, TargetSelector.DamageType.Magical);
+                Target = TargetSelector.GetTarget(1060, TargetSelector.DamageType.Magical);
             }
             else
             {
@@ -2138,7 +2138,7 @@ namespace Veigar__TTMOE
                     missile.Target.IsValid<Obj_AI_Hero>() && missile.Target.IsEnemy)
                 {
                     var turret = (Obj_AI_Turret)missile.SpellCaster;
-                    if (Player.Distance(missile.Target.Position) < 1050)
+                    if (Player.Distance(missile.Target.Position) < 1060)
                         castE((Obj_AI_Hero)missile.Target);
                 }
             }
