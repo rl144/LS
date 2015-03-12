@@ -223,10 +223,10 @@ namespace Veigar__TTMOE
 /*            Q.SetSkillshot(0.25f, 70f, 1750f, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(1.25f, 230f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(1.00f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
-5.5패치로 q탄속 1750에서 2200으로 변경 및 e 1초에서 0.75초*/
-            Q.SetSkillshot(0.25f, 70f, 2200f, false, SkillshotType.SkillshotLine);
+5.5패치로 q탄속 1750에서 2000으로 변경 및 e 1초에서 0.75초 <- 0.5초일수도있음확인필요*/
+            Q.SetSkillshot(0.25f, 70f, 2000f, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(1.25f, 225f, float.MaxValue, false, SkillshotType.SkillshotCircle);
-            E.SetSkillshot(0.75f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            E.SetSkillshot(0.50f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 
             SpellList.Add(Q);
             SpellList.Add(W);
@@ -448,7 +448,7 @@ namespace Veigar__TTMOE
                 if (Ccombo.Contains("IGN"))
                 {
                     int I = 0;
-                    if (Ccombo.Contains("E")) I += 750;
+                    if (Ccombo.Contains("E")) I += 500;
                     if (Ccombo.Contains("W")) I += 1250;
                     if (Ccombo.Contains("Q")) I += 600;
                     if (Ccombo.Contains("R")) I += 600;
@@ -1775,7 +1775,7 @@ namespace Veigar__TTMOE
             float time = 0f;
             if (A) time += 0.6f * 1000;
             if (B) time += 1.2f * 1000;
-            if (C) time += 0.75f * 1000;
+            if (C) time += 0.50f * 1000;
             if (D) time += 0.6f * 1000;
             if (F) time += 1f * 1000;
             return time;
@@ -1787,7 +1787,7 @@ namespace Veigar__TTMOE
             float time = 0f;
             if (combo.Contains("Q")) time += 0.6f * 1000;
             if (combo.Contains("W")) time += 1.2f * 1000;
-            if (combo.Contains("E")) time += 0.75f * 1000;
+            if (combo.Contains("E")) time += 0.50f * 1000;
             if (combo.Contains("R")) time += 0.6f * 1000;
             if (combo.Contains("IGN")) time += 3f * 1000;
             return time;
