@@ -605,21 +605,21 @@ index = 15
                 enemy_spawn = new Vector3(415.33f, 453.38f, 182.66f);
                 Game.PrintChat("Set PurpleTeam Spawn");
                 IsBlueTeam = false;
-                MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 1;
-                MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 2;
-                MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 3;
-                MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 4;
-                MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 5;
-                MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 6;
-                MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 7;
-                MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 8;
-                MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 9;
-                MonsterList.First(temp => temp.ID == top_crab.ID).order = 10;
-                MonsterList.First(temp => temp.ID == PURPLE_MID.ID).order = 11;
-                MonsterList.First(temp => temp.ID == down_crab.ID).order = 12;
-                MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 13;
-                MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 14;
-                MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 15;
+                MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 1;
+                MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 2;
+                MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 3;
+                MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 4;
+                MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 5;
+                MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 6;
+                MonsterList.First(temp => temp.ID == top_crab.ID).order = 7;
+                MonsterList.First(temp => temp.ID == PURPLE_MID.ID).order = 8;
+                MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 9;
+                MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 10;
+                MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 11;
+                MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 12;
+                MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 13;
+                MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 14;
+                MonsterList.First(temp => temp.ID == down_crab.ID).order = 15;
             }
             else
             {
@@ -627,21 +627,21 @@ index = 15
                 enemy_spawn = new Vector3(14318f, 14354, 171.97f);
                 Game.PrintChat("Set BlueTeam Spawn");
                 IsBlueTeam = true;
-                MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 6;
-                MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 5;
-                MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 4;
-                MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 3;
-                MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 2;
-                MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 1;
-                MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 7;
-                MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 8;
-                MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 9;
-                MonsterList.First(temp => temp.ID == top_crab.ID).order = 10;
-                MonsterList.First(temp => temp.ID == BLUE_MID.ID).order = 11;
-                MonsterList.First(temp => temp.ID == down_crab.ID).order = 12;
-                MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 13;
-                MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 14;
-                MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 15;
+                MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 1;
+                MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 2;
+                MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 3;
+                MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 8;
+                MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 9;
+                MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 10;
+                MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 6;
+                MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 5;
+                MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 4;
+                MonsterList.First(temp => temp.ID == top_crab.ID).order = 7;
+                MonsterList.First(temp => temp.ID == BLUE_MID.ID).order = 15;
+                MonsterList.First(temp => temp.ID == down_crab.ID).order = 14;
+                MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 11;
+                MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 12;
+                MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 13;
             }
             max = MonsterList.OrderByDescending(h => h.order).First().order;
             #endregion
@@ -752,18 +752,30 @@ index = 15
                     MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 0;
                     MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 0;
                     MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 0;
+					MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 1;
+					MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 2;
+					MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 3;
+					MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 4;
+					MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 5;
+					MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 6;
                 }
                 else
                 {
-                    MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 7;
-                    MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 8;
-                    MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 9;
-                    MonsterList.First(temp => temp.ID == top_crab.ID).order = 10;
-                    MonsterList.First(temp => temp.ID == PURPLE_MID.ID).order = 11;
-                    MonsterList.First(temp => temp.ID == down_crab.ID).order = 12;
-                    MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 13;
-                    MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 14;
-                    MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 15;
+					MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 1;
+					MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 2;
+					MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 3;
+					MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 4;
+					MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 5;
+					MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 6;
+					MonsterList.First(temp => temp.ID == top_crab.ID).order = 7;
+					MonsterList.First(temp => temp.ID == PURPLE_MID.ID).order = 8;
+					MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 9;
+					MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 10;
+					MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 11;
+					MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 12;
+					MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 13;
+					MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 14;
+					MonsterList.First(temp => temp.ID == down_crab.ID).order = 15;
                 }
             }
             else
@@ -779,18 +791,30 @@ index = 15
                     MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 0;
                     MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 0;
                     MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 0;
+					MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 1;
+					MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 2;
+					MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 3;
+					MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 4;
+					MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 5;
+					MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 6;
                 }
                 else
                 {
-                    MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 7;
-                    MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 8;
-                    MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 9;
-                    MonsterList.First(temp => temp.ID == top_crab.ID).order = 10;
-                    MonsterList.First(temp => temp.ID == BLUE_MID.ID).order = 11;
-                    MonsterList.First(temp => temp.ID == down_crab.ID).order = 12;
-                    MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 13;
-                    MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 14;
-                    MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 15;
+					MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 1;
+					MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 2;
+					MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 3;
+					MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 8;
+					MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 9;
+					MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 10;
+					MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 6;
+					MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 5;
+					MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 4;
+					MonsterList.First(temp => temp.ID == top_crab.ID).order = 7;
+					MonsterList.First(temp => temp.ID == BLUE_MID.ID).order = 15;
+					MonsterList.First(temp => temp.ID == down_crab.ID).order = 14;
+					MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 11;
+					MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 12;
+					MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 13;
                 }
             }
             max = MonsterList.OrderByDescending(h => h.order).First().order;
