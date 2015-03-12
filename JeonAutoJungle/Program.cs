@@ -312,12 +312,14 @@ needItem = ItemId.Bilgewater_Cutlass,
 item = ItemId.Blade_of_the_Ruined_King,
 index = 6
 },
+new ItemToShop()
 {
 Price = 875,
 needItem = ItemId.Blade_of_the_Ruined_King,
 item = ItemId.Pickaxe,
 index = 7
 },
+new ItemToShop()
 {
 Price = 1025,
 needItem = ItemId.Pickaxe,
