@@ -315,7 +315,7 @@ index = 6
 {
 Price = 875,
 needItem = ItemId.Blade_of_the_Ruined_King,
-item = ItemId.Tiamat_Melee_Only,
+item = ItemId.Pickaxe,
 index = 7
 },
 {
