@@ -293,66 +293,71 @@ index = 3
 },
 new ItemToShop()
 {
-Price = 325,
+Price = 1000,
 needItem = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
-item = ItemId.Boots_of_Speed,
-index = 4
-},
-new ItemToShop()
-{
-Price = 675,
-needItem = ItemId.Boots_of_Speed,
 item = ItemId.Berserkers_Greaves,
-index = 5
+index = 4
 },
 new ItemToShop()
 {
 Price = 1400,
 needItem = ItemId.Berserkers_Greaves,
 item = ItemId.Bilgewater_Cutlass,
-index = 6
+index = 5
 },
 new ItemToShop()
 {
 Price = 1800,
 needItem = ItemId.Bilgewater_Cutlass,
 item = ItemId.Blade_of_the_Ruined_King,
+index = 6
+},
+{
+Price = 875,
+needItem = ItemId.Blade_of_the_Ruined_King,
+item = ItemId.Pickaxe,
 index = 7
+},
+{
+Price = 1025,
+needItem = ItemId.Pickaxe,
+item = ItemId.Tiamat_Melee_Only,
+index = 8
 },
 new ItemToShop()
 {
 Price = 1100,
-needItem = ItemId.Blade_of_the_Ruined_King,
+needItem = ItemId.Tiamat_Melee_Only,
 item = ItemId.Zeal,
-index = 8
+index = 9
 },
 new ItemToShop()
 {
 Price = 1700,
 needItem = ItemId.Zeal,
 item = ItemId.Phantom_Dancer,
-index = 9
+index = 10
 },
 new ItemToShop()
 {
 Price = 1550,
 needItem = ItemId.Phantom_Dancer,
 item = ItemId.B_F_Sword,
-index = 10
+index = 11
 },
 new ItemToShop()
 {
 Price = 2250,
 needItem = ItemId.B_F_Sword,
 item = ItemId.Infinity_Edge,
-index = 11
+index = 12
 },
 new ItemToShop()
 {
 Price = 2900,
 needItem = ItemId.Infinity_Edge,
 item = ItemId.Last_Whisper,
-index = 12
+index = 13
 }
 };
         #endregion
@@ -382,66 +387,66 @@ index = 3
 },
 new ItemToShop()
 {
-Price = 325,
+Price = 1000,
 needItem = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
-item = ItemId.Boots_of_Speed,
+/*item = ItemId.Boots_of_Speed,
 index = 4
 },
 new ItemToShop()
 {
 Price = 675,
 needItem = ItemId.Boots_of_Speed,
-item = ItemId.Boots_of_Swiftness,
-index = 5
+*/item = ItemId.Boots_of_Swiftness,
+index = 4
 },
 new ItemToShop()
 {
 Price = 1400,
 needItem = ItemId.Boots_of_Swiftness,
 item = ItemId.Bilgewater_Cutlass,
-index = 6
+index = 5
 },
 new ItemToShop()
 {
 Price = 1800,
 needItem = ItemId.Bilgewater_Cutlass,
 item = ItemId.Blade_of_the_Ruined_King,
-index = 7
+index = 6
 },
 new ItemToShop()
 {
 Price = 900,
 needItem = ItemId.Blade_of_the_Ruined_King,
 item = ItemId.Recurve_Bow,
-index = 8
+index = 7
 },
 new ItemToShop()
 {
 Price = 500+750+450,
 needItem = ItemId.Recurve_Bow,
 item = ItemId.Wits_End,
-index = 9
+index = 8
 },
 new ItemToShop()
 {
 Price = 1900,
 needItem = ItemId.Wits_End,
 item = ItemId.Tiamat_Melee_Only,
-index = 10
+index = 9
 },
 new ItemToShop()
 {
 Price = 800+600,
 needItem = ItemId.Tiamat_Melee_Only,
 item = ItemId.Ravenous_Hydra_Melee_Only,
-index = 11
+index = 10
 },
 new ItemToShop()
 {
 Price = 2900,
 needItem = ItemId.Ravenous_Hydra_Melee_Only,
 item = ItemId.Last_Whisper,
-index = 12
+index = 11
 }
 };
         #endregion
