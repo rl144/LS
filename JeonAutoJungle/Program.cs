@@ -19,6 +19,7 @@ namespace JeonJunglePlay
         private static Vector3 spawn;
         private static Vector3 enemy_spawn;
         public static Menu JeonAutoJungleMenu;
+		public static Orbwalking.Orbwalker Orbwalker; //테스트추가 오브워
         public static float gamestart = 0, pastTime = 0, pastTimeAFK, afktime = 0;
         public static List<MonsterINFO> MonsterList = new List<MonsterINFO>();
         public static int now = 1, max = 20, num = 0;
@@ -588,7 +589,7 @@ index = 15
             ////////////////////////////////////////////////
             JeonAutoJungleMenu = new Menu("JeonAutoJungle", "JeonAutoJungle", true);
             JeonAutoJungleMenu.AddItem(new MenuItem("isActive", "Activate")).SetValue(true);
-            JeonAutoJungleMenu.AddItem(new MenuItem("maxstacks", "Max Stacks").SetValue(new Slider(3, 1, 150)));
+            JeonAutoJungleMenu.AddItem(new MenuItem("maxstacks", "Max Stacks").SetValue(new Slider(9, 1, 150)));
             JeonAutoJungleMenu.AddItem(new MenuItem("autorecallheal", "Recall[for heal]")).SetValue(true);
             JeonAutoJungleMenu.AddItem(new MenuItem("hpper", "Recall on HP(%)").SetValue(new Slider(50, 0, 100)));
             JeonAutoJungleMenu.AddItem(new MenuItem("autorecallitem", "Recall[for item]")).SetValue(true);
@@ -596,9 +597,12 @@ index = 15
             JeonAutoJungleMenu.AddItem(new MenuItem("Invade", "InvadeEnemyJungle?")).SetValue(true);
             JeonAutoJungleMenu.AddItem(new MenuItem("k_dragon", "Add Dragon to Route on Lv").SetValue(new Slider(10, 1, 18)));
             if (Player.ChampionName == "MasterYi")
-                JeonAutoJungleMenu.AddItem(new MenuItem("yi_W", "Cast MasterYi-W(%)").SetValue(new Slider(85, 0, 100)));
-            JeonAutoJungleMenu.AddToMainMenu();
-            setSmiteSlot();
+                JeonAutoJungleMenu.AddItem(new MenuItem("yi_W", "Cast MasterYi-W(%)").SetValue(new Slider(60, 0, 100)));
+            Orbwalker = new Orbwalking.Orbwalker(JeonAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Orbwalker", "Orbwalker")));
+            TargetSelector.AddToMenu(JeonAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Target Selector", "Target Selector")));
+				JeonAutoJungleMenu.AddToMainMenu();
+				//메뉴
+				setSmiteSlot();
             #region 스펠설정
             Q = new Spell(SpellSlot.Q, GetSpellRange(Qdata));
             W = new Spell(SpellSlot.W, GetSpellRange(Wdata));
@@ -892,7 +896,7 @@ index = 15
                             }
                             else if (Player.Gold > buyThings.First().Price
                             && JeonAutoJungleMenu.Item("autorecallitem").GetValue<Boolean>()
-                            && Player.InventoryItems.Length < 8) // HP LESS THAN 25%
+                            && Player.InventoryItems.Length < 9) // HP LESS THAN 25%
                             {
                                 Game.PrintChat("CAN BUY " + buyThings.First().item.ToString() + ". RECALL!");
                                 Player.Spellbook.CastSpell(SpellSlot.Recall);
