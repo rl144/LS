@@ -25,7 +25,7 @@ namespace JeonJunglePlay
 
             if(str.ToUpper() =="NUNU")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AS", path);
+                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "TANK", path);
                 SetSettingValue("SpellTree", "Value", "1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3", path);
             }
             else if (str.ToUpper() == "WARWICK")
@@ -40,12 +40,12 @@ namespace JeonJunglePlay
             }
             else if (str.ToUpper() == "CHOGATH")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AS", path);
+                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "TANK", path);
                 SetSettingValue("SpellTree", "Value", "3, 2, 1, 3, 3, 4, 3, 1, 3, 1, 4, 2, 2, 2, 2, 4, 1, 1", path);
             }
             else if (str.ToUpper() == "MAOKAI")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AS", path);
+                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "TANK", path);
                 SetSettingValue("SpellTree", "Value", "1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3", path);
             }
             else if (str.ToUpper() == "NASUS")
