@@ -20,6 +20,7 @@ namespace JeonJunglePlay
         private static Vector3 enemy_spawn;
         public static Menu JeonAutoJungleMenu;
 		public static Orbwalking.Orbwalker Orbwalker; //테스트추가 오브워
+		public static Orbwalking.OrbwalkingMode ActiveMode { get; set; }
         public static float gamestart = 0, pastTime = 0, pastTimeAFK, afktime = 0;
         public static List<MonsterINFO> MonsterList = new List<MonsterINFO>();
         public static int now = 1, max = 20, num = 0;
