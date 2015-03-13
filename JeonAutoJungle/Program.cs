@@ -480,87 +480,80 @@ index = 3
 },
 new ItemToShop()
 {
-Price = 325,
+Price = 1000,
 needItem = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
-item = ItemId.Boots_of_Speed,
+item = ItemId.Ionian_Boots_of_Lucidity,
 index = 4
 },
 new ItemToShop()
 {
-Price = 675,
-needItem = ItemId.Boots_of_Speed,
-item = ItemId.Ionian_Boots_of_Lucidity,
+Price = 500,
+needItem = ItemId.Ionian_Boots_of_Lucidity,
+item = ItemId.Null_Magic_Mantle,
 index = 5
 },
 new ItemToShop()
 {
-Price = 400,
-needItem = ItemId.Ionian_Boots_of_Lucidity,
-item = ItemId.Ruby_Crystal,
+Price = 900,
+needItem = ItemId.Null_Magic_Mantle,
+item = ItemId.Recurve_Bow,
 index = 6
 },
 new ItemToShop()
 {
-Price = 500+180+820,
-needItem = ItemId.Ruby_Crystal,
-item = ItemId.Aegis_of_the_Legion,
+Price = 1200,
+needItem = ItemId.Recurve_Bow,
+item = ItemId.Wits_End,
 index = 7
 },
 new ItemToShop()
 {
-Price = 900,
-needItem = ItemId.Aegis_of_the_Legion,
-item = ItemId.Locket_of_the_Iron_Solari,
-index = 8
-},
-new ItemToShop()
-{
 Price = 950,
-needItem = ItemId.Locket_of_the_Iron_Solari,
+needItem = ItemId.Wits_End,
 item = ItemId.Glacial_Shroud,
-index = 9
+index = 8
 },
 new ItemToShop()
 {
 Price = 1050+450,
 needItem = ItemId.Glacial_Shroud,
 item = ItemId.Frozen_Heart,
-index = 10
+index = 9
 },
 new ItemToShop()
 {
 Price = 500,
 needItem = ItemId.Frozen_Heart,
 item = ItemId.Null_Magic_Mantle,
-index = 11
+index = 10
 },
 new ItemToShop()
 {
 Price = 400+1150,
 needItem = ItemId.Null_Magic_Mantle,
 item = ItemId.Banshees_Veil,
-index = 12
+index = 11
 },
 new ItemToShop()
 {
 Price = 1200,
 needItem = ItemId.Banshees_Veil,
 item = ItemId.Sheen,
-index = 13
+index = 12
 },
 new ItemToShop()
 {
 Price = 1325,
 needItem = ItemId.Sheen,
 item = ItemId.Phage,
-index = 14
+index = 13
 },
 new ItemToShop()
 {
 Price = 1178,
 needItem = ItemId.Phage,
 item = ItemId.Trinity_Force,
-index = 15
+index = 14
 },
 };
         #endregion
