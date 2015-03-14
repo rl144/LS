@@ -157,115 +157,108 @@ index = 1
 },
 new ItemToShop()
 {
-Price = 450,
+Price = 820,
 needItem = ItemId.Rangers_Trailblazer,
-item = ItemId.Dagger,
+item = ItemId.Fiendish_Codex,
 index = 2
 },
 new ItemToShop()
 {
-Price = 1050,
-needItem = ItemId.Dagger,
-item = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
+Price = 680,
+needItem = ItemId.Fiendish_Codex,
+item = ItemId.Rangers_Trailblazer_Enchantment_Magus,
 index = 3
 },
 new ItemToShop()
 {
-Price = 325,
-needItem = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
-item = ItemId.Boots_of_Speed,
+Price = 1100,
+needItem = ItemId.Rangers_Trailblazer_Enchantment_Magus,
+item = ItemId.Ionian_Boots_of_Lucidity,
 index = 4
 },
 new ItemToShop()
 {
-Price = 775,
-needItem = ItemId.Boots_of_Speed,
-item = ItemId.Ionian_Boots_of_Lucidity,
+Price = 820,
+needItem = ItemId.Ionian_Boots_of_Lucidity,
+item = ItemId.Fiendish_Codex,
 index = 5
 },
 new ItemToShop()
 {
-Price = 400,
-needItem = ItemId.Ionian_Boots_of_Lucidity,
-item = ItemId.Sapphire_Crystal,
+Price = 600,
+needItem = ItemId.Fiendish_Codex,
+item = ItemId.Forbidden_Idol,
 index = 6
 },
 new ItemToShop()
 {
-Price = 140+180,
-needItem = ItemId.Sapphire_Crystal,
-item = ItemId.Tear_of_the_Goddess,
+Price = 880,
+needItem = ItemId.Forbidden_Idol,
+item = ItemId.Morellonomicon,
 index = 7
 },
 new ItemToShop()
 {
-Price = 435,
-needItem = ItemId.Tear_of_the_Goddess,
-item = ItemId.Amplifying_Tome,
-index = 8
-},
-new ItemToShop()
-{
-Price = 300+465,
-needItem = ItemId.Amplifying_Tome,
+Price = 1200,
+needItem = ItemId.Morellonomicon,
 item = ItemId.Seekers_Armguard,
-index = 9
+index = 8
 },
 new ItemToShop()
 {
 Price = 1600,
 needItem = ItemId.Seekers_Armguard,
 item = ItemId.Needlessly_Large_Rod,
-index = 10
+index = 9
 },
 new ItemToShop()
 {
 Price = 500,
 needItem = ItemId.Needlessly_Large_Rod,
 item = ItemId.Zhonyas_Hourglass,
-index = 11
+index = 10
 },
 new ItemToShop()
 {
 Price = 860,
 needItem = ItemId.Zhonyas_Hourglass,
 item = ItemId.Blasting_Wand,
-index = 12
+index = 11
 },
 new ItemToShop()
 {
 Price = 1600,
 needItem = ItemId.Blasting_Wand,
 item = ItemId.Needlessly_Large_Rod,
-index = 13
+index = 12
 },
 new ItemToShop()
 {
 Price = 840,
 needItem = ItemId.Needlessly_Large_Rod,
 item = ItemId.Rabadons_Deathcap,
-index = 14
+index = 13
 },
 new ItemToShop()
 {
 Price = 860,
 needItem = ItemId.Rabadons_Deathcap,
 item = ItemId.Blasting_Wand,
+index = 14
+},
+new ItemToShop()
+{
+Price = 1435,
+needItem = ItemId.Blasting_Wand,
+item = ItemId.Void_Staff,
 index = 15
 },
 new ItemToShop()
 {
-Price = 860,
-needItem = ItemId.Blasting_Wand,
-item = ItemId.Archangels_Staff,
+Price = 2750,
+needItem = ItemId.Void_Staff
+item = ItemId.Banshees_Veil,
 index = 16
-},
-new ItemToShop()
-{
-Price = 2295,
-needItem = ItemId.Archangels_Staff,
-item = ItemId.Void_Staff,
-index = 17
 }
 };
         #endregion
@@ -584,6 +577,7 @@ index = 14
             JeonAutoJungleMenu = new Menu("JeonAutoJungle", "JeonAutoJungle", true);
             JeonAutoJungleMenu.AddItem(new MenuItem("isActive", "Activate")).SetValue(true);
             JeonAutoJungleMenu.AddItem(new MenuItem("maxstacks", "Max Stacks").SetValue(new Slider(9, 1, 150)));
+            JeonAutoJungleMenu.AddItem(new MenuItem("maxlv", "Max level").SetValue(new Slider(11, 1, 18)));
             JeonAutoJungleMenu.AddItem(new MenuItem("autorecallheal", "Recall[for heal]")).SetValue(true);
             JeonAutoJungleMenu.AddItem(new MenuItem("hpper", "Recall on HP(%)").SetValue(new Slider(50, 0, 100)));
             JeonAutoJungleMenu.AddItem(new MenuItem("autorecallitem", "Recall[for item]")).SetValue(true);
@@ -930,13 +924,26 @@ index = 14
                     IsOVER = true;
                     Game.PrintChat("Stacks Over " + maxstacks + ". Now Going to be offense.");
                 }
-                if (buff.Count < maxstacks && IsOVER) //-- I don't speak korean :D
+                if (buff.Count < maxstacks && IsOVER && Player.Level < maxlv) //-- I don't speak korean :D
                 {
                     Game.PrintChat("Stacks under " + maxstacks + ". Going back to farm.");
                     IsOVER = false;
                     IsAttackStart = false;
                 }
             }
+			int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
+			if (Player.Level >= maxlv && !IsOVER)
+			{
+				IsOVER = true;
+                Game.PrintChat("level" + maxlv + ". Now Going to be offense.");
+			}
+			if (Player.Level < maxlv && IsOVER && buff.Count < maxstacks)
+			{
+				IsOVER = false;
+				IsAttackStart = false;
+                Game.PrintChat("level under" + maxlv + ". Going back to farm.");
+			}
+			
             #endregion
             #region 공격 모드 - offensive mode
             if (IsOVER)
