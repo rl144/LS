@@ -36,9 +36,7 @@ namespace JeonJunglePlay
         public static SpellDataInst Rdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R);
         public static List<Spell> cast2mob = new List<Spell>();
         public static List<Spell> cast2hero = new List<Spell>();
-        public static List<Spell> cast4laneclear = new List<Spell>();
-		public int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
-		public int level = Player.Level;		
+        public static List<Spell> cast4laneclear = new List<Spell>();	
         public class MonsterINFO
         {
             public Vector3 Position;
@@ -715,7 +713,8 @@ index = 14
         }
         private static void Game_OnUpdate(EventArgs args) 
         {
-			int maxlv, level;
+		int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
+		int level = Player.Level;	
             setSmiteSlot();
             if (Player.Spellbook.IsChanneling)
                 return;
