@@ -913,19 +913,36 @@ index = 14
                 }
                 if (Player.InShop())
                     recall = false;
+				int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
+				int level = Player.Level;
+				if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)))
+				{
+                    IsOVER = true;
+                    Game.PrintChat("LEVEL " + maxlv + ". Now Going to be offense.");
+				}
             }
-            #endregion
+			else
+			{
+				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)))
+				{
+                    Game.PrintChat("Level " + maxlv + ". Going back to farm.");
+                    IsOVER = false;
+                    IsAttackStart = false;
+				}
+            }
+			#endregion
             #region 스택이 넘는지 체크 - check ur stacks
             foreach (var buff in Player.Buffs.Where(b => b.DisplayName == "Enchantment_Slayer_Stacks"))
             {
                 int maxstacks = JeonAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
 				int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
-                if (buff.Count >= maxstacks && !IsOVER || Player.Level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))) //--테스트
+				int level = Player.Level;
+                if (buff.Count >= maxstacks && !IsOVER || level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))) //--테스트
                 {
                     IsOVER = true;
                     Game.PrintChat("Stacks Over " + maxstacks + ". Now Going to be offense.");
                 }
-                if (buff.Count < maxstacks && IsOVER && Player.Level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))) //-- I don't speak korean :D
+                if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))) //-- I don't speak korean :D
                 {
                     Game.PrintChat("Stacks under " + maxstacks + ". Going back to farm.");
                     IsOVER = false;
@@ -997,7 +1014,8 @@ index = 14
             {
                 if (!(Items.HasItem(Convert.ToInt32(ItemId.Hunters_Machete)) ||
                 Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer)) ||
-                Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer))))
+                Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) ||
+				Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))))
                 {
                     if (smiteSlot != SpellSlot.Unknown)
                     {
