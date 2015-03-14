@@ -713,8 +713,9 @@ index = 14
             if (smiteSlot == SpellSlot.Unknown)
                 Game.PrintChat("YOU ARE NOT JUNGLER(NO SMITE)");
         }
-        private static void Game_OnUpdate(EventArgs args)
+        private static void Game_OnUpdate(EventArgs args) 
         {
+			int maxlv, level;
             setSmiteSlot();
             if (Player.Spellbook.IsChanneling)
                 return;
