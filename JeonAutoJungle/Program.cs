@@ -1488,7 +1488,7 @@ index = 14
             }
             return sMinion;
         }
-        public static bool CheckMonster(String TargetName, Vector3 BasePosition, int Range = 700)
+        public static bool CheckMonster(String TargetName, Vector3 BasePosition, int Range = 300)
         {
             var minions = ObjectManager.Get<Obj_AI_Minion>()
             .Where(minion => minion.IsValid && !minion.IsDead && minion.Name.StartsWith(TargetName));
