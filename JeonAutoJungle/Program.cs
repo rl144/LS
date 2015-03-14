@@ -919,6 +919,7 @@ index = 14
             foreach (var buff in Player.Buffs.Where(b => b.DisplayName == "Enchantment_Slayer_Stacks"))
             {
                 int maxstacks = JeonAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
+				int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
                 if (buff.Count >= maxstacks && !IsOVER) //--테스트
                 {
                     IsOVER = true;
@@ -930,7 +931,6 @@ index = 14
                     IsOVER = false;
                     IsAttackStart = false;
                 }
-				int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
 				if (Player.Level >= maxlv && !IsOVER)
 				{
 					IsOVER = true;
