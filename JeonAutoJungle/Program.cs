@@ -37,6 +37,8 @@ namespace JeonJunglePlay
         public static List<Spell> cast2mob = new List<Spell>();
         public static List<Spell> cast2hero = new List<Spell>();
         public static List<Spell> cast4laneclear = new List<Spell>();
+		public int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
+		public int level = Player.Level;		
         public class MonsterINFO
         {
             public Vector3 Position;
@@ -840,8 +842,6 @@ index = 14
                 afktime = 0;
             if (!IsOVER)
             {
-				int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
-				int level = Player.Level;
                 if (IsStart) // start
                 {
                     if (Game.Time - gamestart >= 0)
@@ -1490,7 +1490,7 @@ index = 14
             }
             return sMinion;
         }
-        public static bool CheckMonster(String TargetName, Vector3 BasePosition, int Range = 500)
+        public static bool CheckMonster(String TargetName, Vector3 BasePosition, int Range = 700)
         {
             var minions = ObjectManager.Get<Obj_AI_Minion>()
             .Where(minion => minion.IsValid && !minion.IsDead && minion.Name.StartsWith(TargetName));
