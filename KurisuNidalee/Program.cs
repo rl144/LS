@@ -142,7 +142,7 @@ namespace KurisuNidalee
             nidaKeys.AddItem(new MenuItem("usejungle", "Jungleclear")).SetValue(true);
             nidaKeys.AddItem(new MenuItem("useclear", "Laneclear")).SetValue(true);
             nidaKeys.AddItem(new MenuItem("uselasthit", "Last Hit")).SetValue(new KeyBind(35, KeyBindType.Press));
-            nidaKeys.AddItem(new MenuItem("useflee", "Flee Mode/Walljump")).SetValue(true);
+            nidaKeys.AddItem(new MenuItem("useflee", "Flee Mode/Walljump")).SetValue(false);
             _mainMenu.AddSubMenu(nidaKeys);
 
             var nidaSpells = new Menu("Nidalee: Combo", "spells");
