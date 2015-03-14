@@ -930,19 +930,20 @@ index = 14
                     IsOVER = false;
                     IsAttackStart = false;
                 }
+				int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
+				if (Player.Level >= maxlv && !IsOVER)
+				{
+					IsOVER = true;
+					Game.PrintChat("level" + maxlv + ". Now Going to be offense.");
+				}
+				if (Player.Level < maxlv && IsOVER && buff.Count < maxstacks)
+				{
+					IsOVER = false;
+					IsAttackStart = false;
+					Game.PrintChat("level under" + maxlv + ". Going back to farm.");
+				}
             }
-			int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
-			if (Player.Level >= maxlv && !IsOVER)
-			{
-				IsOVER = true;
-                Game.PrintChat("level" + maxlv + ". Now Going to be offense.");
-			}
-			if (Player.Level < maxlv && IsOVER && buff.Count < maxstacks)
-			{
-				IsOVER = false;
-				IsAttackStart = false;
-                Game.PrintChat("level under" + maxlv + ". Going back to farm.");
-			}
+
 			
             #endregion
             #region 공격 모드 - offensive mode
