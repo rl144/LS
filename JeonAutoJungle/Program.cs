@@ -256,7 +256,7 @@ index = 15
 new ItemToShop()
 {
 Price = 2750,
-needItem = ItemId.Void_Staff
+needItem = ItemId.Void_Staff,
 item = ItemId.Banshees_Veil,
 index = 16
 }
