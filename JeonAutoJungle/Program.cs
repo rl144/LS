@@ -44,7 +44,7 @@ namespace JeonJunglePlay
             public string name;
             public int order;
             public int respawntime;
-            public int Range = 1000;
+            public int Range = 300;
             public MonsterINFO()
             {
                 MonsterList.Add(this);
