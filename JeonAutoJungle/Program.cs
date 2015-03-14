@@ -866,7 +866,7 @@ index = 14
                     if (Player.IsDead && now > 12)
                         now = 12;
                     MonsterINFO target = MonsterList.First(t => t.order == now);
-                    if (Player.Position.Distance(target.Position) >= 300)
+                    if (Player.Position.Distance(target.Position) >= 700)
                     {
                         if (!recall)
                         {
@@ -916,7 +916,7 @@ index = 14
                 if (Player.InShop())
                     recall = false;
 
-				if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)))
+				if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Ionian_Boots_of_Lucidity)))
 				{
                     IsOVER = true;
                     Game.PrintChat("LEVEL " + maxlv + ". Now Going to be offense.");
@@ -924,7 +924,7 @@ index = 14
             }
 			else
 			{
-				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)))
+				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Ionian_Boots_of_Lucidity)))
 				{
                     Game.PrintChat("Level " + maxlv + ". Going back to farm.");
                     IsOVER = false;
