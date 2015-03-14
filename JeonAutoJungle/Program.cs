@@ -840,6 +840,8 @@ index = 14
                 afktime = 0;
             if (!IsOVER)
             {
+				int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
+				int level = Player.Level;
                 if (IsStart) // start
                 {
                     if (Game.Time - gamestart >= 0)
@@ -913,8 +915,7 @@ index = 14
                 }
                 if (Player.InShop())
                     recall = false;
-				int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
-				int level = Player.Level;
+
 				if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)))
 				{
                     IsOVER = true;
