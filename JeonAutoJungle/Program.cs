@@ -920,7 +920,7 @@ index = 14
             {
                 int maxstacks = JeonAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
 				int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
-                if (buff.Count >= maxstacks && !IsOVER || Player.Level >= maxlv && !IsOVER) //--테스트
+                if (buff.Count >= maxstacks && !IsOVER || Player.Level >= maxlv) //--테스트
                 {
                     IsOVER = true;
                     Game.PrintChat("Stacks Over " + maxstacks + ". Now Going to be offense.");
