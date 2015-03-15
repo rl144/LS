@@ -164,7 +164,7 @@ index = 2
 },
 new ItemToShop()
 {
-Price = 680,
+Price = 580,
 needItem = ItemId.Fiendish_Codex,
 item = ItemId.Rangers_Trailblazer_Enchantment_Magus,
 index = 3
@@ -954,6 +954,7 @@ index = 14
             #region 공격 모드 - offensive mode
             if (IsOVER)
             {
+                    var ehero = ObjectManager.Get<Obj_AI_hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
                 if (!IsAttackStart)
                 {
                     if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
@@ -983,12 +984,12 @@ index = 14
                     {
                         DoCast_Hero();
                         DoLaneClear();
-                        if (turret.Distance(Player.Position) > 1200)
+                        if (turret.Distance(Player.Position) > 1200 && !Player.HealthPercentage() < 25)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
                             
-                        else if (GetMinions(turret) > 2)
+                        else if (GetMinions(turret) > 2 && !Player.HealthPercentage() < 25)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
@@ -1005,6 +1006,21 @@ index = 14
                     if (Player.IsDead)
                         IsAttackedByTurret = false;
                 }
+//도망가기용
+				if (Player.HealthPercentage() < 25 && !Player.IsDead && ehero.Distance(Player.Position) <= 800//hpper
+				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
+				{
+					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
+					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+				}
+				if (Player.HealthPercentage() < 25 && Player.IsDead && ehero.Distance(Player.Position) <= 800//hpper
+				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
+				{
+					Game.PrintChat("Time To Recall Yeah!");
+					Player.Spellbook.CastSpell(SpellSlot.Recall);
+					recall = true;
+					recallhp = Player.Health;
+				}
             }
             #endregion
             #region 상점이용가능할때 // when you are in shop range or dead
@@ -1019,7 +1035,7 @@ index = 14
                     if (smiteSlot != SpellSlot.Unknown)
                     {
                         Player.BuyItem(ItemId.Hunters_Machete);
-                        Player.BuyItem(ItemId.Warding_Totem_Trinket);
+                        Player.BuyItem(ItemId.Scrying_Orb_Trinket);
                     }
                 }
             #endregion
