@@ -30,9 +30,20 @@ namespace Surrender
     } 
 	public class Game
     {
+		private static DateTime time;
 		private static bool SurrenderVoteRunning(GameNotifyEventArgs args)
         {
             return args.EventId == GameEventId.OnSurrenderVote || args.EventId == GameEventId.OnSurrenderVoteStart;
+        }
+        private static void ChatWithDelay(int minWaitInMs, int maxWaitInMs, string text)
+        {
+            Task.Factory.StartNew(
+                () =>
+                {
+                    var sleep = new Random().Next(minWaitInMs, maxWaitInMs);
+                    Thread.Sleep(sleep);
+                    LeagueSharp.Game.Say(text);
+                });
         }
         private static void AgreeSurrender()
         {
