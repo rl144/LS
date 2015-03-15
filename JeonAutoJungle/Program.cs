@@ -1138,7 +1138,7 @@ index = 14
             var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
             if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
 				Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
-            if (ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 700))
+            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 700) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 700))
                 castspell_laneclear(mob1);
         }
         public static void DoCast()
@@ -1146,7 +1146,7 @@ index = 14
             var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
             if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
 				Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
-            if (ObjectManager.Get<Obj_AI_Minion>().Any(t => !t.IsMinion && Player.Distance(t.Position) <= 700))
+            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 700) && ObjectManager.Get<Obj_AI_Minion>().Any(t => !t.IsMinion && Player.Distance(t.Position) <= 700))
                 castspell(mob1);
         }
         public static void DoCast_Hero()
@@ -1154,9 +1154,10 @@ index = 14
             if (ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 700))
             {
                 var target = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
-                Where(tar => tar.IsEnemy && !tar.IsMe && !tar.IsDead).First(); // 플레이어와 가장 가까운타겟
+                Where(target => target.IsEnemy && !target.IsMe && !target.IsDead).First(); // 플레이어와 가장 가까운타겟
+				Player.IssueOrder(GameObjectOrder.MoveTo, target.ServerPosition.Extend(Player.ServerPosition, 50));
                 var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(target.Position)).
-                Where(tur => tur.IsEnemy && !tur.IsDead).First(); // 타겟과 가장 가까운터렛
+                Where(turret => turret.IsEnemy && !turret.IsDead).First(); // 타겟과 가장 가까운터렛
                 if (turret.Distance(target.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
                     castspell_hero(target);
             }
