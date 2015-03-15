@@ -16,21 +16,21 @@ namespace Surrender
    { 
        private static void RemoveEventHandler(EventArgs args) 
        { 
-            LeagueSharp.Game.OnStart -= Game.Game_OnStart; 
-            LeagueSharp.Game.OnNotifyEvent -= Game.Game_OnNotifyEvent; 
-            LeagueSharp.Game.OnUpdate -= Game.Game_OnUpdate; 
+//            LeagueSharp.Game.OnGameStart -= Game.Game_OnGameStart; 
+            LeagueSharp.Game.OnGameNotifyEvent -= Game.Game_OnGameNotifyEvent; 
+//            LeagueSharp.Game.OnUpdate -= Game.Game_OnUpdate; 
         } 
         private static void RegisterEvents() 
         { 
-            LeagueSharp.Game.OnStart += Game.Game_OnStart; 
-            LeagueSharp.Game.OnUpdate += Game.Game_OnUpdate; 
-            LeagueSharp.Game.OnNotifyEvent += Game.Game_OnNotifyEvent; 
-           CustomEvents.Game.OnEnd += RemoveEventHandler; 
+//            LeagueSharp.Game.OnGameStart += Game.Game_OnGameStart; 
+//            LeagueSharp.Game.OnUpdate += Game.Game_OnUpdate; 
+            LeagueSharp.Game.OnGameNotifyEvent += Game.Game_OnGameNotifyEvent; 
+           CustomEvents.Game.OnGameEnd += RemoveEventHandler; 
         } 
     } 
 	public class Game
     {
-	        internal static void Game_OnNotifyEvent(GameNotifyEventArgs args)
+	        internal static void Game_OnGameNotifyEvent(GameNotifyEventArgs args)
         {
 			if(SurrenderVoteRunning(args))
 			{
@@ -593,9 +593,9 @@ index = 14
         #endregion
         private static void Main(string[] args)
         {
-            CustomEvents.Game.OnLoad += Game_OnLoad;
+            CustomEvents.Game.OnGameLoad += Game_GameOnLoad;
         }
-        private static void Game_OnLoad(EventArgs args)
+        private static void Game_OnGameLoad(EventArgs args)
         {
             ////////////////////customizing//////////////////
             var dir = new DirectoryInfo(Config.LeagueSharpDirectory.ToString() + @"\JeonAutoJungle");
@@ -631,10 +631,8 @@ index = 14
 				JeonAutoJungleMenu.AddToMainMenu();
 				//메뉴
 				setSmiteSlot();
-            if (Me.ChampionName != "Nidalee")//for 니달리
+            if (Player.ChampionName != "Nidalee")//for 니달리
             {
-                return;
-            }
             // Add drawing skill list
             CougarSpellList.AddRange(new[] { Takedown, Pounce, Swipe });
             HumanSpellList.AddRange(new[] { Javelin, Bushwack, Primalsurge });
@@ -643,6 +641,7 @@ index = 14
             Bushwack.SetSkillshot(0.50f, 100f, 1500f, false, SkillshotType.SkillshotCircle);
             Swipe.SetSkillshot(0.50f, 375f, 1500f, false, SkillshotType.SkillshotCone);
             Pounce.SetSkillshot(0.50f, 400f, 1500f, false, SkillshotType.SkillshotCone);
+            }
 			
             #region 스펠설정
             Q = new Spell(SpellSlot.Q, GetSpellRange(Qdata));
