@@ -753,6 +753,18 @@ index = 14
                 Game.PrintChat("NASUS BOT ACTIVE");
                 Readini.GetSpelltree(setFile.FullName);
             }
+            else if (Player.ChampionName.ToUpper() == "XINZHAO")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("XINZHAO is now going to Chawchaw");
+                Readini.GetSpelltree(setFile.FullName);
+            }
+            else if (Player.ChampionName.ToUpper() == "NIDALEE")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("NIDALEE CARRY IP");
+                Readini.GetSpelltree(setFile.FullName);
+            }
             else
             {
                 #region Read ini

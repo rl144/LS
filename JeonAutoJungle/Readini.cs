@@ -18,7 +18,7 @@ namespace JeonJunglePlay
         public static void Setini(string path)
         {
             var str = ObjectManager.Player.ChampionName;
-            string[] supportnames = { "NUNU", "WARWICK", "MASTERYI", "CHOGATH", "MAOKAI", "NASUS" };
+            string[] supportnames = { "NUNU", "WARWICK", "MASTERYI", "CHOGATH", "MAOKAI", "NASUS", "XINZHAO", "NIDALEE" };
 
             
             Game.PrintChat("Your champion play on first time. - set ini file");
@@ -57,6 +57,11 @@ namespace JeonJunglePlay
             {
                 SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AS", path);
                 SetSettingValue("SpellTree", "Value", "2, 1, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3", path);
+            }
+            else if (str.ToUpper() == "NIDALEE")
+            {
+                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AP", path);
+                SetSettingValue("SpellTree", "Value", "2, 1, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 3, 2, 3, 4, 2, 2", path);
             }
             else
             {
