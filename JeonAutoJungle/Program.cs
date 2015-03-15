@@ -30,7 +30,16 @@ namespace Surrender
     } 
 	public class Game
     {
-	        internal static void Game_OnGameNotifyEvent(GameNotifyEventArgs args)
+		private static bool SurrenderVoteRunning(GameNotifyEventArgs args)
+        {
+            return args.EventId == GameEventId.OnSurrenderVote || args.EventId == GameEventId.OnSurrenderVoteStart;
+        }
+        private static void AgreeSurrender()
+        {
+            ChatWithDelay(2000, 10000, new Random(2).Next() == 1 ? @"/ff" : @"/surrender");
+            time = DateTime.Now;
+        }
+		internal static void Game_OnGameNotifyEvent(GameNotifyEventArgs args)
         {
 			if(SurrenderVoteRunning(args))
 			{
@@ -593,7 +602,7 @@ index = 14
         #endregion
         private static void Main(string[] args)
         {
-            CustomEvents.Game.OnGameLoad += Game_GameOnLoad;
+            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
         }
         private static void Game_OnGameLoad(EventArgs args)
         {
