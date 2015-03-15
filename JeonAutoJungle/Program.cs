@@ -10,6 +10,36 @@ using System.IO;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
+namespace Surrender 
+{
+	internal class ProgramS
+   { 
+       private static void RemoveEventHandler(EventArgs args) 
+       { 
+            LeagueSharp.Game.OnStart -= Game.Game_OnStart; 
+            LeagueSharp.Game.OnNotifyEvent -= Game.Game_OnNotifyEvent; 
+            LeagueSharp.Game.OnUpdate -= Game.Game_OnUpdate; 
+        } 
+        private static void RegisterEvents() 
+        { 
+            LeagueSharp.Game.OnStart += Game.Game_OnStart; 
+            LeagueSharp.Game.OnUpdate += Game.Game_OnUpdate; 
+            LeagueSharp.Game.OnNotifyEvent += Game.Game_OnNotifyEvent; 
+           CustomEvents.Game.OnEnd += RemoveEventHandler; 
+        } 
+    } 
+	public class Game
+    {
+	        internal static void Game_OnNotifyEvent(GameNotifyEventArgs args)
+        {
+			if(SurrenderVoteRunning(args))
+			{
+			AgreeSurrender();
+			}	
+		}
+	}
+} 
+
 namespace JeonJunglePlay
 {
     public class Program
@@ -563,9 +593,9 @@ index = 14
         #endregion
         private static void Main(string[] args)
         {
-            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
+            CustomEvents.Game.OnLoad += Game_OnLoad;
         }
-        private static void Game_OnGameLoad(EventArgs args)
+        private static void Game_OnLoad(EventArgs args)
         {
             ////////////////////customizing//////////////////
             var dir = new DirectoryInfo(Config.LeagueSharpDirectory.ToString() + @"\JeonAutoJungle");
