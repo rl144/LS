@@ -1170,10 +1170,10 @@ index = 14
             if (ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 700))
             {
                 var tarrr = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
-                Where(tarrr => tarrr.IsEnemy && !tarrr.IsMe && !tarrr.IsDead).First(); // 플레이어와 가장 가까운타겟
+                Where(x => x.IsEnemy && !x.IsMe && !x.IsDead).First(); // 플레이어와 가장 가까운타겟
 				Player.IssueOrder(GameObjectOrder.MoveTo, tarrr.ServerPosition.Extend(Player.ServerPosition, 50));
                 var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
-                Where(turrr => turrr.IsEnemy && !turrr.IsDead).First(); // 타겟과 가장 가까운터렛
+                Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
                 if (turrr.Distance(tarrr.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
                     castspell_hero(tarrr);
             }
