@@ -1007,13 +1007,13 @@ index = 14
                         IsAttackedByTurret = false;
                 }
 //도망가기용
-				if (Player.HealthPercentage() < 25 && !Player.IsDead && ehero.Distance(Player.Position) <= 800//hpper
+				if (Player.HealthPercentage() < 23 && !Player.IsDead && ehero.Distance(Player.Position) <= 800//hpper
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
 				}
-				if (Player.HealthPercentage() < 25 && Player.IsDead && ehero.Distance(Player.Position) <= 800//hpper
+				if (Player.HealthPercentage() < 25 && Player.IsDead && ehero.Distance(Player.Position) > 1000//hpper
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("Time To Recall Yeah!");
