@@ -1098,7 +1098,7 @@ index = 14
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
 				}
-				if (Player.HealthPercentage() < 25 && !Player.IsDead && ehero.Distance(Player.Position) > 1000//hpper
+				if (Player.HealthPercentage() < 25 && !Player.IsDead && ehero.Distance(Player.Position) > 1600//hpper
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("Time To Recall Yeah!");
