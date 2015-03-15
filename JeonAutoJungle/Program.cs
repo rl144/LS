@@ -954,7 +954,7 @@ index = 14
             #region 공격 모드 - offensive mode
             if (IsOVER)
             {
-                    var ehero = ObjectManager.Get<Obj_AI_hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
+                    var ehero = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
                 if (!IsAttackStart)
                 {
                     if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
@@ -984,12 +984,12 @@ index = 14
                     {
                         DoCast_Hero();
                         DoLaneClear();
-                        if (turret.Distance(Player.Position) > 1200 && !Player.HealthPercentage() < 25)
+                        if (turret.Distance(Player.Position) > 1200 && Player.HealthPercentage() >= 25)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
                             
-                        else if (GetMinions(turret) > 2 && !Player.HealthPercentage() < 25)
+                        else if (GetMinions(turret) > 2 && Player.HealthPercentage() >= 25)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
@@ -1169,13 +1169,13 @@ index = 14
         {
             if (ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 700))
             {
-                var tar = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
-                Where(tar => tar.IsEnemy && !tar.IsMe && !tar.IsDead).First(); // 플레이어와 가장 가까운타겟
-				Player.IssueOrder(GameObjectOrder.MoveTo, tar.ServerPosition.Extend(Player.ServerPosition, 50));
-                var tur = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tar.Position)).
-                Where(tur => tur.IsEnemy && !tur.IsDead).First(); // 타겟과 가장 가까운터렛
-                if (tur.Distance(tar.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
-                    castspell_hero(tar);
+                var tarrr = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
+                Where(tarrr => tarrr.IsEnemy && !tarrr.IsMe && !tarrr.IsDead).First(); // 플레이어와 가장 가까운타겟
+				Player.IssueOrder(GameObjectOrder.MoveTo, tarrr.ServerPosition.Extend(Player.ServerPosition, 50));
+                var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
+                Where(turrr => turrr.IsEnemy && !turrr.IsDead).First(); // 타겟과 가장 가까운터렛
+                if (turrr.Distance(tarrr.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
+                    castspell_hero(tarrr);
             }
         }
         public static void castspell(Obj_AI_Base mob1)
