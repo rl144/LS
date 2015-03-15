@@ -37,6 +37,16 @@ namespace JeonJunglePlay
         public static List<Spell> cast2mob = new List<Spell>();
         public static List<Spell> cast2hero = new List<Spell>();
         public static List<Spell> cast4laneclear = new List<Spell>();	
+		//니달리를 위해서
+        private static readonly Spell Javelin = new Spell(SpellSlot.Q, 1500f);
+        private static readonly Spell Bushwack = new Spell(SpellSlot.W, 900f);
+        private static readonly Spell Primalsurge = new Spell(SpellSlot.E, 650f);
+        private static readonly Spell Takedown = new Spell(SpellSlot.Q, 200f);
+        private static readonly Spell Pounce = new Spell(SpellSlot.W, 375f);
+        private static readonly Spell Swipe = new Spell(SpellSlot.E, 275f);
+//        private static readonly Spell Aspectofcougar = new Spell(SpellSlot.R);
+        private static readonly List<Spell> HumanSpellList = new List<Spell>();
+        private static readonly List<Spell> CougarSpellList = new List<Spell>();
         public class MonsterINFO
         {
             public Vector3 Position;
@@ -591,6 +601,19 @@ index = 14
 				JeonAutoJungleMenu.AddToMainMenu();
 				//메뉴
 				setSmiteSlot();
+            if (Me.ChampionName != "Nidalee")//for 니달리
+            {
+                return;
+            }
+            // Add drawing skill list
+            CougarSpellList.AddRange(new[] { Takedown, Pounce, Swipe });
+            HumanSpellList.AddRange(new[] { Javelin, Bushwack, Primalsurge });
+            // Set skillshot prediction (i has rito decode now)
+            Javelin.SetSkillshot(0.125f, 40f, 1300f, true, SkillshotType.SkillshotLine);
+            Bushwack.SetSkillshot(0.50f, 100f, 1500f, false, SkillshotType.SkillshotCircle);
+            Swipe.SetSkillshot(0.50f, 375f, 1500f, false, SkillshotType.SkillshotCone);
+            Pounce.SetSkillshot(0.50f, 400f, 1500f, false, SkillshotType.SkillshotCone);
+			
             #region 스펠설정
             Q = new Spell(SpellSlot.Q, GetSpellRange(Qdata));
             W = new Spell(SpellSlot.W, GetSpellRange(Wdata));
@@ -1189,6 +1212,21 @@ index = 14
                 if (W.IsReady())
                     W.Cast();
             }
+            else if (Player.ChampionName.ToUpper() == "NIDALEE")
+            {
+				if (Javelin.IsReady())
+					Javelin.Cast(mob1.Position);
+				if (Bushwack.IsReady())
+					Bushwack.Cast(mob1.Position);
+                if (Takedown.IsReady())
+                    Takedown.CastOnUnit(mob1);
+                if (Pounce.IsReady())
+                    Pounce.Cast(mob1.Position);
+                if (Swipe.IsReady())
+                    Swipe.Cast(mob1.Position);
+                if (R.IsReady())
+                    R.Cast();
+            }
             else if (Player.ChampionName.ToUpper() == "CHOGATH")
             {
                 if (Q.IsReady())
@@ -1259,6 +1297,21 @@ index = 14
                     E.CastOnUnit(mob1);
                 if (W.IsReady())
                     W.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "NIDALEE")
+            {
+				if (Javelin.IsReady())
+					Javelin.Cast(mob1.Position);
+				if (Bushwack.IsReady())
+					Bushwack.Cast(mob1.Position);
+                if (Takedown.IsReady())
+                    Takedown.CastOnUnit(mob1);
+                if (Pounce.IsReady())
+                    Pounce.Cast(mob1.Position);
+                if (Swipe.IsReady())
+                    Swipe.Cast(mob1.Position);
+                if (R.IsReady())
+                    R.Cast();
             }
             else if (Player.ChampionName.ToUpper() == "CHOGATH")
             {
@@ -1332,6 +1385,17 @@ index = 14
                     E.CastOnUnit(mob1);
                 if (W.IsReady())
                     W.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "NIDALEE")
+            {
+                if (Takedown.IsReady())
+                    Takedown.CastOnUnit(mob1);
+                if (Pounce.IsReady())
+                    Pounce.Cast(mob1.Position);
+                if (Swipe.IsReady())
+                    Swipe.Cast(mob1.Position);
+                if (R.IsReady())
+                    R.Cast();
             }
             else if (Player.ChampionName.ToUpper() == "CHOGATH")
             {
