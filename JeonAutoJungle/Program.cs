@@ -173,13 +173,13 @@ new ItemToShop()
 {
 Price = 1100,
 needItem = ItemId.Rangers_Trailblazer_Enchantment_Magus,
-item = ItemId.Ionian_Boots_of_Lucidity,
+item = ItemId.Sorcerers_Shoes,
 index = 4
 },
 new ItemToShop()
 {
 Price = 820,
-needItem = ItemId.Ionian_Boots_of_Lucidity,
+needItem = ItemId.Sorcerers_Shoes,
 item = ItemId.Fiendish_Codex,
 index = 5
 },
@@ -577,7 +577,7 @@ index = 14
             JeonAutoJungleMenu = new Menu("JeonAutoJungle", "JeonAutoJungle", true);
             JeonAutoJungleMenu.AddItem(new MenuItem("isActive", "Activate")).SetValue(true);
             JeonAutoJungleMenu.AddItem(new MenuItem("maxstacks", "Max Stacks").SetValue(new Slider(9, 1, 150)));
-            JeonAutoJungleMenu.AddItem(new MenuItem("maxlv", "Max level").SetValue(new Slider(11, 1, 18)));
+            JeonAutoJungleMenu.AddItem(new MenuItem("maxlv", "Max level").SetValue(new Slider(9, 1, 18)));
             JeonAutoJungleMenu.AddItem(new MenuItem("autorecallheal", "Recall[for heal]")).SetValue(true);
             JeonAutoJungleMenu.AddItem(new MenuItem("hpper", "Recall on HP(%)").SetValue(new Slider(50, 0, 100)));
             JeonAutoJungleMenu.AddItem(new MenuItem("autorecallitem", "Recall[for item]")).SetValue(true);
@@ -916,7 +916,7 @@ index = 14
                 if (Player.InShop())
                     recall = false;
 
-				if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Ionian_Boots_of_Lucidity)))
+				if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
 				{
                     IsOVER = true;
                     Game.PrintChat("LEVEL " + maxlv + ". Now Going to be offense.");
@@ -924,7 +924,7 @@ index = 14
             }
 			else
 			{
-				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Ionian_Boots_of_Lucidity)))
+				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
 				{
                     Game.PrintChat("Level " + maxlv + ". Going back to farm.");
                     IsOVER = false;
