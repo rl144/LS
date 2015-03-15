@@ -1153,13 +1153,13 @@ index = 14
         {
             if (ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 700))
             {
-                var target = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
-                Where(target => target.IsEnemy && !target.IsMe && !target.IsDead).First(); // 플레이어와 가장 가까운타겟
-				Player.IssueOrder(GameObjectOrder.MoveTo, target.ServerPosition.Extend(Player.ServerPosition, 50));
-                var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(target.Position)).
-                Where(turret => turret.IsEnemy && !turret.IsDead).First(); // 타겟과 가장 가까운터렛
-                if (turret.Distance(target.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
-                    castspell_hero(target);
+                var tar = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
+                Where(tar => tar.IsEnemy && !tar.IsMe && !tar.IsDead).First(); // 플레이어와 가장 가까운타겟
+				Player.IssueOrder(GameObjectOrder.MoveTo, tar.ServerPosition.Extend(Player.ServerPosition, 50));
+                var tur = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tar.Position)).
+                Where(tur => tur.IsEnemy && !tur.IsDead).First(); // 타겟과 가장 가까운터렛
+                if (tur.Distance(tar.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
+                    castspell_hero(tar);
             }
         }
         public static void castspell(Obj_AI_Base mob1)
