@@ -652,7 +652,7 @@ index = 14
 				JeonAutoJungleMenu.AddToMainMenu();
 				//메뉴
 				setSmiteSlot();
-            if (Player.ChampionName != "Nidalee")//for 니달리
+            if (Player.ChampionName = "Nidalee")//for 니달리
             {
             // Add drawing skill list
             CougarSpellList.AddRange(new[] { Takedown, Pounce, Swipe });
@@ -1066,16 +1066,16 @@ index = 14
                 else
                 {
                     var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
-                    if (IsOVER && !IsAttackedByTurret && Player.HealthPercentage() >= 25)
+                    if (IsOVER && !IsAttackedByTurret && Player.HealthPercentage() >= 35)
                     {
                         DoCast_Hero();
                         DoLaneClear();
-                        if (turret.Distance(Player.Position) > 1200 && Player.HealthPercentage() >= 25)
+                        if (turret.Distance(Player.Position) > 1200 && Player.HealthPercentage() >= 30)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
                             
-                        else if (GetMinions(turret) > 2 && Player.HealthPercentage() >= 25)
+                        else if (GetMinions(turret) > 2 && Player.HealthPercentage() >= 35)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
@@ -1093,13 +1093,17 @@ index = 14
                         IsAttackedByTurret = false;
                 }
 //도망가기용
-				if (Player.HealthPercentage() < 23 && !Player.IsDead && ehero.Distance(Player.Position) <= 1200//hpper
+				if (Player.HealthPercentage() < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1200//hpper
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+					if (Player.ChampionName = "Nidalee" & Pounce.IsReady())
+					{
+					Pounce.Cast(spawn);
+					}
 				}
-				if (Player.HealthPercentage() < 25 && !Player.IsDead && ehero.Distance(Player.Position) > 1600//hpper
+				if (Player.HealthPercentage() < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2200//hpper
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("Time To Recall Yeah!");
