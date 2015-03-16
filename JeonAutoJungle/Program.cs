@@ -1039,7 +1039,8 @@ index = 14
             #region 공격 모드 - offensive mode
             if (IsOVER)
             {
-                    var ehero = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
+				var ehero = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
+				var eheros = ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValid && x.IsEnemy && !x.IsDead && Player.Distance(x.Position) <= 900));					
                 if (!IsAttackStart)
                 {
                     if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
@@ -1086,7 +1087,7 @@ index = 14
                             
                         afktime = 0;
                     }
-                    if (turret.Distance(Player.Position) > 800)
+                    if (turret.Distance(Player.Position) > 800 || GetMinions(eheros) > 2)
                         IsAttackedByTurret = false;
                     if (Player.IsDead)
                         IsAttackedByTurret = false;
@@ -1274,7 +1275,7 @@ index = 14
                 if (W.IsReady())
                     W.Cast();
             }
-            else if (Player.ChampionName.ToUpper() == "NIDALEE")
+            else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 600)
             {
 				if (Javelin.IsReady())
 					Javelin.Cast(mob1.Position);
@@ -1360,7 +1361,7 @@ index = 14
                 if (W.IsReady())
                     W.Cast();
             }
-            else if (Player.ChampionName.ToUpper() == "NIDALEE")
+            else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 1000)
             {
 				if (Javelin.IsReady())
 					Javelin.Cast(mob1.Position);
@@ -1448,11 +1449,11 @@ index = 14
                 if (W.IsReady())
                     W.Cast();
             }
-            else if (Player.ChampionName.ToUpper() == "NIDALEE")
+            else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 400)
             {
                 if (Takedown.IsReady())
                     Takedown.CastOnUnit(mob1);
-                if (Pounce.IsReady())
+                if (Pounce.IsReady() && )
                     Pounce.Cast(mob1.Position);
                 if (Swipe.IsReady())
                     Swipe.Cast(mob1.Position);
