@@ -1121,7 +1121,7 @@ index = 14
                             
                         afktime = 0;
                     }
-					else if(IsOver && !IsAttackedByTurret && face_ehro2 <= 2)
+					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 2)
 					DoLaneClear();
                     if (turret.Distance(Player.Position) > 800)
                         IsAttackedByTurret = false;
