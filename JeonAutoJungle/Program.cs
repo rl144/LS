@@ -652,7 +652,7 @@ index = 14
 				JeonAutoJungleMenu.AddToMainMenu();
 				//메뉴
 				setSmiteSlot();
-            if (Player.ChampionName = "Nidalee")//for 니달리
+            if (Player.ChampionName == "Nidalee")//for 니달리
             {
             // Add drawing skill list
             CougarSpellList.AddRange(new[] { Takedown, Pounce, Swipe });
@@ -1098,7 +1098,7 @@ index = 14
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
-					if (Player.ChampionName = "Nidalee" & Pounce.IsReady())
+					if (Player.ChampionName = "Nidalee" && Pounce.IsReady())
 					{
 					Pounce.Cast(spawn);
 					}
