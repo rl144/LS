@@ -69,6 +69,10 @@ namespace JeonJunglePlay
 		{
 			return ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsEnemy && x.IsValid && !x.IsInvulnerable).ToList();
 		}
+		public static List<Obj_AI_Hero> GetAllyList()//회피용 영웅탐지 추가
+		{
+			return ObjectManager.Get<Obj_AI_Hero>().Where(x => !x.IsEnemy && x.IsValid && !x.IsInvulnerable).ToList();
+		}
         public static Obj_AI_Hero Player = ObjectManager.Player;
         public static Spell Q, W, E, R;
         private static Vector3 spawn;
@@ -955,7 +959,7 @@ index = 14
                     if (Player.IsDead && now > 12)
                         now = 12;
                     MonsterINFO target = MonsterList.First(t => t.order == now);
-                    if (Player.Position.Distance(target.Position) >= 500)
+                    if (Player.Position.Distance(target.Position) >= 700)
                     {
                         if (!recall)
                         {
@@ -1046,13 +1050,14 @@ index = 14
 				var ehero = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
 //				var eheros = GetEnemyList().Where(x => x.IsValid && x.IsEnemy && !x.IsDead && Player.Distance(x.Position) <= 2000);					
 //				Obj_AI_Hero ehro = eheros.FirstOrDefault();
-				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1600).Count();
+				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1400).Count();
 				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 900).Count();				
+				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 900).Count();				
                 if (!IsAttackStart)
                 {
-					if (face_ehro <= 1 && face_ehro2 <= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
+					if (face_ehro <= 1 && face_ehro2 <= 3 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || face_ally >= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
                         IsAttackStart = true;
-                    else if (face_ehro <= 1 && face_ehro2 <= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
+                    else if (face_ehro <= 1 && face_ehro2 <= 3 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam || face_ally >= 2  && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
                         IsAttackStart = true;
                     else
                     {
@@ -1077,12 +1082,12 @@ index = 14
                     {
                         DoCast_Hero();
                         DoLaneClear();
-                        if (turret.Distance(Player.Position) > 1200 && face_ehro <= 1 && face_ehro2 <= 2 && Player.HealthPercentage() >= 30)
+                        if (turret.Distance(Player.Position) > 1200 && face_ehro <= 1 && face_ehro2 <= 3 && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > 1200 && face_ally >= 2 && Player.HealthPercentage() >= 30)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
                             
-                        else if (GetMinions(turret) > 2 && face_ehro <= 1 && face_ehro2 <= 2 && Player.HealthPercentage() >= 35)
+                        else if (GetMinions(turret) > 2 && face_ehro <= 1 && face_ehro2 <= 3 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 2 && face_ally >= 2 && Player.HealthPercentage() >= 35)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
