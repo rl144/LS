@@ -1098,7 +1098,7 @@ index = 14
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
-					if (Player.ChampionName = "Nidalee")
+					if (Player.ChampionName == "Nidalee")
 					{
 						if(Pounce.IsReady())
 						{
