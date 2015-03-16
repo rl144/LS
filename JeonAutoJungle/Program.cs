@@ -65,6 +65,10 @@ namespace JeonJunglePlay
 {
     public class Program
     {
+		public static List<Obj_AI_Hero> GetEnemyList()//회피용 영웅탐지 추
+		{
+			return ObjectManager.Get<Obj_AI_Hero>().Where(x. => x.IsEnemy && x.IsValid && !x.IsInvulnerable).ToList();
+		}
         public static Obj_AI_Hero Player = ObjectManager.Player;
         public static Spell Q, W, E, R;
         private static Vector3 spawn;
