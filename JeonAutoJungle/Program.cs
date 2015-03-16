@@ -1087,7 +1087,7 @@ index = 14
                             
                         afktime = 0;
                     }
-                    if (turret.Distance(Player.Position) > 800 || GetMinions(eheros) > 2)
+                    if (turret.Distance(Player.Position) > 800)
                         IsAttackedByTurret = false;
                     if (Player.IsDead)
                         IsAttackedByTurret = false;
