@@ -1040,7 +1040,7 @@ index = 14
             if (IsOVER)
             {
 				var ehero = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
-				var eheros = ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValid && x.IsEnemy && !x.IsDead && Player.Distance(x.Position) <= 900));					
+				var eheros = ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValid && x.IsEnemy && !x.IsDead && Player.Distance(x.Position) <= 900);					
                 if (!IsAttackStart)
                 {
                     if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
@@ -1453,7 +1453,7 @@ index = 14
             {
                 if (Takedown.IsReady())
                     Takedown.CastOnUnit(mob1);
-                if (Pounce.IsReady() && )
+                if (Pounce.IsReady())
                     Pounce.Cast(mob1.Position);
                 if (Swipe.IsReady())
                     Swipe.Cast(mob1.Position);
