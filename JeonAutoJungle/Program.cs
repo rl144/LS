@@ -103,7 +103,7 @@ namespace JeonJunglePlay
         private static readonly Spell Takedown = new Spell(SpellSlot.Q, 200f);
         private static readonly Spell Pounce = new Spell(SpellSlot.W, 375f);
         private static readonly Spell Swipe = new Spell(SpellSlot.E, 275f);
-//        private static readonly Spell Aspectofcougar = new Spell(SpellSlot.R);
+        private static readonly Spell Aspectofcougar = new Spell(SpellSlot.R);
         private static readonly List<Spell> HumanSpellList = new List<Spell>();
         private static readonly List<Spell> CougarSpellList = new List<Spell>();
         public class MonsterINFO
@@ -988,9 +988,19 @@ index = 14
                             }
                         }
                     }
+                    else if (Player.Position.Distance(target.Position) <= 500)
+                    {
+                        if (CheckMonster(target.name, target.Position, 700)) //해당지점에 몬스터가 있는지
+                        {
+                            DoCast();
+                            Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
+                            afktime = 0;
+                            if (smite.Slot != SpellSlot.Unknown && smite.IsReady())
+                                DoSmite();
+                        }
                     else if (Player.Position.Distance(target.Position) <= 250)
                     {
-                        if (CheckMonster(target.name, target.Position, 500)) //해당지점에 몬스터가 있는지
+                        if (CheckMonster(target.name, target.Position, 700)) //해당지점에 몬스터가 있는지
                         {
                             DoCast();
                             Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
@@ -1097,6 +1107,10 @@ index = 14
                             Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 								if (Player.ChampionName == "Nidalee")
 								{
+									if(Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
 									if(Pounce.IsReady())
 									{
 									Pounce.Cast(spawn);
@@ -1119,6 +1133,10 @@ index = 14
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
 					if (Player.ChampionName == "Nidalee")
 					{
+						if(Aspectofcougar.IsReady())
+						{
+						Aspectofcougar.Cast();
+						}
 						if(Pounce.IsReady())
 						{
 						Pounce.Cast(spawn);
