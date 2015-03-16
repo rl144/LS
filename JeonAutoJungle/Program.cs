@@ -988,9 +988,19 @@ index = 14
                             }
                         }
                     }
+                    else if (Player.Position.Distance(target.Position) <= 500)
+                    {
+                        if (CheckMonster(target.name, target.Position, 700)) //해당지점에 몬스터가 있는지
+                        {
+                            DoCast();
+                            Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
+                            afktime = 0;
+                            if (smite.Slot != SpellSlot.Unknown && smite.IsReady())
+                                DoSmite();
+                        }
                     else if (Player.Position.Distance(target.Position) <= 250)
                     {
-                        if (CheckMonster(target.name, target.Position, 500)) //해당지점에 몬스터가 있는지
+                        if (CheckMonster(target.name, target.Position, 700)) //해당지점에 몬스터가 있는지
                         {
                             DoCast();
                             Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
