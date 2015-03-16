@@ -1098,9 +1098,12 @@ index = 14
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
-					if (Player.ChampionName = "Nidalee" && Pounce.IsReady())
+					if (Player.ChampionName = "Nidalee")
 					{
-					Pounce.Cast(spawn);
+						if(Pounce.IsReady())
+						{
+						Pounce.Cast(spawn);
+						}
 					}
 				}
 				if (Player.HealthPercentage() < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2200//hpper
