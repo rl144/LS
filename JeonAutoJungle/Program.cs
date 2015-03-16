@@ -1046,9 +1046,9 @@ index = 14
 				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 900).Count();				
                 if (!IsAttackStart)
                 {
-					if (face_ehro <= 1 && face_ehro2 <=2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
+					if (face_ehro <= 1 && face_ehro2 <= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
                         IsAttackStart = true;
-                    else if (face_ehro <= 1 && face_ehro2 <=2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
+                    else if (face_ehro <= 1 && face_ehro2 <= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
                         IsAttackStart = true;
                     else
                     {
@@ -1073,12 +1073,12 @@ index = 14
                     {
                         DoCast_Hero();
                         DoLaneClear();
-                        if (turret.Distance(Player.Position) > 1200 && face_ehro <= 1 && face_ehro2 <=2 && Player.HealthPercentage() >= 30)
+                        if (turret.Distance(Player.Position) > 1200 && face_ehro <= 1 && face_ehro2 <= 2 && Player.HealthPercentage() >= 30)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
                             
-                        else if (GetMinions(turret) > 2 && face_ehro <= 1 && face_ehro2 <=2 && Player.HealthPercentage() >= 35)
+                        else if (GetMinions(turret) > 2 && face_ehro <= 1 && face_ehro2 <= 2 && Player.HealthPercentage() >= 35)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                         }
@@ -1086,7 +1086,14 @@ index = 14
                         else
                         {
                             Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
-                        }
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(spawn);
+									}
+								}
+							}
                             
                         afktime = 0;
                     }
