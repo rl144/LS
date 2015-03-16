@@ -982,7 +982,7 @@ index = 14
                     }
                     else
                     {
-                        if (CheckMonster(target.name, target.Position, 500)) //해당지점에 몬스터가 있는지
+                        if (CheckMonster(target.name, target.Position, 250)) //해당지점에 몬스터가 있는지
                         {
                             DoCast();
                             Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
