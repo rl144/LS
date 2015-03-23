@@ -215,9 +215,9 @@ namespace Veigar__TTMOE
 
             //Initializing Spells
 			//850으로하면 명중률 너무 떨어짐 825로 수정
-            Q = new Spell(SpellSlot.Q, 850);
+            Q = new Spell(SpellSlot.Q, 825);
             W = new Spell(SpellSlot.W, 900);
-            E = new Spell(SpellSlot.E, 1060);
+            E = new Spell(SpellSlot.E, 1050);
             R = new Spell(SpellSlot.R, 650);
 
 /*            Q.SetSkillshot(0.25f, 70f, 1750f, false, SkillshotType.SkillshotLine);
@@ -252,13 +252,13 @@ namespace Veigar__TTMOE
             menu.AddSubMenu(new Menu("Keys", "Keys"));
             menu.SubMenu("Keys");
             menu.SubMenu("Keys").AddItem(new MenuItem("Combo", "Smart Combo").SetValue(new KeyBind(32, KeyBindType.Press, false)));
-            menu.SubMenu("Keys").AddItem(new MenuItem("AllInActive", "Use All Spells").SetValue(new KeyBind("C".ToCharArray()[0], KeyBindType.Press)));
-            menu.SubMenu("Keys").AddItem(new MenuItem("HarassActive", "Harass").SetValue(new KeyBind("Z".ToCharArray()[0], KeyBindType.Press)));
+            menu.SubMenu("Keys").AddItem(new MenuItem("AllInActive", "Use All Spells").SetValue(new KeyBind("Z".ToCharArray()[0], KeyBindType.Press)));
+            menu.SubMenu("Keys").AddItem(new MenuItem("HarassActive", "Harass").SetValue(new KeyBind("C".ToCharArray()[0], KeyBindType.Press)));
             menu.SubMenu("Keys").AddItem(new MenuItem("Stun Closest Enemy", "Stun Closest Enemy").SetValue(new KeyBind("A".ToCharArray()[0], KeyBindType.Press, false)));
             menu.SubMenu("Keys").AddItem(new MenuItem("LastHitQQ", "Last hit with Q[Toggle]").SetValue(new KeyBind("J".ToCharArray()[0], KeyBindType.Toggle)));
             menu.SubMenu("Keys").AddItem(new MenuItem("LastHitQ", "Last hit with Q[Hold]").SetValue(new KeyBind("I".ToCharArray()[0], KeyBindType.Press, false)));
             menu.SubMenu("Keys").AddItem(new MenuItem("LastHitWW", "Lane Clear with W").SetValue(new KeyBind("K".ToCharArray()[0], KeyBindType.Press, false)));
-            menu.SubMenu("Keys").AddItem(new MenuItem("JungleActive", "Jungle Farm").SetValue(new KeyBind("H".ToCharArray()[0], KeyBindType.Press, false)));
+            menu.SubMenu("Keys").AddItem(new MenuItem("JungleActive", "Jungle Farm").SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press, false)));
             menu.SubMenu("Keys").AddItem(new MenuItem("ExtraNeeded", "Show Extra/Needed Damage").SetValue(new KeyBind("N".ToCharArray()[0], KeyBindType.Toggle, true)));
             menu.SubMenu("Keys").AddItem(new MenuItem("InfoTable", "Show Info Table[FPS]").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Toggle)));
 
@@ -330,7 +330,7 @@ namespace Veigar__TTMOE
             menu.SubMenu("Jungle Clear").AddItem(new MenuItem("UseAAJungle", "Use AA").SetValue(true));
             menu.SubMenu("Jungle Clear").AddItem(new MenuItem("UseQJungle", "Use Q").SetValue(true));
             menu.SubMenu("Jungle Clear").AddItem(new MenuItem("UseWJungle", "Use W").SetValue(true));
-            menu.SubMenu("Jungle Clear").AddItem(new MenuItem("UseEJungle", "Use E").SetValue(true));
+            menu.SubMenu("Jungle Clear").AddItem(new MenuItem("UseEJungle", "Use E").SetValue(false));
 
             //Auto KS
             menu.AddSubMenu(new Menu("Auto KS", "AutoKS"));

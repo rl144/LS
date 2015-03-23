@@ -988,9 +988,9 @@ index = 14
                             }
                         }
                     }
-                    else if (Player.Position.Distance(target.Position) <= 500)
+                    else if (Player.Position.Distance(target.Position) <= 500 && Player.Position.Distance(target.Position) > 250)
                     {
-                        if (CheckMonster(target.name, target.Position, 500)) //해당지점에 몬스터가 있는지
+                        if (CheckMonster(target.name, target.Position, 600)) //해당지점에 몬스터가 있는지
                         {
                             DoCast();
                             Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
@@ -1000,9 +1000,8 @@ index = 14
                         }
                         else
                         {
-                            now += 1;
-                            if (now > max)
-                                now = 1;
+                                Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
+                                afktime = 0;
                         }
 					}
                     else if (Player.Position.Distance(target.Position) <= 250)
