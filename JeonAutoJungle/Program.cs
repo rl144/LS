@@ -1152,7 +1152,7 @@ index = 14
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(face_ehro2 = 0)
+									if(face_ehro2 < 1)
 									{
 										if(!_cougarForm && Aspectofcougar.IsReady())
 										{
@@ -1171,7 +1171,7 @@ index = 14
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(face_ehro2 = 0)
+									if(face_ehro2 < 1)
 									{
 										if(!_cougarForm && Aspectofcougar.IsReady())
 										{
