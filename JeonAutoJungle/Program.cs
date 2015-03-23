@@ -1172,20 +1172,24 @@ index = 14
 					recallhp = Player.Health;
 				}
             }
-			else if(!IsOVER && turret.Distance(Player.Position) < 750)
+			else
 			{
-				Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
-					if (Player.ChampionName == "Nidalee")
-					{
-						if(Aspectofcougar.IsReady())
+			var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+				if(!IsOVER && turret.Distance(Player.Position) < 750)
+				{
+					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+						if (Player.ChampionName == "Nidalee")
 						{
-						Aspectofcougar.Cast();
+							if(Aspectofcougar.IsReady())
+							{
+							Aspectofcougar.Cast();
+							}
+							if(Pounce.IsReady())
+							{
+							Pounce.Cast(spawn);
+							}
 						}
-						if(Pounce.IsReady())
-						{
-						Pounce.Cast(spawn);
-						}
-					}
+				}
 			}
 			
             #endregion
@@ -1341,9 +1345,11 @@ index = 14
                 var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
                 Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
                 if (turrr.Distance(tarrr.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
-                    castspell_hero(tarrr);
+{
+					castspell_hero(tarrr);
 					Player.IssueOrder(GameObjectOrder.AttackUnit, tarrr);
-				else if (turrr.Distance(tarrr.Position) <= 750)
+}
+					else if (turrr.Distance(tarrr.Position) <= 750)
 {
 				Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 					if (Player.ChampionName == "Nidalee")
