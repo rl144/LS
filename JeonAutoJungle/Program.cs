@@ -1300,12 +1300,12 @@ index = 14
             var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
             if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
 				Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
-            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 700) && ObjectManager.Get<Obj_AI_Minion>().Any(t => !t.IsMinion && Player.Distance(t.Position) <= 700))
+            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => !t.IsMinion && Player.Distance(t.Position) <= 700))
                 castspell(mob1);
         }
         public static void DoCast_Hero()
         {
-            if (ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 700))
+            if (ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1000))
             {
                 var tarrr = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
                 Where(x => x.IsEnemy && !x.IsMe && !x.IsDead).First(); // 플레이어와 가장 가까운타겟
@@ -1314,6 +1314,7 @@ index = 14
                 Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
                 if (turrr.Distance(tarrr.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
                     castspell_hero(tarrr);
+					Player.IssueOrder(GameObjectOrder.AttackUnit, tarrr);
             }
         }
         public static void castspell(Obj_AI_Base mob1)
@@ -1450,8 +1451,8 @@ index = 14
             {
                 if (Q.IsReady())
                     Q.CastOnUnit(mob1);
-                if (W.IsReady() && Player.HealthPercentage() < JeonAutoJungleMenu.Item("yi_W").GetValue<Slider>().Value)
-                    W.Cast();
+//                if (W.IsReady() && Player.HealthPercentage() < 35
+//                    W.Cast();
                 if (E.IsReady())
                     E.Cast();
                 if (R.IsReady())
