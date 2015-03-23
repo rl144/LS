@@ -64,6 +64,7 @@
     <Compile Include="Champions\Jinx.cs" />
     <Compile Include="Champions\Kalista.cs" />
     <Compile Include="Champions\KogMaw.cs" />
+    <Compile Include="Champions\MissFortune.cs" />
     <Compile Include="Champions\Sivir.cs" />
     <Compile Include="Champions\Teemo.cs" />
     <Compile Include="Champions\Tristana.cs" />
