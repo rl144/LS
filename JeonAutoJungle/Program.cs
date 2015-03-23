@@ -87,6 +87,7 @@ namespace JeonJunglePlay
         public static bool recall = false, IsOVER = false, IsAttackedByTurret = false, IsAttackStart = false,
         IsCastW = false;
         public static bool canBuyItems = true, IsBlueTeam, IsStart = true, IsFind = false;
+        public static bool _cougarForm;
         public static SpellSlot smiteSlot = SpellSlot.Unknown;
         public static Spell smite;
         public static SpellDataInst Qdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.Q);
