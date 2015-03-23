@@ -1432,12 +1432,12 @@ index = 14
             {
                 var tarrr = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
                 Where(x => x.IsEnemy && !x.IsMe && !x.IsDead).First(); // 플레이어와 가장 가까운타겟
-				Player.IssueOrder(GameObjectOrder.MoveTo, tarrr.ServerPosition.Extend(Player.ServerPosition, 50));
                 var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
                 Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
                 if (turrr.Distance(tarrr.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
 {
 					castspell_hero(tarrr);
+				Player.IssueOrder(GameObjectOrder.MoveTo, tarrr.ServerPosition.Extend(Player.ServerPosition, 50));
 					Player.IssueOrder(GameObjectOrder.AttackUnit, tarrr);
 }
 					else if (turrr.Distance(tarrr.Position) <= 750)
