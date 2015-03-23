@@ -966,6 +966,18 @@ index = 14
                             if (Player.Position.Distance(target.Position) > Player.AttackRange)
                             {
                                 Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
+
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(target.Position);
+									}
+								}
                                 afktime = 0;
                             }
                             DoCast_Hero();
