@@ -670,6 +670,7 @@ index = 14
             Bushwack.SetSkillshot(0.50f, 100f, 1500f, false, SkillshotType.SkillshotCircle);
             Swipe.SetSkillshot(0.50f, 375f, 1500f, false, SkillshotType.SkillshotCone);
             Pounce.SetSkillshot(0.50f, 400f, 1500f, false, SkillshotType.SkillshotCone);
+            _cougarForm = Player.Spellbook.GetSpell(SpellSlot.Q).Name != "JavelinToss";
             }
 			
             #region 스펠설정
@@ -942,11 +943,11 @@ index = 14
                         Player.IssueOrder(GameObjectOrder.MoveTo, MonsterList.First(t => t.order == 1).Position);
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(Aspectofcougar.IsReady())
+									if(!_cougarForm && Aspectofcougar.IsReady())
 									{
 									Aspectofcougar.Cast();
 									}
-									if(Pounce.IsReady())
+									if(_cougarForm && Pounce.IsReady())
 									{
 									Pounce.Cast(MonsterList.First(t => t.order == 1).Position);
 									}
@@ -980,7 +981,7 @@ index = 14
 
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(Aspectofcougar.IsReady())
+									if(!_cougarForm && Aspectofcougar.IsReady())
 									{
 									Aspectofcougar.Cast();
 									}
@@ -1105,7 +1106,7 @@ index = 14
                             Player.IssueOrder(GameObjectOrder.MoveTo, BLUE_MID.Position);
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(Aspectofcougar.IsReady())
+									if(!_cougarForm && Aspectofcougar.IsReady())
 									{
 									Aspectofcougar.Cast();
 									}
@@ -1122,7 +1123,7 @@ index = 14
                             Player.IssueOrder(GameObjectOrder.MoveTo, PURPLE_MID.Position);
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(Aspectofcougar.IsReady())
+									if(!_cougarForm && Aspectofcougar.IsReady())
 									{
 									Aspectofcougar.Cast();
 									}
@@ -1147,9 +1148,9 @@ index = 14
                         if (turret.Distance(Player.Position) > 1200 && face_ehro <= 2 && face_ehro2 <= 3 && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > 1200 && face_ally >= 2 && Player.HealthPercentage() >= 30)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-								if (Player.ChampionName == "Nidalee")
+								if (Player.ChampionName == "Nidalee" && face_ehro2 = 0)
 								{
-									if(Aspectofcougar.IsReady())
+									if(!_cougarForm && Aspectofcougar.IsReady())
 									{
 									Aspectofcougar.Cast();
 									}
@@ -1163,9 +1164,9 @@ index = 14
                         else if (GetMinions(turret) > 2 && face_ehro <= 2 && face_ehro2 <= 3 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 2 && face_ally >= 2 && Player.HealthPercentage() >= 35)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-								if (Player.ChampionName == "Nidalee")
+								if (Player.ChampionName == "Nidalee" && face_ehro2 = 0)
 								{
-									if(Aspectofcougar.IsReady())
+									if(!_cougarForm && Aspectofcougar.IsReady())
 									{
 									Aspectofcougar.Cast();
 									}
@@ -1181,7 +1182,7 @@ index = 14
                             Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(Aspectofcougar.IsReady())
+									if(!_cougarForm && Aspectofcougar.IsReady())
 									{
 									Aspectofcougar.Cast();
 									}
@@ -1209,7 +1210,7 @@ index = 14
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
 					if (Player.ChampionName == "Nidalee")
 					{
-						if(Aspectofcougar.IsReady())
+						if(!_cougarForm && Aspectofcougar.IsReady())
 						{
 						Aspectofcougar.Cast();
 						}
@@ -1236,7 +1237,7 @@ index = 14
 					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 						if (Player.ChampionName == "Nidalee")
 						{
-							if(Aspectofcougar.IsReady())
+							if(!_cougarForm && Aspectofcougar.IsReady())
 							{
 							Aspectofcougar.Cast();
 							}
@@ -1324,7 +1325,7 @@ index = 14
                     Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(Aspectofcougar.IsReady())
+									if(!_cougarForm && Aspectofcougar.IsReady())
 									{
 									Aspectofcougar.Cast();
 									}
@@ -1363,7 +1364,7 @@ index = 14
                         Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(Aspectofcougar.IsReady())
+									if(!_cougarForm && Aspectofcougar.IsReady())
 									{
 									Aspectofcougar.Cast();
 									}
@@ -1432,7 +1433,7 @@ index = 14
 				Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 					if (Player.ChampionName == "Nidalee")
 					{
-						if(Aspectofcougar.IsReady())
+						if(!_cougarForm && Aspectofcougar.IsReady())
 						{
 						Aspectofcougar.Cast();
 						}
