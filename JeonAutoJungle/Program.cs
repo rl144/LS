@@ -945,7 +945,7 @@ index = 14
                         Player.IssueOrder(GameObjectOrder.MoveTo, MonsterList.First(t => t.order == 1).Position);
 								if (Player.ChampionName == "Nidalee")
 								{
-									if (Player.Position.Distance(MonsterList.First(t => t.order == 1).Position > 500)
+									if (Player.Position.Distance(MonsterList.First(t => t.order == 1).Position) > 500)
 									{
 										if(!_cougarForm && Aspectofcougar.IsReady())
 										{
