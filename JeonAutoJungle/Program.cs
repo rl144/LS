@@ -940,6 +940,17 @@ index = 14
                     if (Game.Time - gamestart >= 0)
                     {
                         Player.IssueOrder(GameObjectOrder.MoveTo, MonsterList.First(t => t.order == 1).Position);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(MonsterList.First(t => t.order == 1).Position);
+									}
+								}
                         afktime = 0;
                     }
                     if (Player.Distance(MonsterList.First(t => t.order == 1).Position) <= 100)
@@ -1092,12 +1103,35 @@ index = 14
                         if (IsBlueTeam)
                         {
                             Player.IssueOrder(GameObjectOrder.MoveTo, BLUE_MID.Position);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(BLUE_MID.Position);
+									}
+								}
                             if (Player.Distance(BLUE_MID.Position) <= 100)
                                 IsAttackStart = true;
                         }
                         else
                         {
                             Player.IssueOrder(GameObjectOrder.MoveTo, PURPLE_MID.Position);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(PURPLE_MID.Position);
+									}
+								}
+
                             if (Player.Distance(PURPLE_MID.Position) <= 100)
                                 IsAttackStart = true;
                         }
@@ -1113,11 +1147,33 @@ index = 14
                         if (turret.Distance(Player.Position) > 1200 && face_ehro <= 2 && face_ehro2 <= 3 && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > 1200 && face_ally >= 2 && Player.HealthPercentage() >= 30)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(enemy_spawn);
+									}
+								}
                         }
                             
                         else if (GetMinions(turret) > 2 && face_ehro <= 2 && face_ehro2 <= 3 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 2 && face_ally >= 2 && Player.HealthPercentage() >= 35)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(enemy_spawn);
+									}
+								}
                         }
 
                         else
@@ -1266,6 +1322,17 @@ index = 14
                 m.Target.IsValid<Obj_AI_Hero>() && m.Target.IsMe && JeonAutoJungleMenu.Item("evading").GetValue<Boolean>())
                 {
                     Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(spawn);
+									}
+								}
                     Game.PrintChat("OOPS YOU ARE ATTACKED BY TURRET!");
                     Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
                     IsAttackedByTurret = true;
@@ -1294,6 +1361,17 @@ index = 14
                     if (turrest.Contains(sender.Name) && JeonAutoJungleMenu.Item("evading").GetValue<Boolean>())
                     {
                         Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(spawn);
+									}
+								}
                         Game.PrintChat("OOPS YOU ARE ATTACKED BY INHIBIT TURRET!");
                         Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
                         IsAttackedByTurret = true;
