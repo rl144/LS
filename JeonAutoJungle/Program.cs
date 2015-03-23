@@ -1101,9 +1101,9 @@ index = 14
 				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 900).Count();				
                 if (!IsAttackStart)
                 {
-					if (face_ehro <= 2 && face_ehro2 <= 3 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || face_ally >= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
+					if (face_ehro <= 1 && face_ehro2 <= 3 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || face_ally >= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
                         IsAttackStart = true;
-                    else if (face_ehro <= 2 && face_ehro2 <= 3 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam || face_ally >= 2  && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
+                    else if (face_ehro <= 1 && face_ehro2 <= 3 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam || face_ally >= 2  && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
                         IsAttackStart = true;
                     else
                     {
@@ -1151,7 +1151,7 @@ index = 14
                     {
                         DoCast_Hero();
                         DoLaneClear();
-                        if (turret.Distance(Player.Position) > 1200 && face_ehro <= 2 && face_ehro2 <= 3 && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > 1200 && face_ally >= 2 && Player.HealthPercentage() >= 30)
+                        if (turret.Distance(Player.Position) > 1200 && face_ehro <= 1 && face_ehro2 <= 3 && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > 1200 && face_ally >= 2 && Player.HealthPercentage() >= 30)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 								if (Player.ChampionName == "Nidalee")
@@ -1170,7 +1170,7 @@ index = 14
 								}
                         }
                             
-                        else if (GetMinions(turret) > 2 && face_ehro <= 2 && face_ehro2 <= 3 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 2 && face_ally >= 2 && Player.HealthPercentage() >= 35)
+                        else if (GetMinions(turret) > 2 && face_ehro <= 1 && face_ehro2 <= 3 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 2 && face_ally >= 2 && Player.HealthPercentage() >= 35)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 								if (Player.ChampionName == "Nidalee")
@@ -1207,7 +1207,7 @@ index = 14
                             
                         afktime = 0;
                     }
-					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 2)
+					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1)
 					DoLaneClear();
                     if (turret.Distance(Player.Position) > 800)
                         IsAttackedByTurret = false;
@@ -1432,12 +1432,12 @@ index = 14
             {
                 var tarrr = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
                 Where(x => x.IsEnemy && !x.IsMe && !x.IsDead).First(); // 플레이어와 가장 가까운타겟
-				Player.IssueOrder(GameObjectOrder.MoveTo, tarrr.ServerPosition.Extend(Player.ServerPosition, 50));
                 var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
                 Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
                 if (turrr.Distance(tarrr.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
 {
 					castspell_hero(tarrr);
+				Player.IssueOrder(GameObjectOrder.MoveTo, tarrr.ServerPosition.Extend(Player.ServerPosition, 50));
 					Player.IssueOrder(GameObjectOrder.AttackUnit, tarrr);
 }
 					else if (turrr.Distance(tarrr.Position) <= 750)
