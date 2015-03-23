@@ -670,7 +670,6 @@ index = 14
             Bushwack.SetSkillshot(0.50f, 100f, 1500f, false, SkillshotType.SkillshotCircle);
             Swipe.SetSkillshot(0.50f, 375f, 1500f, false, SkillshotType.SkillshotCone);
             Pounce.SetSkillshot(0.50f, 400f, 1500f, false, SkillshotType.SkillshotCone);
-            _cougarForm = Player.Spellbook.GetSpell(SpellSlot.Q).Name != "JavelinToss";
             }
 			
             #region 스펠설정
@@ -810,6 +809,10 @@ index = 14
 		int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
 		int level = Player.Level;	
             setSmiteSlot();
+			if (Player.ChampionName == "Nidalee")
+			{
+            _cougarForm = Player.Spellbook.GetSpell(SpellSlot.Q).Name != "JavelinToss";
+			}
             if (Player.Spellbook.IsChanneling)
                 return;
             if (!JeonAutoJungleMenu.Item("isActive").GetValue<Boolean>() || smiteSlot == SpellSlot.Unknown)
