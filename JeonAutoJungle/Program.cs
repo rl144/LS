@@ -809,10 +809,7 @@ index = 14
 		int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
 		int level = Player.Level;	
             setSmiteSlot();
-			if (Player.ChampionName == "Nidalee")
-			{
             _cougarForm = Player.Spellbook.GetSpell(SpellSlot.Q).Name != "JavelinToss";
-			}
             if (Player.Spellbook.IsChanneling)
                 return;
             if (!JeonAutoJungleMenu.Item("isActive").GetValue<Boolean>() || smiteSlot == SpellSlot.Unknown)
