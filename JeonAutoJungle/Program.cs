@@ -1172,6 +1172,23 @@ index = 14
 					recallhp = Player.Health;
 				}
             }
+			else if(!IsOVER && turret.Distance(Player.Position) < 750)
+			{
+				Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+					if (Player.ChampionName == "Nidalee")
+					{
+						if(Aspectofcougar.IsReady())
+						{
+						Aspectofcougar.Cast();
+						}
+						if(Pounce.IsReady())
+						{
+						Pounce.Cast(spawn);
+						}
+					}
+				}
+			}
+			
             #endregion
             #region 상점이용가능할때 // when you are in shop range or dead
             #region 시작아이템 사기 // startup
@@ -1327,6 +1344,21 @@ index = 14
                 if (turrr.Distance(tarrr.Position) > 755) // 터렛 사정거리 밖에있어야만 공격함.
                     castspell_hero(tarrr);
 					Player.IssueOrder(GameObjectOrder.AttackUnit, tarrr);
+				else if (turrr.Distance(tarrr.Position) <= 750)
+{
+				Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+					if (Player.ChampionName == "Nidalee")
+					{
+						if(Aspectofcougar.IsReady())
+						{
+						Aspectofcougar.Cast();
+						}
+						if(Pounce.IsReady())
+						{
+						Pounce.Cast(spawn);
+						}
+					}
+}
             }
         }
         public static void castspell(Obj_AI_Base mob1)
