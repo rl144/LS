@@ -810,6 +810,7 @@ index = 14
 		int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
 		int level = Player.Level;	
             setSmiteSlot();
+			if (Player.ChampionName == "Nidalee")
             _cougarForm = Player.Spellbook.GetSpell(SpellSlot.Q).Name != "JavelinToss";
             if (Player.Spellbook.IsChanneling)
                 return;
@@ -1149,15 +1150,18 @@ index = 14
                         if (turret.Distance(Player.Position) > 1200 && face_ehro <= 2 && face_ehro2 <= 3 && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > 1200 && face_ally >= 2 && Player.HealthPercentage() >= 30)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-								if (Player.ChampionName == "Nidalee" && face_ehro2 = 0)
+								if (Player.ChampionName == "Nidalee")
 								{
-									if(!_cougarForm && Aspectofcougar.IsReady())
+									if(face_ehro2 = 0)
 									{
-									Aspectofcougar.Cast();
-									}
-									if(Pounce.IsReady())
-									{
-									Pounce.Cast(enemy_spawn);
+										if(!_cougarForm && Aspectofcougar.IsReady())
+										{
+										Aspectofcougar.Cast();
+										}
+										if(Pounce.IsReady())
+										{
+										Pounce.Cast(enemy_spawn);
+										}
 									}
 								}
                         }
@@ -1165,15 +1169,18 @@ index = 14
                         else if (GetMinions(turret) > 2 && face_ehro <= 2 && face_ehro2 <= 3 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 2 && face_ally >= 2 && Player.HealthPercentage() >= 35)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-								if (Player.ChampionName == "Nidalee" && face_ehro2 = 0)
+								if (Player.ChampionName == "Nidalee")
 								{
-									if(!_cougarForm && Aspectofcougar.IsReady())
+									if(face_ehro2 = 0)
 									{
-									Aspectofcougar.Cast();
-									}
-									if(Pounce.IsReady())
-									{
-									Pounce.Cast(enemy_spawn);
+										if(!_cougarForm && Aspectofcougar.IsReady())
+										{
+										Aspectofcougar.Cast();
+										}
+										if(Pounce.IsReady())
+										{
+										Pounce.Cast(enemy_spawn);
+										}
 									}
 								}
                         }
