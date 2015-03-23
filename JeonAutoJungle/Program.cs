@@ -1186,7 +1186,6 @@ index = 14
 						Pounce.Cast(spawn);
 						}
 					}
-				}
 			}
 			
             #endregion
