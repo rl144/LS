@@ -945,15 +945,19 @@ index = 14
                         Player.IssueOrder(GameObjectOrder.MoveTo, MonsterList.First(t => t.order == 1).Position);
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(!_cougarForm && Aspectofcougar.IsReady())
+									if (Player.Position.Distance(MonsterList.First(t => t.order == 1).Position > 500)
 									{
-									Aspectofcougar.Cast();
-									}
-									if(_cougarForm && Pounce.IsReady())
-									{
-									Pounce.Cast(MonsterList.First(t => t.order == 1).Position);
+										if(!_cougarForm && Aspectofcougar.IsReady())
+										{
+										Aspectofcougar.Cast();
+										}
+										if(_cougarForm && Pounce.IsReady())
+										{
+										Pounce.Cast(MonsterList.First(t => t.order == 1).Position);
+										}
 									}
 								}
+								
                         afktime = 0;
                     }
                     if (Player.Distance(MonsterList.First(t => t.order == 1).Position) <= 100)
