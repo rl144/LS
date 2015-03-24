@@ -1402,7 +1402,7 @@ index = 14
                 if (!(Items.HasItem(Convert.ToInt32(ItemId.Hunters_Machete)) ||
                 Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer)) ||
                 Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) ||
-				Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))
+				Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) ||
 				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife)) ||
 				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus))
 				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Devourer))
@@ -1594,8 +1594,8 @@ index = 14
 				}
 				else
 				{
-				IsAttackStart = true
-				IsOVER = true
+				IsAttackStart = true;
+				IsOVER = true;
 				}
             }
         }
