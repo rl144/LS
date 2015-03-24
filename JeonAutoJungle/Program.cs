@@ -332,6 +332,123 @@ index = 16
 }
 };
         #endregion
+        #region bap
+        public static List<ItemToShop> buyThings_BAP = new List<ItemToShop>
+{
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Hunters_Machete,
+item = ItemId.Poachers_Knife,
+index = 1
+},
+new ItemToShop()
+{
+Price = 820,
+needItem = ItemId.Poachers_Knife,
+item = ItemId.Fiendish_Codex,
+index = 2
+},
+new ItemToShop()
+{
+Price = 580,
+needItem = ItemId.Fiendish_Codex,
+item = ItemId.Poachers_Knife_Enchantment_Magus,
+index = 3
+},
+new ItemToShop()
+{
+Price = 1100,
+needItem = ItemId.Poachers_Knife_Enchantment_Magus,
+item = ItemId.Sorcerers_Shoes,
+index = 4
+},
+new ItemToShop()
+{
+Price = 820,
+needItem = ItemId.Sorcerers_Shoes,
+item = ItemId.Fiendish_Codex,
+index = 5
+},
+new ItemToShop()
+{
+Price = 600,
+needItem = ItemId.Fiendish_Codex,
+item = ItemId.Forbidden_Idol,
+index = 6
+},
+new ItemToShop()
+{
+Price = 880,
+needItem = ItemId.Forbidden_Idol,
+item = ItemId.Morellonomicon,
+index = 7
+},
+new ItemToShop()
+{
+Price = 1200,
+needItem = ItemId.Morellonomicon,
+item = ItemId.Seekers_Armguard,
+index = 8
+},
+new ItemToShop()
+{
+Price = 1600,
+needItem = ItemId.Seekers_Armguard,
+item = ItemId.Needlessly_Large_Rod,
+index = 9
+},
+new ItemToShop()
+{
+Price = 500,
+needItem = ItemId.Needlessly_Large_Rod,
+item = ItemId.Zhonyas_Hourglass,
+index = 10
+},
+new ItemToShop()
+{
+Price = 860,
+needItem = ItemId.Zhonyas_Hourglass,
+item = ItemId.Blasting_Wand,
+index = 11
+},
+new ItemToShop()
+{
+Price = 1600,
+needItem = ItemId.Blasting_Wand,
+item = ItemId.Needlessly_Large_Rod,
+index = 12
+},
+new ItemToShop()
+{
+Price = 840,
+needItem = ItemId.Needlessly_Large_Rod,
+item = ItemId.Rabadons_Deathcap,
+index = 13
+},
+new ItemToShop()
+{
+Price = 860,
+needItem = ItemId.Rabadons_Deathcap,
+item = ItemId.Blasting_Wand,
+index = 14
+},
+new ItemToShop()
+{
+Price = 1435,
+needItem = ItemId.Blasting_Wand,
+item = ItemId.Void_Staff,
+index = 15
+},
+new ItemToShop()
+{
+Price = 2750,
+needItem = ItemId.Void_Staff,
+item = ItemId.Banshees_Veil,
+index = 16
+}
+};
+        #endregion
         #region ad = default
         public static List<ItemToShop> buyThings = new List<ItemToShop>
 {
@@ -339,13 +456,13 @@ new ItemToShop()
 {
 Price = 450,
 needItem = ItemId.Hunters_Machete,
-item = ItemId.Rangers_Trailblazer,
+item = ItemId.Poachers_Knife,
 index = 1
 },
 new ItemToShop()
 {
 Price = 450,
-needItem = ItemId.Rangers_Trailblazer,
+needItem = ItemId.Poachers_Knife,
 item = ItemId.Dagger,
 index = 2
 },
@@ -353,13 +470,13 @@ new ItemToShop()
 {
 Price = 950,
 needItem = ItemId.Dagger,
-item = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
+item = ItemId.Poachers_Knife_Enchantment_Devourer,
 index = 3
 },
 new ItemToShop()
 {
 Price = 1000,
-needItem = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
+needItem = ItemId.Poachers_Knife_Enchantment_Devourer,
 item = ItemId.Berserkers_Greaves,
 index = 4
 },
@@ -1072,14 +1189,14 @@ index = 14
 				if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
 				{
                     IsOVER = true;
-                    Game.PrintChat("LEVEL " + maxlv + ". Now Going to be offense.");
+                    Game.PrintChat("You're level is" + level + ". Now Going to be offense.");
 				}
             }
 			else
 			{
-				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
+				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
 				{
-                    Game.PrintChat("Level " + maxlv + ". Going back to farm.");
+                    Game.PrintChat("You're under " + maxlv + "lv. Going back to farm.");
                     IsOVER = false;
                     IsAttackStart = false;
 				}
@@ -1089,12 +1206,12 @@ index = 14
             foreach (var buff in Player.Buffs.Where(b => b.DisplayName == "Enchantment_Slayer_Stacks"))
             {
                 int maxstacks = JeonAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
-                if (buff.Count >= maxstacks && !IsOVER || level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))) //--테스트
+                if (buff.Count >= maxstacks && !IsOVER || level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus))) //--테스트
                 {
                     IsOVER = true;
-                    Game.PrintChat("Stacks Over " + maxstacks + ". Now Going to be offense.");
+                    Game.PrintChat("Your Stack Is  " + buff.count + ". Now Going to be offense.");
                 }
-                if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))) //-- I don't speak korean :D
+                if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus))) //-- I don't speak korean :D
                 {
                     Game.PrintChat("Stacks under " + maxstacks + ". Going back to farm.");
                     IsOVER = false;
@@ -1285,7 +1402,11 @@ index = 14
                 if (!(Items.HasItem(Convert.ToInt32(ItemId.Hunters_Machete)) ||
                 Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer)) ||
                 Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) ||
-				Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))))
+				Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus))
+				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife)) ||
+				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus))
+				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Devourer))
+				))
                 {
                     if (smiteSlot != SpellSlot.Unknown)
                     {
@@ -1439,15 +1560,15 @@ index = 14
             var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
             if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
 				Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
-            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => !t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) >= 950))
+            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && !t.IsInvulnerable && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => !t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) >= 950))
                 castspell(mob1);
         }
         public static void DoCast_Hero()
         {
-            if (IsOVER && ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 800))
+            if (IsOVER && ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && !t.IsInvulnerable && Player.Distance(t.Position) <= 1000))
             {
                 var tarrr = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
-                Where(x => x.IsEnemy && !x.IsMe && !x.IsDead).First(); // 플레이어와 가장 가까운타겟
+                Where(x => x.IsEnemy && !x.IsMe && !x.IsDead && !x.IsInvulnerable).First(); // 플레이어와 가장 가까운타겟
                 var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
                 Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
                 if (turrr.Distance(tarrr.Position) > 850) // 터렛 사정거리 밖에있어야만 공격함.
@@ -1470,6 +1591,11 @@ index = 14
 						Pounce.Cast(spawn);
 						}
 					}
+				}
+				else
+				{
+				IsAttackStart = true
+				IsOVER = true
 				}
             }
         }
@@ -1864,6 +1990,12 @@ index = 14
                 buyThings.Clear();
                 buyThings = buyThings_AP;
                 Game.PrintChat("Set ItemTree for AP - Finished");
+            }
+            else if (Readini.GetItemTreetype(setFile.FullName) == "BAP")
+            {
+                buyThings.Clear();
+                buyThings = buyThings_BAP;
+                Game.PrintChat("Set ItemTree for AP with Blue Smite Fin.");
             }
             else if (Readini.GetItemTreetype(setFile.FullName) == "AS")
             {
