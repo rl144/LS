@@ -1228,9 +1228,9 @@ index = 14
 //				var eheros = GetEnemyList().Where(x => x.IsValid && x.IsEnemy && !x.IsDead && Player.Distance(x.Position) <= 2000);					
 //				Obj_AI_Hero ehro = eheros.FirstOrDefault();
 				var turrett = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
-				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2000).Count();
-				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 800).Count();				
-				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 1100).Count();				
+				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2400).Count();
+				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 900).Count();				
+				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 1000).Count();				
                 if (!IsAttackStart)
                 {
 					if (face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || face_ally >= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
