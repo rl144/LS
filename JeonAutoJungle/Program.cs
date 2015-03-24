@@ -1999,7 +1999,7 @@ index = 14
             {
                 buyThings.Clear();
                 buyThings = buyThings_BAP;
-                Game.PrintChat("Set ItemTree for AP with Blue Smite Fin.");
+                Game.PrintChat("Set ItemTree for BAP with Blue Smite Fin.");
             }
             else if (Readini.GetItemTreetype(setFile.FullName) == "AS")
             {

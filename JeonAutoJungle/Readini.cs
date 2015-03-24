@@ -25,47 +25,47 @@ namespace JeonJunglePlay
 
             if(str.ToUpper() =="NUNU")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "TANK", path);
+                SetSettingValue("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", "TANK", path);
                 SetSettingValue("SpellTree", "Value", "1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3", path);
             }
             else if (str.ToUpper() == "WARWICK")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AS", path);
+                SetSettingValue("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", "AS", path);
                 SetSettingValue("SpellTree", "Value", "1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3", path);
             }
             else if (str.ToUpper() == "MASTERYI")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AD", path);
+                SetSettingValue("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", "AD", path);
                 SetSettingValue("SpellTree", "Value", "1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3", path);
             }
             else if (str.ToUpper() == "CHOGATH")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "TANK", path);
+                SetSettingValue("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", "TANK", path);
                 SetSettingValue("SpellTree", "Value", "3, 2, 1, 3, 3, 4, 3, 1, 3, 1, 4, 2, 2, 2, 2, 4, 1, 1", path);
             }
             else if (str.ToUpper() == "MAOKAI")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "TANK", path);
+                SetSettingValue("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", "TANK", path);
                 SetSettingValue("SpellTree", "Value", "1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3", path);
             }
             else if (str.ToUpper() == "NASUS")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AS", path);
+                SetSettingValue("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", "AS", path);
                 SetSettingValue("SpellTree", "Value", "1, 3, 3, 2, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2", path);
             }
             else if (str.ToUpper() == "XINZHAO")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AS", path);
+                SetSettingValue("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", "AS", path);
                 SetSettingValue("SpellTree", "Value", "2, 1, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3", path);
             }
             else if (str.ToUpper() == "NIDALEE")
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AP", path);
+                SetSettingValue("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", "AP", path);
                 SetSettingValue("SpellTree", "Value", "2, 1, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 3, 2, 3, 4, 2, 2", path);
             }
             else
             {
-                SetSettingValue("ItemTreeType(AP,AD,TANK,AS)", "Type", "AD", path);
+                SetSettingValue("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", "AD", path);
                 SetSettingValue("SpellTree", "Value", "1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3", path);
 
                 SetSettingValue("Cast(Q,W,E,R)", "Mob", "Q,W,E", path);
