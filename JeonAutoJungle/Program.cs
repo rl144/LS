@@ -339,13 +339,13 @@ new ItemToShop()
 {
 Price = 450,
 needItem = ItemId.Hunters_Machete,
-item = ItemId.Poachers_Knife,
+item = ItemId.Stalkers_Blade,
 index = 1
 },
 new ItemToShop()
 {
 Price = 820,
-needItem = ItemId.Poachers_Knife,
+needItem = ItemId.Stalkers_Blade,
 item = ItemId.Fiendish_Codex,
 index = 2
 },
@@ -353,13 +353,13 @@ new ItemToShop()
 {
 Price = 580,
 needItem = ItemId.Fiendish_Codex,
-item = ItemId.Poachers_Knife_Enchantment_Magus,
+item = ItemId.Stalkers_Blade_Enchantment_Magus,
 index = 3
 },
 new ItemToShop()
 {
 Price = 1100,
-needItem = ItemId.Poachers_Knife_Enchantment_Magus,
+needItem = ItemId.Stalkers_Blade_Enchantment_Magus,
 item = ItemId.Sorcerers_Shoes,
 index = 4
 },
@@ -456,13 +456,13 @@ new ItemToShop()
 {
 Price = 450,
 needItem = ItemId.Hunters_Machete,
-item = ItemId.Poachers_Knife,
+item = ItemId.Stalkers_Blade,
 index = 1
 },
 new ItemToShop()
 {
 Price = 450,
-needItem = ItemId.Poachers_Knife,
+needItem = ItemId.Stalkers_Blade,
 item = ItemId.Dagger,
 index = 2
 },
@@ -470,13 +470,13 @@ new ItemToShop()
 {
 Price = 950,
 needItem = ItemId.Dagger,
-item = ItemId.Poachers_Knife_Enchantment_Devourer,
+item = ItemId.Stalkers_Blade_Enchantment_Devourer,
 index = 3
 },
 new ItemToShop()
 {
 Price = 1000,
-needItem = ItemId.Poachers_Knife_Enchantment_Devourer,
+needItem = ItemId.Stalkers_Blade_Enchantment_Devourer,
 item = ItemId.Berserkers_Greaves,
 index = 4
 },
@@ -1194,7 +1194,7 @@ index = 14
             }
 			else
 			{
-				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
+				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
 				{
                     Game.PrintChat("You're under " + maxlv + "lv. Going back to farm.");
                     IsOVER = false;
@@ -1206,12 +1206,12 @@ index = 14
             foreach (var buff in Player.Buffs.Where(b => b.DisplayName == "Enchantment_Slayer_Stacks"))
             {
                 int maxstacks = JeonAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
-                if (buff.Count >= maxstacks && !IsOVER || level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus))) //--테스트
+                if (buff.Count >= maxstacks && !IsOVER || level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //--테스트
                 {
                     IsOVER = true;
                     Game.PrintChat("Your Stack Is  " + buff.Count + ". Now Going to be offense.");
                 }
-                if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus))) //-- I don't speak korean :D
+                if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //-- I don't speak korean :D
                 {
                     Game.PrintChat("Stacks under " + maxstacks + ". Going back to farm.");
                     IsOVER = false;
@@ -1403,9 +1403,9 @@ index = 14
                 Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer)) ||
                 Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) ||
 				Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) ||
-				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife)) ||
-				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus)) ||
-				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Devourer))
+				Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade)) ||
+				Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus)) ||
+				Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Devourer))
 				))
                 {
                     if (smiteSlot != SpellSlot.Unknown)
