@@ -107,7 +107,7 @@ namespace SmiteOP
             foreach (var spell in ObjectManager.Player.Spellbook.Spells.Where(spell => String.Equals(spell.Name, "SummonerDot", StringComparison.CurrentCultureIgnoreCase)))
             {
                 igniteSlot = spell.Slot;
-                igniteSlot = new Spell(igniteSlot, irange);
+				igniteSlot = Player.GetSpellSlot("SummonerDot");
                 return;
             }
         }
