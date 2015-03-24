@@ -1062,9 +1062,9 @@ index = 14
                 if (Player.InShop())
 					if(JeonAutoJungleMenu.Item("Invade").GetValue<Boolean>())
 					{
-						if(!IsBlueTeam && now = 7 || !IsBlueTeam && now = 15) //정글 게 뻘짓 줄이
+						if(!IsBlueTeam && now == 7 || !IsBlueTeam && now == 15) //정글 게 뻘짓 줄이기
 						now += 1;
-						else if(IsBlueTeam && now = 7 || IsBlueTeam && now = 14)
+						else if(IsBlueTeam && now == 7 || IsBlueTeam && now == 14)
 						now += 1;
 					}
                     recall = false;
@@ -1687,8 +1687,8 @@ index = 14
             {
                 if (Q.IsReady())
                     Q.CastOnUnit(mob1);
-                if (E.IsReady())
-                    E.Cast();
+//                if (E.IsReady())
+//                    E.Cast();
             }
             else if (Player.ChampionName.ToUpper() == "MAOKAI")
             {
