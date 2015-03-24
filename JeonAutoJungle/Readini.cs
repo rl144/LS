@@ -92,8 +92,8 @@ namespace JeonJunglePlay
 
         public static string GetItemTreetype(string path)
         {
-            string[] s = { "AP", "AD", "TANK", "AS" };
-            var str = GetSettingValue_String("ItemTreeType(AP,AD,TANK,AS)", "Type", path);
+            string[] s = { "AP", "BAP", "AD", "TANK", "AS" };
+            var str = GetSettingValue_String("ItemTreeType(AP,BAP,AD,TANK,AS)", "Type", path);
 
             if (!s.Contains(str.ToUpper()))
                 return "X";
