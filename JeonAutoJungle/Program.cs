@@ -1209,7 +1209,7 @@ index = 14
                 if (buff.Count >= maxstacks && !IsOVER || level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus))) //--테스트
                 {
                     IsOVER = true;
-                    Game.PrintChat("Your Stack Is  " + buff.count + ". Now Going to be offense.");
+                    Game.PrintChat("Your Stack Is  " + buff.Count + ". Now Going to be offense.");
                 }
                 if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus))) //-- I don't speak korean :D
                 {
