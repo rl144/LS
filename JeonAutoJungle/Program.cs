@@ -1581,7 +1581,7 @@ index = 14
 				Player.IssueOrder(GameObjectOrder.MoveTo, tarrr.ServerPosition.Extend(Player.ServerPosition, 50));
 					Player.IssueOrder(GameObjectOrder.AttackUnit, tarrr);
 				}
-				else if (turrr.Distance(tarrr.Position) <= 850)
+/*				else if (turrr.Distance(tarrr.Position) <= 850)
 				{
 					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 					if (Player.ChampionName == "Nidalee")
@@ -1596,7 +1596,7 @@ index = 14
 						}
 					}
 				}
-				else
+*/				else
 				{
 				IsAttackStart = true;
 				IsOVER = true;
