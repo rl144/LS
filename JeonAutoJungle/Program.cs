@@ -822,9 +822,9 @@ index = 14
             if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling())
             {
                 afktime += 1;
-                if (afktime > 10) // 잠수 10초 경과
+                if (afktime > 6) // 잠수 5초 경과
                 {
-                    if (Player.InShop())
+                    if (Player.InShop() && Player.HealthPercentage() > 70)
                         Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                     else
                         Player.Spellbook.CastSpell(SpellSlot.Recall);
@@ -928,10 +928,15 @@ index = 14
             #region check somethings about dragon
             if (Player.Level > JeonAutoJungleMenu.Item("k_dragon").GetValue<Slider>().Value)
             {
-                if (MonsterList.First(temp => temp.ID == down_crab.ID).order == 12)
+                if (MonsterList.First(temp => temp.ID == down_crab.ID).order == 14)
                 {
                     MonsterList.First(temp => temp.ID == down_crab.ID).order = 0;
-                    MonsterList.First(temp => temp.ID == Dragon.ID).order = 12;
+                    MonsterList.First(temp => temp.ID == Dragon.ID).order = 14;
+                }
+                if (MonsterList.First(temp => temp.ID == down_crab.ID).order == 15)
+                {
+                    MonsterList.First(temp => temp.ID == down_crab.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == Dragon.ID).order = 15;
                 }
             }
             #endregion
@@ -1055,6 +1060,13 @@ index = 14
                     }
                 }
                 if (Player.InShop())
+					if(JeonAutoJungleMenu.Item("Invade").GetValue<Boolean>())
+					{
+						if(!IsBlueTeam && now = 7 || !IsBlueTeam && now = 15) //정글 게 뻘짓 줄이
+						now += 1;
+						else if(IsBlueTeam && now = 7 || IsBlueTeam && now = 14)
+						now += 1;
+					}
                     recall = false;
 
 				if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
