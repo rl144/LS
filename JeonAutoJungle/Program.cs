@@ -1404,7 +1404,7 @@ index = 14
                 Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) ||
 				Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) ||
 				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife)) ||
-				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus))
+				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Magus)) ||
 				Items.HasItem(Convert.ToInt32(ItemId.Poachers_Knife_Enchantment_Devourer))
 				))
                 {
