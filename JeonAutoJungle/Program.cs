@@ -1227,7 +1227,7 @@ index = 14
 				var ehero = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
 //				var eheros = GetEnemyList().Where(x => x.IsValid && x.IsEnemy && !x.IsDead && Player.Distance(x.Position) <= 2000);					
 //				Obj_AI_Hero ehro = eheros.FirstOrDefault();
-				var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+				var turrett = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
 				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2000).Count();
 				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 800).Count();				
 				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 1100).Count();				
@@ -1352,7 +1352,7 @@ index = 14
 //도망가기용
 				if (Player.HealthPercentage() < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1200//hpper
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
-				turret.Distance(Player.Position) <= 800 && Player.HealthPercentage() < 33
+				turrett.Distance(Player.Position) <= 800 && Player.HealthPercentage() < 33
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
