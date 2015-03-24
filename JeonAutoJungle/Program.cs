@@ -1206,7 +1206,7 @@ index = 14
             foreach (var buff in Player.Buffs.Where(b => b.DisplayName == "Enchantment_Slayer_Stacks"))
             {
                 int maxstacks = JeonAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
-                if (buff.Count >= maxstacks && !IsOVER || level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //--테스트
+                if (buff.Count >= maxstacks && !IsOVER || level >= maxlv)// || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //--테스트
                 {
                     IsOVER = true;
                     Game.PrintChat("Your Stack Is  " + buff.Count + ". Now Going to be offense.");
@@ -1793,8 +1793,8 @@ index = 14
             {
                 if (Takedown.IsReady())
                     Takedown.CastOnUnit(mob1);
-                if (Pounce.IsReady())
-                    Pounce.Cast(mob1.Position);
+        //        if (Pounce.IsReady())
+        //            Pounce.Cast(mob1.Position);
                 if (Swipe.IsReady())
                     Swipe.Cast(mob1.Position);
                 if (R.IsReady())
