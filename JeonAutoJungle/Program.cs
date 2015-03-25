@@ -74,6 +74,7 @@ namespace JeonJunglePlay
 			return ObjectManager.Get<Obj_AI_Hero>().Where(x => !x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
 		}
         public static Obj_AI_Hero Player = ObjectManager.Player;
+        private static Obj_AI_Hero Target = null; // 타겟 추
         public static Spell Q, W, E, R;
         private static Vector3 spawn;
         private static Vector3 enemy_spawn;
@@ -934,14 +935,14 @@ index = 14
         private static Obj_AI_Hero GetTarget()
         {
             Obj_AI_Hero Target = null;
-            if (ChoosedTarget == null)
-            {
+            /*if (ChoosedTarget == null)
+            {*/
                 Target = TargetSelector.GetTarget(Physical, TargetSelector.DamageType.Physical);
-            }
+/*            }
             else
             {
                 Target = ChoosedTarget;
-            }
+            }*/
             return Target;
         }
 		private static void Game_OnUpdate(EventArgs args) 
@@ -949,6 +950,7 @@ index = 14
 		int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
 		int level = Player.Level;	
             setSmiteSlot();
+            Target = GetTarget();
 			if (Player.ChampionName == "Nidalee")
             _cougarForm = Player.Spellbook.GetSpell(SpellSlot.Q).Name != "JavelinToss";
             if (Player.Spellbook.IsChanneling)
