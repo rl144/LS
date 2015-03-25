@@ -1302,14 +1302,14 @@ index = 14
 								}
                         }
                             
-                        else if (GetMinions(turret) > 1 && face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && face_ally >= 2 && Player.HealthPercentage() >= 35)
+                        else if (GetMinions(turret) > 1 && face_ehro <= 1 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && face_ally >= 2 && Player.HealthPercentage() >= 35)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-							DoCast_Hero();
-							DoLaneClear();
+//							DoCast_Hero();
+//							DoLaneClear();
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(face_ehro2 < 1)
+									if(face_ehro2 < 1 && turret.Distance(Player.Position) > 900)
 									{
 										if(!_cougarForm && Aspectofcougar.IsReady())
 										{
