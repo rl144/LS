@@ -1344,7 +1344,7 @@ index = 14
                     }
 					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1)
 					DoLaneClear();
-                    if (turret.Distance(Player.Position) > 800)
+                    if (turret.Distance(Player.Position) > 880)
                         IsAttackedByTurret = false;
                     if (Player.IsDead)
                         IsAttackedByTurret = false;
@@ -1352,7 +1352,7 @@ index = 14
 //도망가기용
 				if (Player.HealthPercentage() < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1400//hpper
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
-				turrett.Distance(Player.Position) <= 840 && Player.HealthPercentage() < 33
+				turrett.Distance(Player.Position) <= 880 && Player.HealthPercentage() < 33
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
@@ -1382,7 +1382,7 @@ index = 14
 			else
 			{
 			var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
-				if(!IsOVER && turret.Distance(Player.Position) < 750)
+				if(!IsOVER && turret.Distance(Player.Position) < 880)
 				{
 					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 						if (Player.ChampionName == "Nidalee")
@@ -1576,7 +1576,7 @@ index = 14
                 Where(x => x.IsEnemy && !x.IsMe && !x.IsDead && !x.IsInvulnerable).First(); // 플레이어와 가장 가까운타겟
                 var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
                 Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
-                if (turrr.Distance(tarrr.Position) > 850) // 터렛 사정거리 밖에있어야만 공격함.
+                if (turrr.Distance(tarrr.Position) > 880) // 터렛 사정거리 밖에있어야만 공격함.
 				{
 					castspell_hero(tarrr);
 				Player.IssueOrder(GameObjectOrder.MoveTo, tarrr.ServerPosition.Extend(Player.ServerPosition, 50));
