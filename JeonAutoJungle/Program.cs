@@ -108,6 +108,7 @@ namespace JeonJunglePlay
         private static readonly Spell Aspectofcougar = new Spell(SpellSlot.R);
         private static readonly List<Spell> HumanSpellList = new List<Spell>();
         private static readonly List<Spell> CougarSpellList = new List<Spell>();
+		public static int TRRange = 900;
         public class MonsterINFO
         {
             public Vector3 Position;
@@ -937,7 +938,7 @@ index = 14
             Obj_AI_Hero Target = null;
             /*if (ChoosedTarget == null)
             {*/
-                Target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Physical);
+                Target = TargetSelector.GetTarget(700, TargetSelector.DamageType.Physical);
 /*            }
             else
             {
@@ -1303,7 +1304,7 @@ index = 14
     //                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
                     if (IsOVER && !IsAttackedByTurret && Player.HealthPercentage() >= 35)
                     {
-                        if (turret.Distance(Player.Position) > 900 && face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > 900 && face_ally >= 2 && Player.HealthPercentage() >= 30)
+                        if (turret.Distance(Player.Position) > TRRange && face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > TRRange && face_ally >= 2 && Player.HealthPercentage() >= 30)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 							DoCast_Hero();
@@ -1331,7 +1332,7 @@ index = 14
 //							DoLaneClear();
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(face_ehro2 < 1 && turret.Distance(Player.Position) > 900)
+									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange)
 									{
 										if(!_cougarForm && Aspectofcougar.IsReady())
 										{
@@ -1365,7 +1366,7 @@ index = 14
                     }
 					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1)
 					DoLaneClear();
-                    if (turret.Distance(Player.Position) > 880)
+                    if (turret.Distance(Player.Position) > TRRange)
                         IsAttackedByTurret = false;
                     if (Player.IsDead)
                         IsAttackedByTurret = false;
@@ -1373,7 +1374,7 @@ index = 14
 //도망가기용
 				if (Player.HealthPercentage() < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1400//hpper
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
-				turrett.Distance(Player.Position) <= 880 && Player.HealthPercentage() < 33
+				turrett.Distance(Player.Position) <= TRRange && Player.HealthPercentage() < 33
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
@@ -1391,7 +1392,7 @@ index = 14
 					}
 				}
 				if (Player.HealthPercentage() < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
-				&& turrett.Distance(Player.Position) > 1500
+				&& turrett.Distance(Player.Position) > 2250
 				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("Time To Recall Yeah!");
@@ -1403,7 +1404,7 @@ index = 14
 			else
 			{
 			var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
-				if(!IsOVER && turret.Distance(Player.Position) < 880)
+				if(!IsOVER && turret.Distance(Player.Position) < TRRange)
 				{
 					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 						if (Player.ChampionName == "Nidalee")
@@ -1578,7 +1579,7 @@ index = 14
             var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
             if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
 				Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
-            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) >= 950))
+            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange))
                 castspell_laneclear(mob1);
         }
         public static void DoCast()
@@ -1586,7 +1587,7 @@ index = 14
             var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
             if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
 				Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
-            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && !t.IsInvulnerable && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => !t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) >= 950))
+            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && !t.IsInvulnerable && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => !t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange))
                 castspell(mob1);
         }
         public static void DoCast_Hero()
@@ -1597,7 +1598,7 @@ index = 14
                 Where(x => x.IsEnemy && !x.IsMe && !x.IsDead && !x.IsInvulnerable).First(); // 플레이어와 가장 가까운타겟
                 var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
                 Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
-                if (turrr.Distance(Target.Position) > 880) // 터렛 사정거리 밖에있어야만 공격함.
+                if (turrr.Distance(Target.Position) > TRRange) // 터렛 사정거리 밖에있어야만 공격함.
 				{
 					castspell_hero(Target);
 				Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, 50));
