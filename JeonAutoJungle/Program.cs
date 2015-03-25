@@ -937,7 +937,7 @@ index = 14
             Obj_AI_Hero Target = null;
             /*if (ChoosedTarget == null)
             {*/
-                Target = TargetSelector.GetTarget(Physical, TargetSelector.DamageType.Physical);
+                Target = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Physical);
 /*            }
             else
             {
