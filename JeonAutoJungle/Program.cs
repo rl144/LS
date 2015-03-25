@@ -931,7 +931,20 @@ index = 14
             if (smiteSlot == SpellSlot.Unknown)
                 Game.PrintChat("YOU ARE NOT JUNGLER(NO SMITE)");
         }
-        private static void Game_OnUpdate(EventArgs args) 
+        private static Obj_AI_Hero GetTarget()
+        {
+            Obj_AI_Hero Target = null;
+            if (ChoosedTarget == null)
+            {
+                Target = TargetSelector.GetTarget(Physical, TargetSelector.DamageType.Physical);
+            }
+            else
+            {
+                Target = ChoosedTarget;
+            }
+            return Target;
+        }
+		private static void Game_OnUpdate(EventArgs args) 
         {
 		int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
 		int level = Player.Level;	
@@ -1582,11 +1595,11 @@ index = 14
                 Where(x => x.IsEnemy && !x.IsMe && !x.IsDead && !x.IsInvulnerable).First(); // 플레이어와 가장 가까운타겟
                 var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
                 Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
-                if (turrr.Distance(tarrr.Position) > 880) // 터렛 사정거리 밖에있어야만 공격함.
+                if (turrr.Distance(Target.Position) > 880) // 터렛 사정거리 밖에있어야만 공격함.
 				{
-					castspell_hero(tarrr);
-				Player.IssueOrder(GameObjectOrder.MoveTo, tarrr.ServerPosition.Extend(Player.ServerPosition, 50));
-					Player.IssueOrder(GameObjectOrder.AttackUnit, tarrr);
+					castspell_hero(Target);
+				Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, 50));
+					Player.IssueOrder(GameObjectOrder.AttackUnit, Target);
 				}
 /*				else if (turrr.Distance(tarrr.Position) <= 850)
 				{
