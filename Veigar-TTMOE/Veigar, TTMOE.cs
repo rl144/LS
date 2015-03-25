@@ -214,8 +214,8 @@ namespace Veigar__TTMOE
             if (Player.BaseSkinName != ChampionName) return;
 
             //Initializing Spells
-			//850으로하면 명중률 너무 떨어짐 825로 수정
-            Q = new Spell(SpellSlot.Q, 825);
+			//950으로하면 명중률 너무 떨어짐 910로 수정
+            Q = new Spell(SpellSlot.Q, 910);
             W = new Spell(SpellSlot.W, 900);
             E = new Spell(SpellSlot.E, 1050);
             R = new Spell(SpellSlot.R, 650);
