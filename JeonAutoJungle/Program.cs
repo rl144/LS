@@ -475,15 +475,15 @@ index = 3
 },
 new ItemToShop()
 {
-Price = 1000,
+Price = 1475,
 needItem = ItemId.Stalkers_Blade_Enchantment_Devourer,
-item = ItemId.Berserkers_Greaves,
+item = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
 index = 4
 },
 new ItemToShop()
 {
 Price = 1400,
-needItem = ItemId.Berserkers_Greaves,
+needItem = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
 item = ItemId.Bilgewater_Cutlass,
 index = 5
 },
@@ -524,26 +524,33 @@ index = 10
 },
 new ItemToShop()
 {
-Price = 1550,
+Price = 1400,
 needItem = ItemId.Phantom_Dancer,
-item = ItemId.B_F_Sword,
+item = ItemId.Ravenous_Hydra_Melee_Only,
 index = 11
+},
+new ItemToShop()
+{
+Price = 1550,
+needItem = ItemId.Ravenous_Hydra_Melee_Only,
+item = ItemId.B_F_Sword,
+index = 12
 },
 new ItemToShop()
 {
 Price = 2250,
 needItem = ItemId.B_F_Sword,
 item = ItemId.Infinity_Edge,
-index = 12
-},
-new ItemToShop()
+index = 13
+}
+/*new ItemToShop()
 {
 Price = 2900,
 needItem = ItemId.Infinity_Edge,
 item = ItemId.Last_Whisper,
-index = 13
+index = 14
 }
-};
+*/};
         #endregion
         #region as
         public static List<ItemToShop> buyThings_AS = new List<ItemToShop>
@@ -571,7 +578,7 @@ index = 3
 },
 new ItemToShop()
 {
-Price = 1000,
+Price = 1475,
 needItem = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
 /*item = ItemId.Boots_of_Speed,
 index = 4
@@ -580,13 +587,13 @@ new ItemToShop()
 {
 Price = 675,
 needItem = ItemId.Boots_of_Speed,
-*/item = ItemId.Boots_of_Swiftness,
+*/item = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
 index = 4
 },
 new ItemToShop()
 {
 Price = 1400,
-needItem = ItemId.Boots_of_Swiftness,
+needItem = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
 item = ItemId.Bilgewater_Cutlass,
 index = 5
 },
