@@ -1179,9 +1179,8 @@ index = 14
                 if (Player.InShop())
 					if(JeonAutoJungleMenu.Item("Invade").GetValue<Boolean>())
 					{
-						if(!IsBlueTeam && now == 7 || !IsBlueTeam && now == 15) //정글 게 뻘짓 줄이기
-						now += 1;
-						else if(IsBlueTeam && now == 7 || IsBlueTeam && now == 14)
+						if(!IsBlueTeam && now == 7 || !IsBlueTeam && now == 15 ||
+							IsBlueTeam && now == 7 || IsBlueTeam && now == 14) //정글 게 뻘짓 줄이기
 						now += 1;
 					}
                     recall = false;
