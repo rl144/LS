@@ -10,7 +10,7 @@ using System.Drawing;
 using SharpDX;
 using Color = System.Drawing.Color;
 
-namespace SmiteOP
+namespace IgSm
 {
     internal class Program
     {
@@ -18,7 +18,7 @@ namespace SmiteOP
         private static Spell SmiteSlot;
 		private static Spell IgniteSlot;
         private static List<Items.Item> itemsList = new List<Items.Item>();
-        private static string WelcMsg = ("<font color = '#ff3366'>SmiteOP</font><font color='#FFFFFF'> by Da'ath.</font> <font color = '#66ff33'> ~~ LOADED ~~</font> ");
+        private static string WelcMsg = ("<font color = '#ff3366'>IgSm</font><font color='#FFFFFF'> by Da'ath.</font> <font color = '#66ff33'> ~~ LOADED ~~</font> ");
         public static SpellSlot smiteSlot = SpellSlot.Unknown;
 		public static SpellSlot igniteSlot = SpellSlot.Unknown;
         private static Menu Menu;
@@ -39,7 +39,7 @@ namespace SmiteOP
              CreateMenu();
              InitializeItems();
 
-             Game.OnGameUpdate += Game_OnGameUpdate;
+             Game.OnUpdate += Game_OnUpdate;
              Drawing.OnDraw += Drawing_OnDraw;
       
         }
@@ -57,7 +57,7 @@ namespace SmiteOP
                 return;
         }
 
-        private static void Game_OnGameUpdate(EventArgs args)
+        private static void Game_OnUpdate(EventArgs args)
         {
             if (!Menu.Item("enable").GetValue<bool>())
                 return;
@@ -114,7 +114,7 @@ namespace SmiteOP
 
         private static void CreateMenu()
         {
-            Menu = new Menu("SmiteOP", "menu", true);
+            Menu = new Menu("IgSm", "menu", true);
             Menu.AddItem(new MenuItem("enable", "Enable").SetValue(true));
             Menu.AddItem(new MenuItem("draw", "Draw Smite Range").SetValue(new Circle(true, Color.Blue)));
             Menu.AddToMainMenu();
