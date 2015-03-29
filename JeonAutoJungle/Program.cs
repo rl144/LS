@@ -11,55 +11,6 @@ using System.IO;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
-namespace Surrender 
-{
-	internal class ProgramS
-   { 
-       private static void RemoveEventHandler(EventArgs args) 
-       { 
-//            LeagueSharp.Game.OnGameStart -= Game.Game_OnGameStart; 
-            LeagueSharp.Game.OnGameNotifyEvent -= Game.Game_OnGameNotifyEvent; 
-//            LeagueSharp.Game.OnUpdate -= Game.Game_OnUpdate; 
-        } 
-        private static void RegisterEvents() 
-        { 
-//            LeagueSharp.Game.OnGameStart += Game.Game_OnGameStart; 
-//            LeagueSharp.Game.OnUpdate += Game.Game_OnUpdate; 
-            LeagueSharp.Game.OnGameNotifyEvent += Game.Game_OnGameNotifyEvent; 
-           CustomEvents.Game.OnGameEnd += RemoveEventHandler; 
-        } 
-    } 
-	public class Game
-    {
-		private static DateTime time;
-		private static bool SurrenderVoteRunning(GameNotifyEventArgs args)
-        {
-            return args.EventId == GameEventId.OnSurrenderVote || args.EventId == GameEventId.OnSurrenderVoteStart;
-        }
-        private static void ChatWithDelay(int minWaitInMs, int maxWaitInMs, string text)
-        {
-            Task.Factory.StartNew(
-                () =>
-                {
-                    var sleep = new Random().Next(minWaitInMs, maxWaitInMs);
-                    Thread.Sleep(sleep);
-                    LeagueSharp.Game.Say(text);
-                });
-        }
-        private static void AgreeSurrender()
-        {
-            ChatWithDelay(2000, 10000, new Random(2).Next() == 1 ? @"/ff" : @"/surrender");
-            time = DateTime.Now;
-        }
-		internal static void Game_OnGameNotifyEvent(GameNotifyEventArgs args)
-        {
-			if(SurrenderVoteRunning(args))
-			{
-			AgreeSurrender();
-			}	
-		}
-	}
-} 
 
 namespace JeonJunglePlay
 {
