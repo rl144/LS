@@ -105,7 +105,7 @@ namespace RLProject.Champions
             Mobsteal();
         }
 		
-		static float Eharrass();
+		public static float Eharrass();
         {
             int lvl = Player.Level;
             int eharrass = (80 + 12 * lvl);
