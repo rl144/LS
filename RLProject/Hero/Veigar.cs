@@ -10,7 +10,7 @@ using Collision = LeagueSharp.Common.Collision;
 
 namespace RLProject.Champions
 {
-    public static class Kalista
+    public static class Veigar
     {
         static Obj_AI_Hero Player { get { return ObjectManager.Player; } }
         static Orbwalking.Orbwalker Orbwalker { get { return RLProject.Orbwalker; } }
@@ -19,12 +19,14 @@ namespace RLProject.Champions
 
         public static void Load()
         {
-            Q = new Spell(SpellSlot.Q, 1180f);
-            W = new Spell(SpellSlot.W, 5200f);
-            E = new Spell(SpellSlot.E, 1000f);
-            R = new Spell(SpellSlot.R, 1400f);
+            Q = new Spell(SpellSlot.Q, 950f);
+            W = new Spell(SpellSlot.W, 900f);
+            E = new Spell(SpellSlot.E, 1050f);
+            R = new Spell(SpellSlot.R, 650f);
 
-            Q.SetSkillshot(0.25f, 30f, 1700f, true, SkillshotType.SkillshotLine);
+            Q.SetSkillshot(0.25f, 70f, 2000f, false, SkillshotType.SkillshotLine);
+            W.SetSkillshot(1.25f, 225f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            E.SetSkillshot(0.50f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 
             var drawDamageMenu = new MenuItem("Draw_RDamage", "Draw (E) Damage", true).SetValue(true);
             var drawFill = new MenuItem("Draw_Fill", "Draw (E) Damage Fill", true).SetValue(new Circle(true, Color.FromArgb(90, 255, 169, 4)));

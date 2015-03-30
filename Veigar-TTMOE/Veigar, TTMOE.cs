@@ -192,7 +192,7 @@ namespace Veigar__TTMOE
         private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
-            var sprite = new Render.Sprite(Properties.Resources.Sprite, new Vector2(Drawing.Width * 0.83f, Drawing.Height * 0.33f));
+/*            var sprite = new Render.Sprite(Properties.Resources.Sprite, new Vector2(Drawing.Width * 0.83f, Drawing.Height * 0.33f));
             sprite.VisibleCondition += s => Render.OnScreen(Drawing.WorldToScreen(Player.Position)) && menu.Item("Show").GetValue<bool>();
             sprite.Scale = new Vector2(1f, 1f);
             sprite.Add();
@@ -203,7 +203,7 @@ namespace Veigar__TTMOE
                     sprite.Dispose();
                     sprite = null;
                 }
-            };
+            };*/ //스프라이트 - 배너를 지웠습니당
         }
 
         private static void Game_OnGameLoad(EventArgs args)
@@ -306,7 +306,7 @@ namespace Veigar__TTMOE
             menu.SubMenu("Other").AddItem(new MenuItem("buystart", "Buy Starting Items").SetValue(new KeyBind("P".ToCharArray()[0], KeyBindType.Press, false)));
             menu.SubMenu("Other").AddItem(new MenuItem("Reset", "Remove Target Lock").SetValue(new KeyBind("L".ToCharArray()[0], KeyBindType.Press, false)));
             menu.SubMenu("Other").AddItem(new MenuItem("packet", "Use Packets").SetValue(true));
-            menu.SubMenu("Other").AddItem(new MenuItem("Show", "Display Sprite").SetValue(true));
+            //menu.SubMenu("Other").AddItem(new MenuItem("Show", "Display Sprite").SetValue(true)); 배너 삭
             //menu.SubMenu("Other").AddItem(new MenuItem("skinch", "Use Custom Skin").SetValue(false));
             //menu.SubMenu("Other").AddItem(new MenuItem("skinechm", "Skin Changer").SetValue(new Slider(5, 1, 8)));
 
