@@ -74,7 +74,7 @@ namespace IgSm
                 return;
 
             float dmg = Damage();
-			float idmg = IDamage();
+			float idmg = Idamage();
             foreach (var enemy in enemys)
             {
                 if (enemy.Health <= dmg)
@@ -152,10 +152,10 @@ namespace IgSm
 
             return damage;
         }
-		private static float IDamage()
+		private static float Idamage()
 		{
 			int lvl = Player.Level;
-			int idamage = (20 + 20 * lvl); // 원랜 50+20*lvl이지만 이렇게함!!)
+			int idamage = (30 + 20 * lvl); // 원랜 50+20*lvl이지만 이렇게함!!)
 			return idamage;
 		}
 	}

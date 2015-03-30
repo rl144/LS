@@ -100,9 +100,16 @@ namespace RLProject.Champions
                 Laneclear();
                 Jungleclear();
             }
-
+			float ehrs = Eharrass();
             Killsteal();
             Mobsteal();
+        }
+		
+		static float Eharrass();
+        {
+            int lvl = Player.Level;
+            int eharrass = (80 + 12 * lvl);
+            return eharrass;
         }
 
         static void Drawing_OnDraw(EventArgs args)
@@ -246,10 +253,10 @@ namespace RLProject.Champions
                     Q.Cast(Qtarget);
             }
 
-            if (RLProject.Menu.Item("homboUseE", true).GetValue<Boolean>() && E.IsReady())
+            if (RLProject.Menu.Item("harrassUseE", true).GetValue<Boolean>() && E.IsReady())
             {
                 var EMinion = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Enemy).Where(x => x.Health <= E.GetDamage(x)).OrderBy(x => x.Health).FirstOrDefault();
-                var ETarget = HeroManager.Enemies.Where(x => E.CanCast(x) && E.GetDamage(x) >= 1 && !x.HasBuffOfType(BuffType.Invulnerability) && !x.HasBuffOfType(BuffType.SpellShield)).OrderByDescending(x => E.GetDamage(x)).FirstOrDefault();
+                var ETarget = HeroManager.Enemies.Where(x => E.CanCast(x) && E.GetDamage(x) >= ehrs && !x.HasBuffOfType(BuffType.Invulnerability) && !x.HasBuffOfType(BuffType.SpellShield)).OrderByDescending(x => E.GetDamage(x)).FirstOrDefault();
 
                 if (ETarget.Health <= E.GetDamage(ETarget) || (E.CanCast(EMinion) && E.CanCast(ETarget)))
                     E.Cast();
@@ -306,7 +313,7 @@ namespace RLProject.Champions
             if (RLProject.Menu.Item("harassUseE", true).GetValue<Boolean>() && E.IsReady())
             {
                 var EMinion = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Enemy).Where(x => x.Health <= E.GetDamage(x)).OrderBy(x => x.Health).FirstOrDefault();
-                var ETarget = HeroManager.Enemies.Where(x => E.CanCast(x) && E.GetDamage(x) >= 1 && !x.HasBuffOfType(BuffType.Invulnerability) && !x.HasBuffOfType(BuffType.SpellShield)).OrderByDescending(x => E.GetDamage(x)).FirstOrDefault();
+                var ETarget = HeroManager.Enemies.Where(x => E.CanCast(x) && E.GetDamage(x) >= ehrs && !x.HasBuffOfType(BuffType.Invulnerability) && !x.HasBuffOfType(BuffType.SpellShield)).OrderByDescending(x => E.GetDamage(x)).FirstOrDefault();
 
                 if (ETarget.Health <= E.GetDamage(ETarget) || (E.CanCast(EMinion) && E.CanCast(ETarget)))
                     E.Cast();
