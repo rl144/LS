@@ -94,11 +94,11 @@ namespace RLProject.Champions
                 DamageIndicator.FillColor = eventArgs.GetNewValue<Circle>().Color;
             };
 
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
         }
 
-        static void Game_OnGameUpdate(EventArgs args)
+        static void Game_OnUpdate(EventArgs args)
         {
             if (Player.IsDead)
                 return;

@@ -71,14 +71,14 @@ namespace RLProject.Champions
                 DamageIndicator.FillColor = eventArgs.GetNewValue<Circle>().Color;
             };
 
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
             Obj_AI_Hero.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
         }
 
-        static void Game_OnGameUpdate(EventArgs args)
+        static void Game_OnUpdate(EventArgs args)
         {
             if (Player.IsDead)
                 return;

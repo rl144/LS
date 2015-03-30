@@ -47,13 +47,13 @@ namespace RLProject.Champions
             RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("drawingR", "R Range", true).SetValue(new Circle(true, Color.FromArgb(170, 78, 25))));
             RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("drawingRTimer", "R Timer", true).SetValue(true));
 
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
             Orbwalking.AfterAttack += Orbwalking_OnAfterAttack;
         }
 
-        static void Game_OnGameUpdate(EventArgs args)
+        static void Game_OnUpdate(EventArgs args)
         {
             if (Player.IsDead)
                 return;
