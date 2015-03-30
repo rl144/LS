@@ -100,10 +100,11 @@ namespace RLProject.Champions
                 Laneclear();
                 Jungleclear();
             }
-			float ehrs = Eharrass();
             Killsteal();
             Mobsteal();
         }
+		
+		static float ehrs = Eharrass();
 		
 		static float Eharrass()
         {
