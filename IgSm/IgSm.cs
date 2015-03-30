@@ -18,7 +18,7 @@ namespace IgSm
         private static Spell SmiteSlot;
 		private static Spell IgniteSlot;
         private static List<Items.Item> itemsList = new List<Items.Item>();
-        private static string WelcMsg = ("<font color = '#ff3366'>IgSm</font><font color='#FFFFFF'> by Da'ath.</font> <font color = '#66ff33'> ~~ LOADED ~~</font> ");
+        private static string WelcMsg = ("<font color = '#ff3366'>IgSm</font><font color='#FFFFFF'> by RL244.</font> <font color = '#66ff33'> ~~ LOADED ~~</font> ");
         public static SpellSlot smiteSlot = SpellSlot.Unknown;
 		public static SpellSlot igniteSlot = SpellSlot.Unknown;
         private static Menu Menu;
