@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Linq;
 using System.Collections.Generic;
 using LeagueSharp;
@@ -10,7 +10,7 @@ using Collision = LeagueSharp.Common.Collision;
 
 namespace RLProject.Champions
 {
-    public static class Ashe
+    public static class MissFortune
     {
         static Obj_AI_Hero Player { get { return ObjectManager.Player; } }
         static Orbwalking.Orbwalker Orbwalker { get { return RLProject.Orbwalker; } }
@@ -263,3 +263,4 @@ namespace RLProject.Champions
         }
     }
 }
+*/
