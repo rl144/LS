@@ -178,8 +178,6 @@ namespace RLProject.Champions
 
         public static void Load()
         {
-            Player = ObjectManager.Player;
-
             //Initializing Spells
 			//950으로하면 명중률 너무 떨어짐 910로 수정
             Q = new Spell(SpellSlot.Q, 910);
@@ -209,14 +207,14 @@ namespace RLProject.Champions
             //Target selector
             var targetSelectorMenu = new Menu("Target Selector", "Target Selector");
             TargetSelector.AddToMenu(targetSelectorMenu);
-            RLProject.menu.AddSubMenu(targetSelectorMenu);
+            RLProject.Menu.AddSubMenu(targetSelectorMenu);
 
             //Orbwalker
-            RLProject.menu.AddSubMenu(orbwalkerMenu);
+            RLProject.Menu.AddSubMenu(orbwalkerMenu);
             chooseOrbwalker(true);
 */
             //Keys & Combo Related
-            RLProject.menu.AddSubMenu(new Menu("Keys", "Keys"));
+            RLProject.Menu.AddSubMenu(new Menu("Keys", "Keys"));
             RLProject.Menu.SubMenu("Keys");
             RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("Combo", "Smart Combo").SetValue(new KeyBind(32, KeyBindType.Press, false)));
             RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("AllInActive", "Use All Spells").SetValue(new KeyBind("Z".ToCharArray()[0], KeyBindType.Press)));
@@ -230,7 +228,7 @@ namespace RLProject.Champions
             RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("InfoTable", "Show Info Table[FPS]").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Toggle)));
 
             //Drawings menu:
-//            RLProject.menu.AddSubMenu(new Menu("Drawings", "Drawings"));
+//            RLProject.Menu.AddSubMenu(new Menu("Drawings", "Drawings"));
             RLProject.Menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDdisplay", "Heads-up Display").SetValue(false));
             RLProject.Menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDX", "X axis").SetValue(new Slider(67, 0, 100)));
             RLProject.Menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDY", "Y axis").SetValue(new Slider(86, 0, 100)));
@@ -251,7 +249,7 @@ namespace RLProject.Champions
             RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("OptimalCombo", "Show Best Kill Combo[FPS]").SetValue(false));
 
             //Mana Manager menu:
-            RLProject.menu.AddSubMenu(new Menu("Mana Manager", "manam"));
+            RLProject.Menu.AddSubMenu(new Menu("Mana Manager", "manam"));
             RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("manaStatus", "Display Mana Status").SetValue(true));
             RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("wusage", "WaveClear if mana > (%)").SetValue(new Slider(0)));
             RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("qusage", "Q farm if mana > (%)").SetValue(new Slider(0)));
@@ -261,7 +259,7 @@ namespace RLProject.Champions
             RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("SaveEH", "Save Mana for E(Harass)").SetValue(false));
 
             //Misc menu:
-            RLProject.menu.AddSubMenu(new Menu("Other", "Other"));
+            RLProject.Menu.AddSubMenu(new Menu("Other", "Other"));
             RLProject.Menu.SubMenu("Other").AddSubMenu(new Menu("Auto W Settings", "wsets"));
             RLProject.Menu.SubMenu("Other").SubMenu("wsets").AddItem(new MenuItem("Wimm", "Enable Auto W on CC'ed targets").SetValue(true));
             RLProject.Menu.SubMenu("Other").SubMenu("wsets").AddItem(new MenuItem("Wimmz", "Use W on invulnerability end").SetValue(true));
@@ -278,7 +276,7 @@ namespace RLProject.Champions
             //RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("skinechm", "Skin Changer").SetValue(new Slider(5, 1, 8)));
 
             //Notifications
-            RLProject.menu.AddSubMenu(new Menu("Notifications", "notes"));
+            RLProject.Menu.AddSubMenu(new Menu("Notifications", "notes"));
             RLProject.Menu.SubMenu("notes").AddItem(new MenuItem("noteactive", "Enable text notifications").SetValue(true));
             RLProject.Menu.SubMenu("notes").AddItem(new MenuItem("notems", "Inform if your ms < target ms[combo]").SetValue(true));
             RLProject.Menu.SubMenu("notes").AddItem(new MenuItem("notebuffs", "Inform if target has forbidden buffs").SetValue(false));
@@ -286,21 +284,21 @@ namespace RLProject.Champions
 
 
             //Laneclear menu:
-//            RLProject.menu.AddSubMenu(new Menu("Laneclear", "Laneclear"));
+//            RLProject.Menu.AddSubMenu(new Menu("Laneclear", "Laneclear"));
             RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("dontfarm", "Disable Q farm when using any combos").SetValue(true));
             RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("OnlySiege", "Last hit only siege creeps").SetValue(false));
             RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("WAmount", "Min Minions To Land W").SetValue(new Slider(3, 1, 7)));
             RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("LaneclearMove", "Move To mouse").SetValue(new StringList(new[] { "Never", "Lane Clear", "Q farm", "Lane Clear & Q farm" }, 0)));
 
             //Jungle Laneclear menu:
-//            RLProject.menu.AddSubMenu(new Menu("Jungle Laneclear", "Jungleclear"));
+//            RLProject.Menu.AddSubMenu(new Menu("Jungle Laneclear", "Jungleclear"));
             RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("UseAAJungle", "Use AA").SetValue(true));
             RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("UseQJungle", "Use Q").SetValue(true));
             RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("UseWJungle", "Use W").SetValue(true));
             RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("UseEJungle", "Use E").SetValue(false));
 
             //Auto KS
-            RLProject.menu.AddSubMenu(new Menu("Auto KS", "AutoKS"));
+            RLProject.Menu.AddSubMenu(new Menu("Auto KS", "AutoKS"));
             RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("UseQKS", "Use Q").SetValue(true));
             RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("UseWKS", "Use W").SetValue(false));
             RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("UseRKS", "Use R").SetValue(false));
@@ -309,12 +307,12 @@ namespace RLProject.Champions
             RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("AutoKST", "AutoKS (toggle)!").SetValue(new KeyBind("U".ToCharArray()[0], KeyBindType.Toggle, true)));
 
             //Harass menu:
-//            RLProject.menu.AddSubMenu(new Menu("Harass", "Harass"));
+//            RLProject.Menu.AddSubMenu(new Menu("Harass", "Harass"));
             RLProject.Menu.SubMenu("Harass").AddItem(new MenuItem("HarassMode", "Choose Harass Type").SetValue(new StringList(new[] { "E+W+Q", "E+W", "Q", "None" }, 2)));
             RLProject.Menu.SubMenu("Harass").AddItem(new MenuItem("WaitW", "Cast W before Q").SetValue(false));
 
             //Combo menu:
-//            RLProject.menu.AddSubMenu(new Menu("Combo and Casting", "Combo"));
+//            RLProject.Menu.AddSubMenu(new Menu("Combo and Casting", "Combo"));
             RLProject.Menu.SubMenu("Combo").AddItem(new MenuItem("LockTargets", "Lock Targets with Left Click").SetValue(true));
             RLProject.Menu.SubMenu("Combo").AddItem(new MenuItem("DontEShields", "Dont use E in spell shields").SetValue(true));
             RLProject.Menu.SubMenu("Combo").AddItem(new MenuItem("ToOrb", "[in-built]OrbWalk when comboing").SetValue(false));
