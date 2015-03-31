@@ -176,23 +176,6 @@ namespace RLProject.Champions
         static int ManaMode = 0;
         static int NeededCD = 0;
 
-        static void Main(string[] args)
-        {
-            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
-/*            var sprite = new Render.Sprite(Properties.Resources.Sprite, new Vector2(Drawing.Width * 0.83f, Drawing.Height * 0.33f));
-            sprite.VisibleCondition += s => Render.OnScreen(Drawing.WorldToScreen(Player.Position)) && menu.Item("Show").GetValue<bool>();
-            sprite.Scale = new Vector2(1f, 1f);
-            sprite.Add();
-            Game.OnUpdate += eventArgs =>
-            {
-                if (sprite != null && Game.ClockTime >= 50)
-                {
-                    sprite.Dispose();
-                    sprite = null;
-                }
-            };*/ //스프라이트 - 배너를 지웠습니당
-        }
-
         public static void Load()
         {
             Player = ObjectManager.Player;
