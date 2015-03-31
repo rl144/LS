@@ -243,7 +243,7 @@ namespace KurisuNidalee
             PrimalSurge();
             Killsteal();
 
-            if (_mainMenu.Item("usecombo").GetValue<KeyBind>().Active)
+            if (_mainMenu.Item("usecombo").GetValue<bool>())
                 UseCombo(_target);
 
             if (_mainMenu.Item("useharass").GetValue<KeyBind>().Active ||
@@ -252,9 +252,9 @@ namespace KurisuNidalee
                 UseHarass();
             }
 
-            if (_mainMenu.Item("useclear").GetValue<KeyBind>().Active)
+            if (_mainMenu.Item("useclear").GetValue<bool>())
                 UseLaneFarm();
-            if (_mainMenu.Item("usejungle").GetValue<KeyBind>().Active)
+            if (_mainMenu.Item("usejungle").GetValue<bool>())
                 UseJungleFarm();
             if (_mainMenu.Item("uselasthit").GetValue<KeyBind>().Active)
                 UseLastHit();
