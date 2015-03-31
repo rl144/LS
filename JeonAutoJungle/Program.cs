@@ -1118,7 +1118,8 @@ index = 14
                     }
                     else if (Player.Position.Distance(target.Position) <= 500 && Player.Position.Distance(target.Position) > 250)
                     {
-                        if (CheckMonster(target.name, target.Position, 600)) //해당지점에 몬스터가 있는지
+                        if(!recall)
+						{if (CheckMonster(target.name, target.Position, 600)) //해당지점에 몬스터가 있는지
                         {
                             DoCast();
                             Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
@@ -1130,11 +1131,12 @@ index = 14
                         {
                                 Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
                                 afktime = 0;
-                        }
+                        }}
 					}
                     else if (Player.Position.Distance(target.Position) <= 250)
                     {
-                        if (CheckMonster(target.name, target.Position, 500)) //해당지점에 몬스터가 있는지
+						if(!recall)
+                        {if (CheckMonster(target.name, target.Position, 500)) //해당지점에 몬스터가 있는지
                         {
                             DoCast();
                             Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
@@ -1147,7 +1149,7 @@ index = 14
                             now += 1;
                             if (now > max)
                                 now = 1;
-                        }
+                        }}
                     }
                 }
                 if (Player.InShop())
@@ -1262,7 +1264,7 @@ index = 14
 							DoLaneClear();
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(face_ehro2 < 1)
+									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
 									{
 										if(!_cougarForm && Aspectofcougar.IsReady())
 										{
@@ -1276,14 +1278,14 @@ index = 14
 								}
                         }
                             
-                        else if (GetMinions(turret) > 1 && face_ehro <= 1 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && face_ally >= 2 && Player.HealthPercentage() >= 35)
+                        else if (GetMinions(turret) > 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && face_ally >= 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35)
                         {
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 //							DoCast_Hero();
 //							DoLaneClear();
 								if (Player.ChampionName == "Nidalee")
 								{
-									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange)
+									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
 									{
 										if(!_cougarForm && Aspectofcougar.IsReady())
 										{
