@@ -349,7 +349,7 @@ namespace RLProject.Champions
 
         static void Harass()
         {
-            if (!(Player.ManaPercentage() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value))
+            if (!(Player.ManaPercent() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value))
             {
                 if (RLProject.Menu.Item("harassUseQ", true).GetValue<Boolean>())
                     QSwitch(false);
@@ -382,7 +382,7 @@ namespace RLProject.Champions
                 return;
             }
 
-            if (!(Player.ManaPercentage() > RLProject.Menu.Item("laneclearMana", true).GetValue<Slider>().Value))
+            if (!(Player.ManaPercent() > RLProject.Menu.Item("laneclearMana", true).GetValue<Slider>().Value))
             {
                 if (RLProject.Menu.Item("laneclearUseQ", true).GetValue<Boolean>()) 
                     QSwitch(false);
@@ -410,7 +410,7 @@ namespace RLProject.Champions
                 return;
             }
 
-            if (!(Player.ManaPercentage() > RLProject.Menu.Item("jungleclearMana", true).GetValue<Slider>().Value))
+            if (!(Player.ManaPercent() > RLProject.Menu.Item("jungleclearMana", true).GetValue<Slider>().Value))
             {
                 if (RLProject.Menu.Item("jungleclearUseQ", true).GetValue<Boolean>())
                     QSwitch(false);

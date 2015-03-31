@@ -140,7 +140,7 @@ namespace RLProject.Champions
                     W.Cast(Target);
             }
 
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed && Player.ManaPercentage() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value)
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed && Player.ManaPercent() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value)
             {
                 if (RLProject.Menu.Item("harassUseQ", true).GetValue<Boolean>() && Q.CanCast(Target) && !Player.IsDashing())
                     Q.Cast(Target);
@@ -198,7 +198,7 @@ namespace RLProject.Champions
 
         static void Harass()
         {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value))
+            if (!Orbwalking.CanMove(1) || !(Player.ManaPercent() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value))
                 return;
 
             if (RLProject.Menu.Item("harassUseQ", true).GetValue<Boolean>())
@@ -212,7 +212,7 @@ namespace RLProject.Champions
 
         static void Laneclear()
         {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("laneclearMana", true).GetValue<Slider>().Value))
+            if (!Orbwalking.CanMove(1) || !(Player.ManaPercent() > RLProject.Menu.Item("laneclearMana", true).GetValue<Slider>().Value))
                 return;
 
             var Minions = MinionManager.GetMinions(Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.Enemy);
@@ -231,7 +231,7 @@ namespace RLProject.Champions
 
         static void Jungleclear()
         {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("jungleclearMana", true).GetValue<Slider>().Value))
+            if (!Orbwalking.CanMove(1) || !(Player.ManaPercent() > RLProject.Menu.Item("jungleclearMana", true).GetValue<Slider>().Value))
                 return;
 
             var Mobs = MinionManager.GetMinions(Player.ServerPosition, Orbwalking.GetRealAutoAttackRange(Player) + 100, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
