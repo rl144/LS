@@ -180,9 +180,9 @@ namespace RLProject.Champions
         {
             //Initializing Spells
 			//950으로하면 명중률 너무 떨어짐 910로 수정
-            Q = new Spell(SpellSlot.Q, 910);
+            Q = new Spell(SpellSlot.Q, 950);
             W = new Spell(SpellSlot.W, 900);
-            E = new Spell(SpellSlot.E, 1050);
+            E = new Spell(SpellSlot.E, 1040);
             R = new Spell(SpellSlot.R, 650);
 
 /*            Q.SetSkillshot(0.25f, 70f, 1750f, false, SkillshotType.SkillshotLine);
@@ -921,11 +921,11 @@ namespace RLProject.Champions
             else if (D && DR)
                 NeededRangee = 650;
             else if (A && AR)
-                NeededRangee = 850; //Q리메이크로 사정거리 850됨. 
+                NeededRangee = 950; //Q리메이크로 사정거리 850됨. 
             else if (B && BR)
                 NeededRangee = 900;
             else if (C && CR)
-                NeededRangee = 1060;
+                NeededRangee = 1040;
             return NeededRangee;
         }
 
@@ -1871,7 +1871,7 @@ namespace RLProject.Champions
             Obj_AI_Hero Target = null;
             if (ChoosedTarget == null)
             {
-                Target = TargetSelector.GetTarget(1060, TargetSelector.DamageType.Magical);
+                Target = TargetSelector.GetTarget(1040, TargetSelector.DamageType.Magical);
             }
             else
             {
@@ -2093,7 +2093,7 @@ namespace RLProject.Champions
                     missile.Target.IsValid<Obj_AI_Hero>() && missile.Target.IsEnemy)
                 {
                     var turret = (Obj_AI_Turret)missile.SpellCaster;
-                    if (Player.Distance(missile.Target.Position) < 1060)
+                    if (Player.Distance(missile.Target.Position) < 1040)
                         castE((Obj_AI_Hero)missile.Target);
                 }
             }
