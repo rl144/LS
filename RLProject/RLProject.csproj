@@ -70,6 +70,7 @@
     <Compile Include="Hero\Tristana.cs" />
     <Compile Include="Hero\Twitch.cs" />
     <Compile Include="Hero\Vayne.cs" />
+    <Compile Include="Hero\Veigar.cs" />
     <Compile Include="Hero\_base.cs" />
     <Compile Include="DamageIndicator.cs" />
     <Compile Include="RLProject.cs" />

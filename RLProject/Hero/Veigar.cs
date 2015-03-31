@@ -12,327 +12,2192 @@ namespace RLProject.Champions
 {
     public static class Veigar
     {
+        static bool boughtItemOne;                   //Var to check if bought starting items
+        static Obj_AI_Hero ChoosedTarget = null;
+        static int TargetLockCD;
+        static Obj_AI_Base _m = null;
         static Obj_AI_Hero Player { get { return ObjectManager.Player; } }
-        static Orbwalking.Orbwalker Orbwalker { get { return RLProject.Orbwalker; } }
+		static Orbwalking.Orbwalker Orbwalker { get { return RLProject.Orbwalker; } }
+        static Obj_AI_Hero Target = null;
+        static Obj_AI_Hero WimmTarget = null;
+        static Obj_AI_Hero WimmTargett = null;
+        //static Int32 LastSkin;
+        static int Orb = 0;
+        static int ComboStarted = 0;
+        static float Delay = 0f;
+        static float Delay1 = 0f;
+        static string Ccombo = null;
+        static float Delayy = 0f;
+        static float Delayy1 = 0f;
+        static string Cccombo = null;
 
-        static Spell Q, W, E, R;
+        //HUD
+        static List<HUD> HUDlist = new List<HUD>
+        {
+            new HUD()
+            {
+                DisplayTextON = "Combo : On", DisplayTextOFF = "Combo : Off", MenuText = "Display Combo Status", MenuComboText = "Combo"
+            },
+            new HUD()
+            {
+                DisplayTextON = "Harass : On", DisplayTextOFF = "Harass : Off", MenuText = "Display Harass Status", MenuComboText = "HarassActive"
+            },
+            new HUD()
+            {
+                DisplayTextON = "UseAll : On", DisplayTextOFF = "UseAll : Off", MenuText = "Display Use All Status", MenuComboText = "AllInActive"
+            },
+            new HUD()
+            {
+                DisplayTextON = "Q LastHit : On", DisplayTextOFF = "Q LastHit : Off", MenuText = "Display Q farm Status", MenuComboText = "LastHitQQ"
+            },
+            new HUD()
+            {
+                DisplayTextON = "AutoKS : On", DisplayTextOFF = "AutoKS : Off", MenuText = "Display KS Status", MenuComboText = "AutoKST"
+            },
+            new HUD()
+            {
+                DisplayTextON = "StunClosest : On", DisplayTextOFF = "StunClosest : Off", MenuText = "Display Stun Closest Status", MenuComboText = "Stun Closest Enemy"
+            },
+            new HUD()
+            {
+                DisplayTextON = "LaneClearW : On", DisplayTextOFF = "LaneClearW : Off", MenuText = "Display LaneClear Status", MenuComboText = "LastHitWW"
+            },
+        };
+
+        //Buffs
+        static List<NewBuff> buffList = new List<NewBuff>
+        {
+            
+            new NewBuff()
+            {
+                MenuName = "Sion Passive", DisplayName = "SionPassiveZombie", Name = "sionpassivezombie"
+            },
+            new NewBuff()
+            {
+                MenuName = "Alistar Ult", DisplayName = "Trample Buff", Name = "alistartrample"
+            },
+            new NewBuff()
+            {
+                MenuName = "Anivia Passive", DisplayName = "rebirth", Name = "Rebirth"
+            },
+            new NewBuff()
+            {
+                MenuName = "Aatrox Passive", DisplayName = "aatroxpassivedeath", Name = "AatroxPassiveReady"
+            },
+            new NewBuff()
+            {
+                MenuName = "Zac Passive", DisplayName = "zacrebirthready", Name = "ZacRebirthReady"
+            },
+            new NewBuff()
+            {
+                MenuName = "Kayle Ult", DisplayName = "JudicatorIntervention", Name = "JudicatorIntervention"
+            },
+            new NewBuff()
+            {
+                MenuName = "Lissandra Ult", DisplayName = "lissandrarself", Name = "LissandraRSelf"
+            },
+            new NewBuff()
+            {
+                MenuName = "Poppy Ult", DisplayName = "PoppyDiplomaticImmunity", Name = "PoppyDiplomaticImmunity"
+            },
+            new NewBuff()
+            {
+                MenuName = "Trynda Ult", DisplayName = "UndyingRage", Name = "Undying Rage"
+            },
+            new NewBuff()
+            {
+                MenuName = "Braum Shield", DisplayName = "braumeshieldbuff", Name = "BraumShieldRaise"
+            },
+            new NewBuff()
+            {
+                MenuName = "Guardian Angel", DisplayName = "Guardian Angel", Name = "willrevive"
+            },
+        };
+
+        static List<NewIgnore> IgnoreList = new List<NewIgnore>
+        {
+            new NewIgnore()
+            {
+                MenuName = "Banshees Veil", DisplayName = "BansheesVeil", Name = "bansheesveil"
+            },
+            new NewIgnore()
+            {
+                MenuName = "Nocturne Shield", DisplayName = "NocturneShroudofDarkness", Name = "NocturneShroudofDarknessShield"
+            },
+            new NewIgnore()
+            {
+                MenuName = "Morgana Shield", DisplayName = "Black Shield", Name = "BlackShield"
+            },
+            new NewIgnore()
+            {
+                MenuName = "Sivir Shield", DisplayName = "SivirE", Name = "Spell Shield"
+            },
+            new NewIgnore()
+            {
+                MenuName = "Fizz E", DisplayName = "fizztrickslamsounddummy", Name = "fizztrickslamsounddummy"
+            },
+                        new NewIgnore()
+            {
+                MenuName = "Vladimir W", DisplayName = "VladimirSanguinePool", Name = "VladimirSanguinePool"
+            },
+        };
+
+        //Spells
+        static List<Spell> SpellList = new List<Spell>();
+
+        static Spell Q;
+        static Spell W;
+        static Spell E;
+        static Spell R;
+
+        //Collision
+        static int _wallCastT;
+        static Vector2 _yasuoWallCastedPos;
+        static GameObject _yasuoWall;
+
+        //Damage
+        static Dictionary<Obj_AI_Hero, int> enemyDictionary = new Dictionary<Obj_AI_Hero, int>();
+        static Dictionary<Obj_AI_Hero, string> enemyDictionary1 = new Dictionary<Obj_AI_Hero, string>();
+
+        //Ignite
+        static SpellSlot IgniteSlot;
+
+        //Items
+        static Items.Item biscuit = new Items.Item(2010, 10);
+        static Items.Item HPpot = new Items.Item(2003, 10);
+        static Items.Item Flask = new Items.Item(2041, 10);
+
+        //Mana Manager
+        static int[] qMana = { 0, 60, 65, 70, 75, 80 };
+        static int[] wMana = { 0, 70, 75, 80, 85, 90 };
+        static int[] eMana = { 0, 80, 85, 90, 95, 100 };
+        static int[] rMana = { 0, 125, 125, 125 };
+
+        static int ManaMode = 0;
+        static int NeededCD = 0;
+
+        static void Main(string[] args)
+        {
+            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
+/*            var sprite = new Render.Sprite(Properties.Resources.Sprite, new Vector2(Drawing.Width * 0.83f, Drawing.Height * 0.33f));
+            sprite.VisibleCondition += s => Render.OnScreen(Drawing.WorldToScreen(Player.Position)) && menu.Item("Show").GetValue<bool>();
+            sprite.Scale = new Vector2(1f, 1f);
+            sprite.Add();
+            Game.OnUpdate += eventArgs =>
+            {
+                if (sprite != null && Game.ClockTime >= 50)
+                {
+                    sprite.Dispose();
+                    sprite = null;
+                }
+            };*/ //스프라이트 - 배너를 지웠습니당
+        }
 
         public static void Load()
         {
-            Q = new Spell(SpellSlot.Q, 950f);
-            W = new Spell(SpellSlot.W, 900f);
-            E = new Spell(SpellSlot.E, 1050f);
-            R = new Spell(SpellSlot.R, 650f);
+            Player = ObjectManager.Player;
 
+            //Initializing Spells
+			//950으로하면 명중률 너무 떨어짐 910로 수정
+            Q = new Spell(SpellSlot.Q, 910);
+            W = new Spell(SpellSlot.W, 900);
+            E = new Spell(SpellSlot.E, 1050);
+            R = new Spell(SpellSlot.R, 650);
+
+/*            Q.SetSkillshot(0.25f, 70f, 1750f, false, SkillshotType.SkillshotLine);
+            W.SetSkillshot(1.25f, 230f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            E.SetSkillshot(1.00f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+5.5패치로 q탄속 1750에서 2000으로 변경 및 e 1초에서 0.75초 <- 0.5초일수도있음확인필요*/
             Q.SetSkillshot(0.25f, 70f, 2000f, false, SkillshotType.SkillshotLine);
             W.SetSkillshot(1.25f, 225f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             E.SetSkillshot(0.50f, 330f, float.MaxValue, false, SkillshotType.SkillshotCircle);
 
-            var drawDamageMenu = new MenuItem("Draw_RDamage", "Draw (E) Damage", true).SetValue(true);
-            var drawFill = new MenuItem("Draw_Fill", "Draw (E) Damage Fill", true).SetValue(new Circle(true, Color.FromArgb(90, 255, 169, 4)));
+            SpellList.Add(Q);
+            SpellList.Add(W);
+            SpellList.Add(E);
+            SpellList.Add(R);
 
-            RLProject.Menu.SubMenu("Combo").AddItem(new MenuItem("comboUseQ", "Use Q", true).SetValue(true));
-            RLProject.Menu.SubMenu("Combo").AddItem(new MenuItem("comboUseE", "Use E", true).SetValue(true));
+            IgniteSlot = Player.GetSpellSlot("SummonerDot");
+/*
+            //Menu
+            menu = new Menu(ChampionName, ChampionName, true);
+            orbwalkerMenu = new Menu("Orbwalker", "Orbwalker");
 
-            RLProject.Menu.SubMenu("Harass").AddItem(new MenuItem("harassUseQ", "Use Q", true).SetValue(true));
-            RLProject.Menu.SubMenu("Harass").AddItem(new MenuItem("harassUseE", "Use E", true).SetValue(true));
-            RLProject.Menu.SubMenu("Harass").AddItem(new MenuItem("harassMana", "if Mana % >", true).SetValue(new Slider(50, 0, 100)));
+            //Target selector
+            var targetSelectorMenu = new Menu("Target Selector", "Target Selector");
+            TargetSelector.AddToMenu(targetSelectorMenu);
+            RLProject.menu.AddSubMenu(targetSelectorMenu);
 
-            RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("laneclearUseQ", "Use Q", true).SetValue(true));
-            RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("laneclearQnum", "Cast Q If Can Kill Minion Number >=", true).SetValue(new Slider(3, 1, 5)));
-            RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("laneclearUseE", "Use E", true).SetValue(true));
-            RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("laneclearEnum", "Cast E If Can Kill Minion Number >=", true).SetValue(new Slider(2, 1, 5)));
-            RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("laneclearMana", "if Mana % >", true).SetValue(new Slider(60, 0, 100)));
+            //Orbwalker
+            RLProject.menu.AddSubMenu(orbwalkerMenu);
+            chooseOrbwalker(true);
+*/
+            //Keys & Combo Related
+            RLProject.menu.AddSubMenu(new Menu("Keys", "Keys"));
+            RLProject.Menu.SubMenu("Keys");
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("Combo", "Smart Combo").SetValue(new KeyBind(32, KeyBindType.Press, false)));
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("AllInActive", "Use All Spells").SetValue(new KeyBind("Z".ToCharArray()[0], KeyBindType.Press)));
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("HarassActive", "Harass").SetValue(new KeyBind("C".ToCharArray()[0], KeyBindType.Press)));
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("Stun Closest Enemy", "Stun Closest Enemy").SetValue(new KeyBind("A".ToCharArray()[0], KeyBindType.Press, false)));
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("LastHitQQ", "Last hit with Q[Toggle]").SetValue(new KeyBind("J".ToCharArray()[0], KeyBindType.Toggle)));
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("LastHitQ", "Last hit with Q[Hold]").SetValue(new KeyBind("I".ToCharArray()[0], KeyBindType.Press, false)));
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("LastHitWW", "Lane Clear with W").SetValue(new KeyBind("K".ToCharArray()[0], KeyBindType.Press, false)));
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("JungleActive", "Jungle Laneclear").SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press, false)));
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("ExtraNeeded", "Show Extra/Needed Damage").SetValue(new KeyBind("N".ToCharArray()[0], KeyBindType.Toggle, true)));
+            RLProject.Menu.SubMenu("Keys").AddItem(new MenuItem("InfoTable", "Show Info Table[FPS]").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Toggle)));
 
-            RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("jungleclearUseQ", "Use Q", true).SetValue(true));
-            RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("jungleclearUseE", "Use E", true).SetValue(true));
-            RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("jungleclearMana", "if Mana % >", true).SetValue(new Slider(20, 0, 100)));
+            //Drawings menu:
+//            RLProject.menu.AddSubMenu(new Menu("Drawings", "Drawings"));
+            RLProject.Menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDdisplay", "Heads-up Display").SetValue(false));
+            RLProject.Menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDX", "X axis").SetValue(new Slider(67, 0, 100)));
+            RLProject.Menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("HUDY", "Y axis").SetValue(new Slider(86, 0, 100)));
+            foreach (var hud in HUDlist.Where(hud => hud.MenuText != "Display KS Status" && hud.MenuText != "Display Stun Closest Status" && hud.MenuText != "Display LaneClear Status"))
+                RLProject.Menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("U" + hud.MenuText, hud.MenuText).SetValue(true));
+            foreach (var hud in HUDlist.Where(hud => hud.MenuText == "Display KS Status" || hud.MenuText == "Display Stun Closest Status" || hud.MenuText == "Display LaneClear Status"))
+                RLProject.Menu.SubMenu("Drawings").SubMenu("HUD Settings").AddItem(new MenuItem("U" + hud.MenuText, hud.MenuText).SetValue(false));
 
-            RLProject.Menu.SubMenu("Misc").AddItem(new MenuItem("killsteal", "Use Killsteal (With E)", true).SetValue(true));
-            RLProject.Menu.SubMenu("Misc").AddItem(new MenuItem("mobsteal", "Use Mobsteal (With E)", true).SetValue(true));
-            RLProject.Menu.SubMenu("Misc").AddItem(new MenuItem("lasthitassist", "Use Lasthit Assist (With E)", true).SetValue(true));
-            RLProject.Menu.SubMenu("Misc").AddItem(new MenuItem("soulboundsaver", "Use Soulbound Saver (With R)", true).SetValue(true));
+//R범위 추가
+            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("QRange", "Q range").SetValue(new Circle(true, Color.FromArgb(255, 0, 255, 0))));
+            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("WRange", "W range").SetValue(new Circle(false, Color.FromArgb(100, 255, 0, 255))));
+            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("ERange", "E range").SetValue(new Circle(true, Color.FromArgb(255, 255, 0, 255))));
+            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("RRange", "R range").SetValue(new Circle(true, Color.FromArgb(255, 0, 255, 0))));
+            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("MinionMarker", "Mark Q Laneclear Minions").SetValue(new Circle(true, Color.Green)));
+            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("TText", "Mark Targets with Circles").SetValue(true));
+            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("LText", "Display Locked Target[HP BAR]").SetValue(true));
+            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("ExtraNeeded1", "Add HP bar indicator to E/N").SetValue(true));
+            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("OptimalCombo", "Show Best Kill Combo[FPS]").SetValue(false));
 
-            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("drawingAA", "Real AA Range", true).SetValue(new Circle(true, Color.FromArgb(0, 230, 255))));
-            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("drawingQ", "Q Range", true).SetValue(new Circle(true, Color.FromArgb(0, 230, 255))));
-            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("drawingW", "W Range", true).SetValue(new Circle(false, Color.FromArgb(0, 230, 255))));
-            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("drawingE", "E Range", true).SetValue(new Circle(true, Color.FromArgb(0, 230, 255))));
-            RLProject.Menu.SubMenu("Drawings").AddItem(new MenuItem("drawingR", "R Range", true).SetValue(new Circle(false, Color.FromArgb(0, 230, 255))));
+            //Mana Manager menu:
+            RLProject.menu.AddSubMenu(new Menu("Mana Manager", "manam"));
+            RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("manaStatus", "Display Mana Status").SetValue(true));
+            RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("wusage", "WaveClear if mana > (%)").SetValue(new Slider(0)));
+            RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("qusage", "Q farm if mana > (%)").SetValue(new Slider(0)));
+            RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("husage", "Harass if mana > (%)").SetValue(new Slider(0)));
+            RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("SaveEW", "Save Mana for E(WaveClear)").SetValue(false));
+            RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("SaveE", "Save Mana for E(Q farm)").SetValue(false));
+            RLProject.Menu.SubMenu("manam").AddItem(new MenuItem("SaveEH", "Save Mana for E(Harass)").SetValue(false));
 
-            RLProject.Menu.SubMenu("Drawings").AddItem(drawDamageMenu);
-            RLProject.Menu.SubMenu("Drawings").AddItem(drawFill);
+            //Misc menu:
+            RLProject.menu.AddSubMenu(new Menu("Other", "Other"));
+            RLProject.Menu.SubMenu("Other").AddSubMenu(new Menu("Auto W Settings", "wsets"));
+            RLProject.Menu.SubMenu("Other").SubMenu("wsets").AddItem(new MenuItem("Wimm", "Enable Auto W on CC'ed targets").SetValue(true));
+            RLProject.Menu.SubMenu("Other").SubMenu("wsets").AddItem(new MenuItem("Wimmz", "Use W on invulnerability end").SetValue(true));
+            RLProject.Menu.SubMenu("Other").SubMenu("wsets").AddItem(new MenuItem("DontWimm", "Disable Auto W when comboing").SetValue(false));
+            RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("StunUnderTower", "Stun Enemies Attacked by Tower").SetValue(true));
+            RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("UseInt", "Use E to Interrupt").SetValue(true));
+            RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("UseGap", "Use E against GapClosers").SetValue(true));
+            RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("PotOnIGN", "Use HP Pot when ignited").SetValue(true));
+            RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("buystart", "Buy Starting Items").SetValue(new KeyBind("P".ToCharArray()[0], KeyBindType.Press, false)));
+            RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("Reset", "Remove Target Lock").SetValue(new KeyBind("L".ToCharArray()[0], KeyBindType.Press, false)));
+            RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("packet", "Use Packets").SetValue(true));
+            //RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("Show", "Display Sprite").SetValue(true)); 배너 삭
+            //RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("skinch", "Use Custom Skin").SetValue(false));
+            //RLProject.Menu.SubMenu("Other").AddItem(new MenuItem("skinechm", "Skin Changer").SetValue(new Slider(5, 1, 8)));
 
-            DamageIndicator.DamageToUnit = GetComboDamage;
-            DamageIndicator.Enabled = drawDamageMenu.GetValue<bool>();
-            DamageIndicator.Fill = drawFill.GetValue<Circle>().Active;
-            DamageIndicator.FillColor = drawFill.GetValue<Circle>().Color;
+            //Notifications
+            RLProject.menu.AddSubMenu(new Menu("Notifications", "notes"));
+            RLProject.Menu.SubMenu("notes").AddItem(new MenuItem("noteactive", "Enable text notifications").SetValue(true));
+            RLProject.Menu.SubMenu("notes").AddItem(new MenuItem("notems", "Inform if your ms < target ms[combo]").SetValue(true));
+            RLProject.Menu.SubMenu("notes").AddItem(new MenuItem("notebuffs", "Inform if target has forbidden buffs").SetValue(false));
+            RLProject.Menu.SubMenu("notes").AddItem(new MenuItem("notetenacity", "Inform if E stun < W delay").SetValue(true));
 
-            drawDamageMenu.ValueChanged +=
-            delegate(object sender, OnValueChangeEventArgs eventArgs)
-            {
-                DamageIndicator.Enabled = eventArgs.GetNewValue<bool>();
-            };
 
-            drawFill.ValueChanged +=
-            delegate(object sender, OnValueChangeEventArgs eventArgs)
-            {
-                DamageIndicator.Fill = eventArgs.GetNewValue<Circle>().Active;
-                DamageIndicator.FillColor = eventArgs.GetNewValue<Circle>().Color;
-            };
+            //Laneclear menu:
+//            RLProject.menu.AddSubMenu(new Menu("Laneclear", "Laneclear"));
+            RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("dontfarm", "Disable Q farm when using any combos").SetValue(true));
+            RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("OnlySiege", "Last hit only siege creeps").SetValue(false));
+            RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("WAmount", "Min Minions To Land W").SetValue(new Slider(3, 1, 7)));
+            RLProject.Menu.SubMenu("Laneclear").AddItem(new MenuItem("LaneclearMove", "Move To mouse").SetValue(new StringList(new[] { "Never", "Lane Clear", "Q farm", "Lane Clear & Q farm" }, 0)));
 
+            //Jungle Laneclear menu:
+//            RLProject.menu.AddSubMenu(new Menu("Jungle Laneclear", "Jungleclear"));
+            RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("UseAAJungle", "Use AA").SetValue(true));
+            RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("UseQJungle", "Use Q").SetValue(true));
+            RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("UseWJungle", "Use W").SetValue(true));
+            RLProject.Menu.SubMenu("Jungleclear").AddItem(new MenuItem("UseEJungle", "Use E").SetValue(false));
+
+            //Auto KS
+            RLProject.menu.AddSubMenu(new Menu("Auto KS", "AutoKS"));
+            RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("UseQKS", "Use Q").SetValue(true));
+            RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("UseWKS", "Use W").SetValue(false));
+            RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("UseRKS", "Use R").SetValue(false));
+            RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("UseIGNKS", "Use IGN").SetValue(false));
+            RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("DisableKS", "Disable KS when using combos").SetValue(false));
+            RLProject.Menu.SubMenu("AutoKS").AddItem(new MenuItem("AutoKST", "AutoKS (toggle)!").SetValue(new KeyBind("U".ToCharArray()[0], KeyBindType.Toggle, true)));
+
+            //Harass menu:
+//            RLProject.menu.AddSubMenu(new Menu("Harass", "Harass"));
+            RLProject.Menu.SubMenu("Harass").AddItem(new MenuItem("HarassMode", "Choose Harass Type").SetValue(new StringList(new[] { "E+W+Q", "E+W", "Q", "None" }, 2)));
+            RLProject.Menu.SubMenu("Harass").AddItem(new MenuItem("WaitW", "Cast W before Q").SetValue(false));
+
+            //Combo menu:
+//            RLProject.menu.AddSubMenu(new Menu("Combo and Casting", "Combo"));
+            RLProject.Menu.SubMenu("Combo").AddItem(new MenuItem("LockTargets", "Lock Targets with Left Click").SetValue(true));
+            RLProject.Menu.SubMenu("Combo").AddItem(new MenuItem("DontEShields", "Dont use E in spell shields").SetValue(true));
+            RLProject.Menu.SubMenu("Combo").AddItem(new MenuItem("ToOrb", "[in-built]OrbWalk when comboing").SetValue(false));
+            RLProject.Menu.SubMenu("Combo").AddItem(new MenuItem("CastMode", "E and W settings").SetValue(new StringList(new[] { "Use E before W", "Use W before E", }, 0)));
+            RLProject.Menu.SubMenu("Combo").AddSubMenu(new Menu("Smart Combo Settings", "MainCombo"));
+            RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("If combo requires successful W hit").AddItem(new MenuItem("ComboWaitMode", "Choosed Mode:").SetValue(new StringList(new[] { "Wait for W to land first", "Don't wait for W to land", }, 0)));
+            RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("If combo requires successful W hit").AddItem(new MenuItem("IgnoreQ", "Allow Q Cast without W Check").SetValue(true));
+            RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("If combo requires successful W hit").AddItem(new MenuItem("IgnoreR", "Allow R Cast without W Check").SetValue(false));
+            RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("If combo requires successful W hit").AddItem(new MenuItem("IgnoreIGN", "Allow IGN Cast without W Check").SetValue(false));
+
+            RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").AddSubMenu(new Menu("OverKill target by %", "op"));
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.Team != Player.Team))
+                RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("op").AddItem(new MenuItem("op" + enemy.BaseSkinName, enemy.BaseSkinName).SetValue(new Slider(0)));
+
+            RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").AddSubMenu(new Menu("Ignore List", "il"));
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.Team != Player.Team))
+                RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").SubMenu("il").AddItem(new MenuItem("il" + enemy.BaseSkinName, enemy.BaseSkinName).SetValue(false));
+            RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").AddItem(new MenuItem("Priority", "Saving priority").SetValue(new StringList(new[] { "IGN > R", "R > IGN" }, 0)));
+            RLProject.Menu.SubMenu("Combo").SubMenu("MainCombo").AddItem(new MenuItem("ComboMode", "Combo config for unkillable targets").SetValue(new StringList(new[] { "None", "Choosed Harass Mode", "Q", "E+W", "E+W+Q", }, 4)));
+            RLProject.Menu.SubMenu("Combo").AddSubMenu(new Menu("Dont use R,IGN if target has", "DontRIGN"));
+            foreach (var buff in buffList)
+                RLProject.Menu.SubMenu("Combo").SubMenu("DontRIGN").AddItem(new MenuItem("dont" + buff.Name, buff.MenuName).SetValue(true));
+            foreach (var buff in IgnoreList.Where(buff => buff.MenuName != "Sivir Shield" && buff.MenuName != "Fizz E" && buff.MenuName != "Vladimir W"))
+                RLProject.Menu.SubMenu("Combo").SubMenu("DontRIGN").AddItem(new MenuItem("dont" + buff.Name, buff.MenuName).SetValue(true));
+            RLProject.Menu.SubMenu("Combo").SubMenu("DontRIGN").AddItem(new MenuItem("YasuoWall", "Yasuo Wall").SetValue(true));
+
+            menu.AddToMainMenu();
+
+            //if (menu.Item("skinch").GetValue<bool>())
+            //{
+            //    GenModelPacket(Player.ChampionName, menu.Item("skinchm").GetValue<Slider>().Value);
+            //    LastSkin = menu.Item("skinchm").GetValue<Slider>().Value;
+            //}
+
+            //Events
+            GameObject.OnCreate += OnCreate;
+            GameObject.OnDelete += OnDelete;
+            Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
             Game.OnUpdate += Game_OnUpdate;
+            Game.OnWndProc += Game_OnWndProc;
+            GameObject.OnCreate += TowerAttackOnCreate;
             Drawing.OnDraw += Drawing_OnDraw;
-            Obj_AI_Hero.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
-            Orbwalking.OnNonKillableMinion += Orbwalking_OnNonKillableMinion;
+            Interrupter2.OnInterruptableTarget += Interrupter_OnPosibleToInterrupt;
+            AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
+            Game.PrintChat("Veigar, TTMOE! Edited by RL");
         }
+//Q캐스트 영웅(챔피언)
+        static void CastQ(Obj_AI_Hero target)
+        {
+//            var pred = Q.GetPrediction(target, true);
+//            var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
+//            var prediction = Q.GetPrediction(target, true);
+//            var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
+            var qpred = Q.GetPrediction(target, true);
+            var qcollision = Q.GetCollision(Player.ServerPosition.To2D(), new List<Vector2> { qpred.CastPosition.To2D() });
+            var minioncol = qcollision.Where(x => !(x is Obj_AI_Hero)).Count(x => x.IsMinion);
+			if (target.IsValidTarget(Q.Range) && minioncol <= 1 && qpred.Hitchance >= HitChance.High)
+            {
+            Q.Cast(qpred.CastPosition, Packets());
+            }
+		}
+
+
+/*        }
+		
+        static void CastQ(Obj_AI_Hero target)
+        {
+            var prediction = Q.GetPrediction(target, true);
+            var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
+*/
+//            if (pred.Hitchance >= HitChance.High && Q.IsReady() && minions = 0)
+/*            if (minions == 0)
+            {
+            Q.Cast(prediction.CastPosition, Packets());
+            }
+*/		
+			
+//q미니언 충돌
+        static void CastQ(Obj_AI_Base target)
+        {
+            var prediction = Q.GetPrediction(target, true);
+            var minions = prediction.CollisionObjects.Count(thing => thing.IsMinion);
+
+            if (minions <= 1)
+			{
+            Q.Cast(prediction.CastPosition, Packets());
+			}
+		}
 
         static void Game_OnUpdate(EventArgs args)
         {
-            if (Player.IsDead)
-                return;
-
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
-                Combo();
-
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
-                Harass();
-
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
+            #region ComboShetOnUpdate
+            if (Delay != 0f)
             {
-                Laneclear();
-                Jungleclear();
+                //int I = Environment.TickCount;
+                //Drawing.DrawText(Player.HPBarPosition.X + 55, Player.HPBarPosition.Y + 50, System.Drawing.Color.LightGreen, "Combo:" + Ccombo + "(" + (Environment.TickCount - Delay1) + "/" + Delay + ")");
+
+                if (Ccombo.Contains("IGN"))
+                {
+                    int I = 0;
+                    if (Ccombo.Contains("E")) I += 500;
+                    if (Ccombo.Contains("W")) I += 1250;
+                    if (Ccombo.Contains("Q")) I += 600;
+                    if (Ccombo.Contains("R")) I += 600;
+                    if (Environment.TickCount - Delay1 > I && Player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready)
+                    {
+                        Delay = 0f;
+                        Delay1 = 0f;
+                        Ccombo = null;
+                        I = 0;
+                    }
+                }
+                if (Environment.TickCount - Delay1 > Delay)
+                {
+                    Delay = 0f;
+                    Delay1 = 0f;
+                    Ccombo = null;
+                }
+            }
+            #endregion
+
+            #region OnUpdate
+            if (ChoosedTarget != null && ChoosedTarget.IsDead || !menu.Item("LockTargets").GetValue<bool>())
+                ChoosedTarget = null;
+
+            Target = GetTarget();
+
+            var point = Player.ServerPosition + 300 * (Game.CursorPos.To2D() - Player.ServerPosition.To2D()).Normalized().To3D();
+
+            //check if player is dead
+            if (Player.IsDead) return;
+
+            if (menu.Item("Reset").GetValue<KeyBind>().Active)
+            {
+                ChoosedTarget = null;
             }
 
-            Killsteal();
-            Mobsteal();
+            if (menu.Item("PotOnIGN").GetValue<bool>())
+            {
+                AutoHP();
+            }
+
+            if (menu.Item("buystart").GetValue<KeyBind>().Active)
+            {
+                BuyItems();
+            }
+
+            if (!menu.Item("Combo").GetValue<KeyBind>().Active)
+            {
+                if (menu.Item("JungleActive").GetValue<KeyBind>().Active)
+                {
+                    JungleLaneclear();
+                }
+
+                if (menu.Item("HarassActive").GetValue<KeyBind>().Active)
+                {
+                    if (Player.Mana / Player.MaxMana * 100 < menu.Item("husage").GetValue<Slider>().Value) return;
+                    if (menu.Item("SaveEH").GetValue<bool>() && !HasMana(false, false, true, false)) return;
+                    Harass();
+                }
+
+                if (menu.Item("LastHitWW").GetValue<KeyBind>().Active)
+                {
+                    if (Player.Mana / Player.MaxMana * 100 < menu.Item("wusage").GetValue<Slider>().Value) return;
+                    if (menu.Item("SaveEW").GetValue<bool>() && !HasMana(false, false, true, false)) return;
+                    lastHitW();
+                    if (menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 1 || menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 3) if (Player.ServerPosition.Distance(Game.CursorPos) > 55) Player.IssueOrder(GameObjectOrder.MoveTo, point);
+                }
+
+                if (menu.Item("AllInActive").GetValue<KeyBind>().Active)
+                {
+                    AllIn();
+                }
+
+                if (menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active)
+                {
+                    //if (Player.ServerPosition.Distance(Game.CursorPos) > 55 && !KeMinimap.Minimap.MouseOver) Player.IssueOrder(GameObjectOrder.MoveTo, point);
+                    //if (E.IsReady())
+                    //{
+                    //    castE(GetNearestEnemy(Player));
+                    //}
+                    //if(Target != null)
+                    //{
+                    //    CastQ(Target);
+                    //}
+                    if (E.IsReady())
+                    {
+                        var targets = ObjectManager.Get<Obj_AI_Hero>().Where(h => h.IsValidTarget(E.Range + E.Width / 2)).OrderBy(h => h.Distance(Player, true));
+
+                        if (targets.Count() > 0)
+                        {
+                            foreach (var target in targets)
+                            {
+                                castE(target);
+                            }
+                        }
+                    }
+                    if (menu.Item("ToOrb").GetValue<bool>()) if (Player.ServerPosition.Distance(Game.CursorPos) > 80) Player.IssueOrder(GameObjectOrder.MoveTo, point);
+                }
+            }
+            else
+            {
+                Combo();
+                //if (menu.Item("ToOrb").GetValue<bool>()) if (Orb == 2) xSLx_Orbwalker.xSLxOrbwalker.Orbwalk(Game.CursorPos, Target); else if (Orb == 1) Orbwalking.Orbwalk(Target, Game.CursorPos);
+            }
+
+            if (menu.Item("AutoKST").GetValue<KeyBind>().Active)
+            {
+                AutoKS();
+            }
+
+            if (menu.Item("manaStatus").GetValue<bool>())
+            {
+                ManaMode = manaCheck().Item1;
+                NeededCD = manaCheck().Item2;
+            }
+
+            if (menu.Item("ExtraNeeded").GetValue<KeyBind>().Active)
+            {
+                enemyDictionary = ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget()).ToDictionary(enemy => enemy, enemy => GetExtraNeeded(enemy).Item1);
+            }
+
+            if (menu.Item("InfoTable").GetValue<KeyBind>().Active || menu.Item("OptimalCombo").GetValue<bool>())
+            {
+                enemyDictionary1 = ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget() && menu.Item("il" + enemy.BaseSkinName).GetValue<bool>() == false).ToDictionary(enemy => enemy, enemy => GetBestCombo(enemy, "Table"));
+            }
+
+            if (menu.Item("LastHitQQ").GetValue<KeyBind>().Active || menu.Item("LastHitQ").GetValue<KeyBind>().Active)
+            {
+                if (Player.Mana / Player.MaxMana * 100 < menu.Item("qusage").GetValue<Slider>().Value) return;
+                if (menu.Item("SaveE").GetValue<bool>() && !HasMana(false, false, true, false)) return;
+                if (menu.Item("AllInActive").GetValue<KeyBind>().Active || menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active || menu.Item("HarassActive").GetValue<KeyBind>().Active || menu.Item("Combo").GetValue<KeyBind>().Active && menu.Item("dontfarm").GetValue<bool>()) return;
+                if (menu.Item("OnlySiege").GetValue<bool>())
+                {
+                    _m = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth).FirstOrDefault(m => m.BaseSkinName.Contains("Siege") && m.Health < ((Player.GetSpellDamage(m, SpellSlot.Q))) && HealthPrediction.GetHealthPrediction(m, (int)(Player.Distance(m, false) / Q.Speed), (int)(Q.Delay * 1000 + Game.Ping / 2)) > 0);
+                }
+                else
+                {
+                    _m = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth).FirstOrDefault(m => m.Health < ((Player.GetSpellDamage(m, SpellSlot.Q))) && HealthPrediction.GetHealthPrediction(m, (int)(Player.Distance(m, false) / Q.Speed), (int)(Q.Delay * 1000 + Game.Ping / 2)) > 0);
+                }
+                lastHit();
+                if (menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 2 || menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 3) if (Player.ServerPosition.Distance(Game.CursorPos) > 55) Player.IssueOrder(GameObjectOrder.MoveTo, point);
+            }
+
+            if (menu.Item("Wimm").GetValue<bool>())
+            {
+                WimmTarget = ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget()).FirstOrDefault(m => m.IsValidTarget(E.Range) && m.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && b.Name != "VeigarStun" && (b.Type == BuffType.Charm || b.Type == BuffType.Knockback || b.Type == BuffType.Stun || b.Type == BuffType.Suppression || b.Type == BuffType.Snare)).Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time >= W.Delay);
+                if (WimmTarget != null && !WimmTarget.HasBuff("VeigarStun") && !menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active)
+                    W.Cast(WimmTarget);
+            }
+            if (menu.Item("Wimm").GetValue<bool>() && menu.Item("Wimmz").GetValue<bool>())
+            {
+                WimmTargett = ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget()).FirstOrDefault(m => m.IsValidTarget(E.Range) && m.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && b.Name == "zhonyasringshield").Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time < W.Delay);
+                if (WimmTargett != null && WimmTargett.Buffs.Where(b => b.Name == "zhonyasringshield").Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time > W.Delay - 1f)
+                {
+                    W.Cast(WimmTargett);
+                }
+            }
+            #endregion
         }
 
         static void Drawing_OnDraw(EventArgs args)
         {
-            if (Player.IsDead)
-                return;
+            //Drawing.DrawText(Player.HPBarPosition.X - 30, Player.HPBarPosition.Y + 10, System.Drawing.Color.Red, "E<W" + Player.PercentTenacityCharacterMod);
 
-            var drawingAA = RLProject.Menu.Item("drawingAA", true).GetValue<Circle>();
-            var drawingQ = RLProject.Menu.Item("drawingQ", true).GetValue<Circle>();
-            var drawingW = RLProject.Menu.Item("drawingW", true).GetValue<Circle>();
-            var drawingE = RLProject.Menu.Item("drawingE", true).GetValue<Circle>();
-            var drawingR = RLProject.Menu.Item("drawingR", true).GetValue<Circle>();
+            //check if player is dead
+            if (Player.IsDead) return;
 
-            if (drawingAA.Active)
-                Render.Circle.DrawCircle(Player.Position, Orbwalking.GetRealAutoAttackRange(Player), drawingAA.Color);
-
-            if (Q.IsReady() && drawingQ.Active)
-                Render.Circle.DrawCircle(Player.Position, Q.Range, drawingQ.Color);
-
-            if (W.IsReady() && drawingW.Active)
-                Render.Circle.DrawCircle(Player.Position, W.Range, drawingW.Color);
-
-            if (E.IsReady() && drawingE.Active)
-                Render.Circle.DrawCircle(Player.Position, E.Range, drawingE.Color);
-
-            if (R.IsReady() && drawingR.Active)
-                Render.Circle.DrawCircle(Player.Position, R.Range, drawingR.Color);
-        }
-
-        static void Obj_AI_Hero_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
-        {
-            if (sender.IsMe && args.SData.Name == "KalistaExpungeWrapper")
-                    Utility.DelayAction.Add(250, Orbwalking.ResetAutoAttackTimer);
-
-            if (RLProject.Menu.Item("soulboundsaver", true).GetValue<Boolean>() && R.IsReady())
+            if (menu.Item("noteactive").GetValue<bool>())
             {
-                if (sender.Type == GameObjectType.obj_AI_Hero && sender.IsEnemy)
+                var y = 0f;
+                foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget()))
                 {
-                    var soulboundhero = HeroManager.Allies.FirstOrDefault(hero => hero.HasBuff("kalistacoopstrikeally", true) && args.Target.NetworkId == hero.NetworkId && hero.HealthPercentage() <= 15);
-
-                    if (R.CanCast(soulboundhero))
-                        R.Cast();
-                }
-            }
-        }
-
-        static void Killsteal()
-        {
-            if (!RLProject.Menu.Item("killsteal", true).GetValue<Boolean>() || !E.IsReady())
-                return;
-
-            var target = HeroManager.Enemies.FirstOrDefault(x => !x.HasBuffOfType(BuffType.Invulnerability) && !x.HasBuffOfType(BuffType.SpellShield) && E.CanCast(x) && (x.Health + (x.HPRegenRate / 2)) <= E.GetDamage(x));
-
-            if (E.CanCast(target))
-                E.Cast();
-        }
-
-        static void Mobsteal()
-        {
-            if (!RLProject.Menu.Item("mobsteal", true).GetValue<Boolean>() || !E.IsReady())
-                return;
-
-            var Mob = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault(x => x.Health + (x.HPRegenRate / 2) <= E.GetDamage(x));
-
-            if (E.CanCast(Mob))
-                E.Cast();
-
-            var Minion = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth).FirstOrDefault(x => x.Health <= E.GetDamage(x) && (x.SkinName.ToLower().Contains("siege") || x.SkinName.ToLower().Contains("super")));
-
-            if (E.CanCast(Minion))
-                E.Cast();
-        }
-
-        static float GetComboDamage(Obj_AI_Base enemy)
-        {
-            float damage = 0;
-
-            if (E.IsReady())
-                damage += E.GetDamage(enemy);
-
-            return damage;
-        }
-
-        static List<Obj_AI_Base> Q_GetCollisionMinions(Obj_AI_Hero source, Vector3 targetposition)
-        {
-            var input = new PredictionInput
-            {
-                Unit = source,
-                Radius = Q.Width,
-                Delay = Q.Delay,
-                Speed = Q.Speed,
-            };
-
-            input.CollisionObjects[0] = CollisionableObjects.Minions;
-
-            return Collision.GetCollision(new List<Vector3> { targetposition }, input).OrderBy(obj => obj.Distance(source, false)).ToList();
-        }
-
-        static void Orbwalking_OnNonKillableMinion(AttackableUnit minion)
-        {
-            if (!RLProject.Menu.Item("lasthitassist", true).GetValue<Boolean>())
-                return;
-
-            if (E.CanCast((Obj_AI_Base)minion) && minion.Health <= E.GetDamage((Obj_AI_Base)minion))
-                E.Cast();
-        }
-
-        static void Combo()
-        {
-            if (!Orbwalking.CanMove(1))
-                return;
-
-            if (RLProject.Menu.Item("comboUseQ", true).GetValue<Boolean>())
-            {
-                var Qtarget = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Physical, true);
-
-                if (Q.CanCast(Qtarget) && Q.GetPrediction(Qtarget).Hitchance >= HitChance.VeryHigh && !Player.IsWindingUp && !Player.IsDashing())
-                    Q.Cast(Qtarget);
-            }
-
-            if (RLProject.Menu.Item("comboUseE", true).GetValue<Boolean>() && E.IsReady())
-            {
-                var Minion = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Enemy).Where(x => x.Health <= E.GetDamage(x)).OrderBy(x => x.Health).FirstOrDefault();
-                var Target = HeroManager.Enemies.Where(x => E.CanCast(x) && E.GetDamage(x) >= 1 && !x.HasBuffOfType(BuffType.Invulnerability) && !x.HasBuffOfType(BuffType.SpellShield)).OrderByDescending(x => E.GetDamage(x)).FirstOrDefault();
-
-                if (Target.Health <= E.GetDamage(Target) || (E.CanCast(Minion) && E.CanCast(Target)))
-                    E.Cast();
-            }
-        }
-
-        static void Harass()
-        {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value))
-                return;
-
-            if (RLProject.Menu.Item("harassUseQ", true).GetValue<Boolean>())
-            {
-                var Qtarget = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Physical, true);
-
-                if (Q.CanCast(Qtarget) && Q.GetPrediction(Qtarget).Hitchance >= HitChance.VeryHigh && !Player.IsWindingUp && !Player.IsDashing())
-                    Q.Cast(Qtarget);
-            }
-
-            if (RLProject.Menu.Item("homboUseE", true).GetValue<Boolean>() && E.IsReady())
-            {
-                var EMinion = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Enemy).Where(x => x.Health <= E.GetDamage(x)).OrderBy(x => x.Health).FirstOrDefault();
-                var ETarget = HeroManager.Enemies.Where(x => E.CanCast(x) && E.GetDamage(x) >= 1 && !x.HasBuffOfType(BuffType.Invulnerability) && !x.HasBuffOfType(BuffType.SpellShield)).OrderByDescending(x => E.GetDamage(x)).FirstOrDefault();
-
-                if (ETarget.Health <= E.GetDamage(ETarget) || (E.CanCast(EMinion) && E.CanCast(ETarget)))
-                    E.Cast();
-            }
-        }
-
-        static void Laneclear()
-        {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("laneclearMana", true).GetValue<Slider>().Value))
-                return;
-
-            var Minions = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Enemy);
-
-            if (Minions.Count <= 0)
-                return;
-
-            if (RLProject.Menu.Item("laneclearUseQ", true).GetValue<Boolean>() && Q.IsReady())
-            {
-                //-------------------------------------------------------------------------------------------------------------------------------
-                foreach (var minion in Minions.Where(x => x.Health <= Q.GetDamage(x)))
-                {
-                    var killcount = 0;
-
-                    foreach (var colminion in Q_GetCollisionMinions(Player, Player.ServerPosition.Extend(minion.ServerPosition, Q.Range)))
+                    if (menu.Item("notebuffs").GetValue<bool>() && menu.Item("Combo").GetValue<KeyBind>().Active)
                     {
-                        if (colminion.Health <= Q.GetDamage(colminion))
-                            killcount++;
-                        else
-                            break;
+                        //Game.PrintChat("actually");
+                        if (HasBuffs(enemy))
+                        {
+                            foreach (var buff in buffList.Where(buff => enemy.HasBuff(buff.DisplayName) || enemy.HasBuff(buff.Name)))
+                            {
+                                Game.PrintChat("actually" + buff.MenuName);
+                                Drawing.DrawText(enemy.HPBarPosition.X + 9, enemy.HPBarPosition.Y + 37 + y, System.Drawing.Color.Red, "" + buff.MenuName);
+                                y += 11f;
+                            }
+                        }
                     }
-
-                    if (killcount >= RLProject.Menu.Item("laneclearQnum", true).GetValue<Slider>().Value)
+                    if (menu.Item("notetenacity").GetValue<bool>())
                     {
-                        if (!Player.IsWindingUp && !Player.IsDashing())
-                        { 
-                            Q.Cast(minion);
-                            break;
+                        if (!tenacitycheck(enemy))
+                        {
+                            Drawing.DrawText(enemy.HPBarPosition.X + 143, enemy.HPBarPosition.Y + 20, System.Drawing.Color.Red, "E<W");
                         }
                     }
                 }
-                //-------------------------------------------------------------------------------------------------------------------------------
             }
 
-            if (RLProject.Menu.Item("laneclearUseE", true).GetValue<Boolean>() && E.IsReady())
+            if (Target != null && Target.IsVisible)
             {
-                var minionkillcount = 0;
-
-                foreach (var Minion in Minions.Where(x => E.CanCast(x) && x.Health <= E.GetDamage(x))){minionkillcount++;}
-
-                if (minionkillcount >= RLProject.Menu.Item("laneclearEnum", true).GetValue<Slider>().Value)
-                    E.Cast();
+                if (ChoosedTarget != null && menu.Item("LockTargets").GetValue<bool>())
+                {
+                    if (menu.Item("TText").GetValue<bool>()) Render.Circle.DrawCircle(ChoosedTarget.Position, 75, Color.LightGreen);
+                    Drawing.DrawText(Player.HPBarPosition.X + 55, Player.HPBarPosition.Y + 25, System.Drawing.Color.LightGreen, "Lock:" + ChoosedTarget.ChampionName);
+                }
+                else
+                {
+                    if (menu.Item("TText").GetValue<bool>()) Render.Circle.DrawCircle(Target.Position, 75, Color.Red);
+                }
+            }
+            else if (Target != null)
+            {
+                if (ChoosedTarget != null && menu.Item("LockTargets").GetValue<bool>())
+                {
+                    if (menu.Item("LText").GetValue<bool>()) Drawing.DrawText(Player.HPBarPosition.X + 55, Player.HPBarPosition.Y + 25, System.Drawing.Color.LightGreen, "Lock:" + ChoosedTarget.ChampionName);
+                }
             }
 
-            if (RLProject.Menu.Item("harassUseE", true).GetValue<Boolean>() && E.IsReady())
+            //Draw Extra or Needed for kill damage
+            if (menu.Item("ExtraNeeded").GetValue<KeyBind>().Active)
             {
-                var EMinion = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Enemy).Where(x => x.Health <= E.GetDamage(x)).OrderBy(x => x.Health).FirstOrDefault();
-                var ETarget = HeroManager.Enemies.Where(x => E.CanCast(x) && E.GetDamage(x) >= 1 && !x.HasBuffOfType(BuffType.Invulnerability) && !x.HasBuffOfType(BuffType.SpellShield)).OrderByDescending(x => E.GetDamage(x)).FirstOrDefault();
+                foreach (Obj_AI_Hero enemy in enemyDictionary.Keys)
+                {
+                    if (enemy.IsVisible && !enemy.IsDead)
+                    {
+                        string Text = GetExtraNeeded(enemy).Item2;
+                        float ENdamage = 0f;
+                        if (enemyDictionary[enemy] >= 1000)
+                        {
+                            int Integer = enemyDictionary[enemy];
+                            float Floater = Integer;
+                            ENdamage = (float)Math.Round((Floater / 1000), 1);
+                        }
+                        else
+                        {
+                            ENdamage = enemyDictionary[enemy];
+                        }
+                        if (Text == "Extra:")
+                        {
+                            if (enemyDictionary[enemy] >= 1000)
+                                Drawing.DrawText(enemy.HPBarPosition.X + 7, enemy.HPBarPosition.Y + 1, Color.Red, "Killable(" + ENdamage + "k+)");
+                            else
+                                Drawing.DrawText(enemy.HPBarPosition.X + 7, enemy.HPBarPosition.Y + 1, Color.Red, "Killable(" + ENdamage + ")");
+                            if (menu.Item("ExtraNeeded1").GetValue<bool>())
+                            {
+                                var hpBarPos = enemy.HPBarPosition;
 
-                if (ETarget.Health <= E.GetDamage(ETarget) || (E.CanCast(EMinion) && E.CanCast(ETarget)))
-                    E.Cast();
+                                hpBarPos.X += 45;
+                                hpBarPos.Y += 18;
+
+                                var combodamage = GetComboDamage(enemy, "Cunts", true, true, true, true, true);
+
+                                var PercentHPleftAfterCombo = (enemy.Health - combodamage) / enemy.MaxHealth;
+                                var PercentHPleft = enemy.Health / enemy.MaxHealth;
+                                if (PercentHPleftAfterCombo < 0) PercentHPleftAfterCombo = 0;
+
+                                double comboXPos = hpBarPos.X - 36 + (107 * PercentHPleftAfterCombo);
+                                double currentHpxPos = hpBarPos.X - 36 + (107 * PercentHPleft);
+
+                                var barcolor = Color.FromArgb(100, 220, 0, 0);
+                                var barcolorline = Color.WhiteSmoke;
+
+                                Drawing.DrawLine(
+                                    (float)comboXPos, hpBarPos.Y, (float)comboXPos, hpBarPos.Y + 5, 1, barcolorline);
+                                var diff = currentHpxPos - comboXPos;
+                                for (var i = 0; i < diff; i++)
+                                {
+                                    Drawing.DrawLine(
+                                        (float)comboXPos + i, hpBarPos.Y + 2, (float)comboXPos + i,
+                                        hpBarPos.Y + 10, 1, barcolor);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (enemyDictionary[enemy] >= 1000)
+                                Drawing.DrawText(enemy.HPBarPosition.X + 7, enemy.HPBarPosition.Y + 1, Color.White, "Unkillable(" + ENdamage + "k+)");
+                            else
+                                Drawing.DrawText(enemy.HPBarPosition.X + 7, enemy.HPBarPosition.Y + 1, Color.White, "Unkillable(" + ENdamage + ")");
+                            if (menu.Item("ExtraNeeded1").GetValue<bool>())
+                            {
+                                var hpBarPos = enemy.HPBarPosition;
+
+                                hpBarPos.X += 45;
+                                hpBarPos.Y += 18;
+
+                                var combodamage = GetComboDamage(enemy, "Cunts", true, true, true, true, true);
+
+                                var PercentHPleftAfterCombo = (enemy.Health - combodamage) / enemy.MaxHealth;
+                                var PercentHPleft = enemy.Health / enemy.MaxHealth;
+                                if (PercentHPleftAfterCombo < 0) PercentHPleftAfterCombo = 0;
+
+                                double comboXPos = hpBarPos.X - 36 + (107 * PercentHPleftAfterCombo);
+                                double currentHpxPos = hpBarPos.X - 36 + (107 * PercentHPleft);
+
+                                var barcolor = Color.FromArgb(100, 0, 220, 0);
+                                var barcolorline = Color.WhiteSmoke;
+
+                                Drawing.DrawLine(
+                                    (float)comboXPos, hpBarPos.Y, (float)comboXPos, hpBarPos.Y + 5, 1, barcolorline);
+                                var diff = currentHpxPos - comboXPos;
+                                for (var i = 0; i < diff; i++)
+                                {
+                                    Drawing.DrawLine(
+                                        (float)comboXPos + i, hpBarPos.Y + 2, (float)comboXPos + i,
+                                        hpBarPos.Y + 10, 1, barcolor);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (menu.Item("OptimalCombo").GetValue<bool>())
+            {
+                foreach (Obj_AI_Hero enemy in enemyDictionary1.Keys)
+                {
+                    if (enemy.IsVisible)
+                    {
+                        if (!enemy.IsDead)
+                        {
+                            Drawing.DrawText(enemy.HPBarPosition.X + 7, enemy.HPBarPosition.Y + 40, System.Drawing.Color.White, enemyDictionary1[enemy]);
+                        }
+                    }
+                }
+            }
+
+            if (menu.Item("LastHitQQ").GetValue<KeyBind>().Active || menu.Item("LastHitQ").GetValue<KeyBind>().Active)
+            {
+                var MinMar = menu.Item("MinionMarker").GetValue<Circle>();
+                if (_m != null)
+                    Render.Circle.DrawCircle(_m.Position, 75, MinMar.Color);
+            }
+
+            #region Indicators
+            if (menu.Item("HUDdisplay").GetValue<bool>())
+            {
+                float X = (float)menu.Item("HUDX").GetValue<Slider>().Value / 100;
+                float Y = (float)menu.Item("HUDY").GetValue<Slider>().Value / 100;
+                foreach (var hud in HUDlist.Where(hud => "U" + hud.MenuText == menu.Item("U" + hud.MenuText).Name && menu.Item("U" + hud.MenuText).GetValue<bool>()))
+                {
+                    if (menu.Item(hud.MenuComboText).GetValue<KeyBind>().Active)
+                        Drawing.DrawText(Drawing.Width * X, Drawing.Height * Y, System.Drawing.Color.Yellow, hud.DisplayTextON);
+                    else
+                        Drawing.DrawText(Drawing.Width * X, Drawing.Height * Y, System.Drawing.Color.DarkRed, hud.DisplayTextOFF);
+                    Y = Y + 0.02f;
+                }
+            }
+            #endregion
+            #region Mana Status
+            if (menu.Item("manaStatus").GetValue<bool>())
+            {
+                if (ManaMode != 0)
+                {
+                    Vector2 wts = Drawing.WorldToScreen(Player.Position);
+                    if (ManaMode == 1)
+                    {
+                        Drawing.DrawText(wts[0] - 30, wts[1], Color.White, ("Q(" + NeededCD + ")s"));
+                    }
+                    else if (ManaMode == 2)
+                    {
+                        Drawing.DrawText(wts[0] - 30, wts[1], Color.White, ("E+W+Q(" + NeededCD + ")s"));
+                    }
+                    else if (ManaMode == 3)
+                    {
+                        Drawing.DrawText(wts[0] - 30, wts[1], Color.White, ("E+W+Q+R(" + NeededCD + ")s"));
+                    }
+                }
+            }
+            #endregion
+            #region InfoTable
+            if (menu.Item("InfoTable").GetValue<KeyBind>().Active)
+            {
+                var x = Drawing.Width * 0.85f;
+                var y = Drawing.Height * 0.61f;
+                Drawing.DrawText(x, y - 20f, System.Drawing.Color.White, "~INFO TABLE~");
+                //Applies the function to all enemy heroes
+                foreach (Obj_AI_Hero enemy in enemyDictionary1.Keys)
+                {
+                    if (!enemy.IsDead)
+                    {
+                        float ENNdamage = 0f;
+                        if (GetExtraNeeded(enemy).Item1 >= 1000)
+                        {
+                            int Integer = GetExtraNeeded(enemy).Item1;
+                            float Floater = Integer;
+                            ENNdamage = (float)Math.Round((Floater / 1000), 1);
+                        }
+                        else
+                        {
+                            ENNdamage = GetExtraNeeded(enemy).Item1;
+                        }
+                        if (enemyDictionary1[enemy] == "Unkillable")
+                        {
+                            if (GetExtraNeeded(enemy).Item1 >= 1000)
+                            {
+                                Drawing.DrawText(x, y, System.Drawing.Color.White, enemy.ChampionName + ":" + enemyDictionary1[enemy] + "(" + ENNdamage + "k+)");
+                            }
+                            else
+                            {
+                                Drawing.DrawText(x, y, System.Drawing.Color.White, enemy.ChampionName + ":" + enemyDictionary1[enemy] + "(" + GetExtraNeeded(enemy).Item1 + ")");
+                            }
+                        }
+                        else
+                        {
+                            Drawing.DrawText(x, y, System.Drawing.Color.White, enemy.ChampionName + ":" + enemyDictionary1[enemy] + "(" + GetExtraNeeded(enemy).Item1 + ")");
+                        }
+                    }
+                    else
+                    {
+                        Drawing.DrawText(x, y, System.Drawing.Color.White, enemy.ChampionName + ":" + "Dead"); //Enemy is dead
+                    }
+                    y = y + 20f;
+                }
+            }
+            //    foreach (Obj_AI_Hero enemy in enemyDictionary1.Keys)
+            //    {
+            //        if (!enemy.IsDead)
+            //        {
+            //            if (enemyDictionary1[enemy] == "Unkillable")
+            //            {
+            //                Drawing.DrawText(x, y, System.Drawing.Color.White, enemy.ChampionName + ":" + enemyDictionary1[enemy]);
+            //            }
+            //            else
+            //            {
+            //                Drawing.DrawText(x, y, System.Drawing.Color.White, enemy.ChampionName + ":" + enemyDictionary1[enemy]);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            Drawing.DrawText(x, y, System.Drawing.Color.White, enemy.ChampionName + ":" + "Dead"); //Enemy is dead
+            //        }
+            //        y = y + 20f;
+            //    }
+            //}
+            #endregion
+            foreach (Spell spell in SpellList)
+            {
+                var menuItem = menu.Item(spell.Slot + "Range").GetValue<Circle>();
+                if (menuItem.Active)
+                    Render.Circle.DrawCircle(Player.Position, spell.Range, menuItem.Color);
             }
         }
 
-        static void Jungleclear()
+        //Automatic Kill Steal
+        static void AutoKS()
         {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("jungleclearMana", true).GetValue<Slider>().Value))
-                return;
-
-            var Mobs = MinionManager.GetMinions(Player.ServerPosition, Orbwalking.GetRealAutoAttackRange(Player) + 100, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
-
-            if (Mobs.Count <= 0)
-                return;
-
-            if (RLProject.Menu.Item("jungleclearUseQ", true).GetValue<Boolean>() && Q.CanCast(Mobs[0]))
-                Q.Cast(Mobs[0]);
-
-            if (RLProject.Menu.Item("jungleclearUseE", true).GetValue<Boolean>() && E.CanCast(Mobs[0]))
+            if (menu.Item("AllInActive").GetValue<KeyBind>().Active || menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active || menu.Item("HarassActive").GetValue<KeyBind>().Active || menu.Item("Combo").GetValue<KeyBind>().Active && menu.Item("DisableKS").GetValue<bool>()) return;
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && !enemy.IsDead && enemy.IsValidTarget() && Player.Distance(enemy.Position) <= NeededRange(menu.Item("UseQKS").GetValue<bool>(), menu.Item("UseWKS").GetValue<bool>(), menu.Item("UseWKS").GetValue<bool>(), menu.Item("UseRKS").GetValue<bool>(), menu.Item("UseIGNKS").GetValue<bool>()) && Player.Distance(enemy.Position) <= E.Range))
             {
-                if (Mobs[0].Health + (Mobs[0].HPRegenRate/2) <= E.GetDamage(Mobs[0]))
-                    E.Cast();
+                if (GetComboDamage(enemy, "Cunts", true, false, false, false, false) > enemy.Health && menu.Item("UseQKS").GetValue<bool>())
+                {
+                    if (HasMana(true, false, false, false))
+                    {
+                        UseSpells(enemy, "Source", true, false, false, false, false);
+                    }
+                }
+                else if (GetComboDamage(enemy, "Cunts", false, true, false, false, false) > enemy.Health && menu.Item("UseWKS").GetValue<bool>())
+                {
+                    if (HasMana(false, true, false, false))
+                    {
+                        UseSpells(enemy, "NE", false, true, false, false, false);
+                    }
+                }
+                else if (GetComboDamage(enemy, "Cunts", true, false, false, false, false) > enemy.Health && menu.Item("UseQKS").GetValue<bool>() && menu.Item("UseDFGKS").GetValue<bool>())
+                {
+                    if (HasMana(true, false, false, false))
+                    {
+                        UseSpells(enemy, "Source", true, false, false, false, false);
+                    }
+                }
+                else if (GetComboDamage(enemy, "Cunts", false, false, false, true, false) > enemy.Health && menu.Item("UseRKS").GetValue<bool>())
+                {
+                    if (HasMana(false, false, false, true))
+                    {
+                        UseSpells(enemy, "Source", false, false, false, true, false);
+                    }
+                }
+                else if (GetComboDamage(enemy, "Cunts", false, false, false, true, false) > enemy.Health && menu.Item("UseRKS").GetValue<bool>() && menu.Item("UseDFGKS").GetValue<bool>())
+                {
+                    if (HasMana(false, false, false, true))
+                    {
+                        UseSpells(enemy, "Source", true, false, false, false, false);
+                    }
+                }
+                else if (GetComboDamage(enemy, "Cunts", false, false, false, false, true) > enemy.Health && menu.Item("UseIGNKS").GetValue<bool>())
+                {
+                    UseSpells(enemy, "Source", false, false, false, false, true);
+                }
+                else if (GetComboDamage(enemy, "Cunts", menu.Item("UseQKS").GetValue<bool>(), menu.Item("UseWKS").GetValue<bool>(), false, menu.Item("UseRKS").GetValue<bool>(), menu.Item("UseIGNKS").GetValue<bool>()) > enemy.Health)
+                {
+                    UseSpells(enemy, "Source", menu.Item("UseQKS").GetValue<bool>(), menu.Item("UseWKS").GetValue<bool>(), false, menu.Item("UseRKS").GetValue<bool>(), menu.Item("UseIGNKS").GetValue<bool>());
+                }
             }
+        }
+//사거리필요
+        static int NeededRange(bool A, bool B, bool C, bool D, bool F)
+        {
+            bool AR = Exists(true, false, false, false, false);
+            bool BR = Exists(false, true, false, false, false);
+            bool CR = Exists(false, false, true, false, false);
+            bool DR = Exists(false, false, false, true, false);
+            bool FR = Exists(false, false, false, false, true);
+
+            int NeededRangee = 0;
+            if (F && FR)
+                NeededRangee = 600;
+            else if (D && DR)
+                NeededRangee = 650;
+            else if (A && AR)
+                NeededRangee = 850; //Q리메이크로 사정거리 850됨. 
+            else if (B && BR)
+                NeededRangee = 900;
+            else if (C && CR)
+                NeededRangee = 1060;
+            return NeededRangee;
+        }
+
+        //Harass Combo(Independent of CD and target HP)
+        static void Harass()
+        {
+            if (menu.Item("HarassMode").GetValue<StringList>().SelectedIndex == 0) UseSpells(Target, "EWQHarass", true, true, true, false, false);
+            else if (menu.Item("HarassMode").GetValue<StringList>().SelectedIndex == 1) UseSpells(Target, "EWHarass", false, true, true, false, false);
+            else if (menu.Item("HarassMode").GetValue<StringList>().SelectedIndex == 2) UseSpells(Target, "QHarass", true, false, false, false, false);
+        }
+
+        //Use All Available Spells Combo(Independent of CD and target HP)
+        static void AllIn()
+        {
+            if (menu.Item("ToOrb").GetValue<bool>()) if (Orb == 2) Orbwalking.Orbwalk(Target, Game.CursorPos); else if (Orb == 1) Orbwalking.Orbwalk(Target, Game.CursorPos);
+            UseSpells(Target, "AllIn", true, true, true, true, true);
+        }
+
+        //The Main Smart Combo that chooses the most efficient combo that will ensure the kill
+        static void Combo()
+        {
+            if (Target != null && Player.Distance(Target.Position) <= E.Range && menu.Item("il" + Target.BaseSkinName).GetValue<bool>() == false)
+            {
+                string TheCombo = null;
+
+                TheCombo = GetBestCombo(Target, "Comboing");
+
+                if (TheCombo != null && Target.MoveSpeed >= Player.MoveSpeed && menu.Item("notems").GetValue<bool>()) Drawing.DrawText(Player.HPBarPosition.X + 9, Player.HPBarPosition.Y + 37, System.Drawing.Color.LightGreen, Target.ChampionName + "" + "MS is higher" + "(" + Math.Round((Target.MoveSpeed - Player.MoveSpeed)) + ")");
+
+                if (TheCombo == "E+Q" && HasMana(true, false, true, false)) //E+Q
+                    UseSpells(Target, "N", true, false, true, false, false);
+                else if (TheCombo == "Q" && HasMana(true, false, false, false)) //Q
+                    UseSpells(Target, "N", true, false, false, false, false);
+                else if (TheCombo == "E+W" && HasMana(false, true, true, false)) //E+W
+                    UseSpells(Target, "NE", false, true, true, false, false);
+                else if (TheCombo == "W" && HasMana(false, true, false, false)) //W
+                    UseSpells(Target, "NE", false, true, false, false, false);
+                else if (TheCombo == "E+W+Q" && HasMana(true, true, true, false)) //E+W+Q
+                    UseSpells(Target, "NE", true, true, true, false, false);
+                else if (TheCombo == "|DFG|E+W+Q" && HasMana(true, true, true, false)) //DFG+E+W+Q
+                    UseSpells(Target, "NE", true, true, true, false, false);
+                else if (TheCombo == "|DFG|E+W" && HasMana(false, true, true, false)) //DFG+E+W
+                    UseSpells(Target, "NE", false, true, true, false, false);
+                else if (TheCombo == "|DFG|Q" && HasMana(true, false, false, false)) //DFG+Q
+                    UseSpells(Target, "N", true, false, false, false, false);
+                else if (TheCombo == "E+W+R" && HasMana(false, true, true, true)) //E+W+R
+                    UseSpells(Target, "NE", false, true, true, true, false);
+                else if (TheCombo == "E+W+R+Q" && HasMana(true, true, true, true)) //E+W+R+Q
+                    UseSpells(Target, "NE", true, true, true, true, false);
+                else if (TheCombo == "E+R" && HasMana(false, false, true, true)) //E+R
+                    UseSpells(Target, "N", false, false, true, true, false);
+                else if (TheCombo == "R" && HasMana(false, false, false, true)) //R
+                    UseSpells(Target, "N", false, false, false, true, false);
+                else if (TheCombo == "|DFG|E+R+Q" && HasMana(true, false, true, true)) //DFG+E+R+Q
+                    UseSpells(Target, "N", true, false, true, true, false);
+                else if (TheCombo == "|DFG|E+W+R" && HasMana(false, true, true, true)) //DFG+E+W+R
+                    UseSpells(Target, "NE", false, true, true, true, false);
+                else if (TheCombo == "|DFG|E+W+R+Q" && HasMana(true, true, true, true)) //DFG+E+W+R+Q
+                    UseSpells(Target, "NE", true, true, true, true, false);
+                else if (TheCombo == "|DFG|R" && HasMana(false, false, false, true)) //DFG+R
+                    UseSpells(Target, "N", false, false, false, true, false);
+                else if (TheCombo == "E+Q+IGN" && HasMana(true, false, true, false)) //E+Q+IGN
+                    UseSpells(Target, "N", true, false, true, false, true);
+                else if (TheCombo == "E+W+IGN" && HasMana(false, true, true, false)) //E+W+IGN
+                    UseSpells(Target, "NE", false, true, true, false, true);
+                else if (TheCombo == "E+W+Q+IGN" && HasMana(true, true, true, false)) //E+W+Q+IGN
+                    UseSpells(Target, "NE", true, true, true, false, true);
+                else if (TheCombo == "E+W+R+Q+IGN" && HasMana(true, true, true, true)) //E+W+R+Q+IGN
+                    UseSpells(Target, "NE", true, true, true, true, true);
+                else if (TheCombo == "|DFG|E+Q+IGN" && HasMana(true, false, true, false)) //DFG+E+Q+IGN
+                    UseSpells(Target, "N", true, false, true, false, true);
+                else if (TheCombo == "|DFG|E+W+IGN" && HasMana(false, true, true, false)) //DFG+E+W+IGN
+                    UseSpells(Target, "NE", false, true, true, false, true);
+                else if (TheCombo == "|DFG|E+W+Q+IGN" && HasMana(true, true, true, false)) //DFG+E+W+Q+IGN
+                    UseSpells(Target, "NE", true, true, true, false, true);
+                else if (TheCombo == "|DFG|E+W+R+Q+IGN" && HasMana(true, true, true, true)) //DFG+E+W+R+Q+IGN
+                    UseSpells(Target, "NE", true, true, true, true, true);
+                else if (TheCombo == "IGN" && HasMana(false, false, false, false)) //IGN
+                    UseSpells(Target, "N", false, false, false, false, true);
+                else if (TheCombo == "Unkillable" && HasMana(false, false, false, false)) //Unkillable
+                    if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 0)
+                        return;
+                    else if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 1)
+                        Harass();
+                    else if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 2)
+                        UseSpells(Target, "N", true, false, false, false, false);
+                    else if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 3)
+                        UseSpells(Target, "NE", false, true, true, false, false);
+                    else if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 4)
+                        UseSpells(Target, "NE", true, true, true, false, false);
+            }
+        }
+//테스트용 추가
+        //Uses selected abilities
+        static void UseSpells(Obj_AI_Hero T, string Source, bool QQ, bool WW, bool EE, bool RR, bool IGNN)
+        {
+			var Qprediction = Q.GetPrediction(T);
+            var minions = Qprediction.CollisionObjects.Count(thing => thing.IsMinion);
+            if (Player.Distance(T, true) < Math.Pow(NeededRange(QQ, WW, EE, RR, IGNN), 2) && Player.Distance(T, true) > Math.Pow(NeededRange(QQ, WW, EE, RR, IGNN), 2)) ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, T);
+
+            if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
+            {
+                if (EE && T != null)
+                {
+                    if (Player.Distance(T.Position) <= E.Range)
+                    {
+                        if (E.IsReady() && !IsImmune(T) || !menu.Item("DontEShields").GetValue<bool>())
+                        {
+                            castE((Obj_AI_Hero)T);
+                        }
+                    }
+                }
+
+                if (WW && T != null)
+                {
+                    if (W.IsReady())
+                    {
+                        var pred = W.GetPrediction(T);
+                        if (Source == "NE" && menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
+                        {
+                            if (pred.Hitchance == HitChance.Immobile || T.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && (b.Type == BuffType.Charm || b.Type == BuffType.Knockback || b.Type == BuffType.Stun || b.Type == BuffType.Suppression || b.Type == BuffType.Snare)).Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time >= W.Delay && W.IsReady())
+                                W.Cast(T.ServerPosition, Packets());
+                        }
+                        else
+                        {
+                            if (pred.Hitchance == HitChance.Immobile || T.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && (b.Type == BuffType.Charm || b.Type == BuffType.Knockback || b.Type == BuffType.Stun || b.Type == BuffType.Suppression || b.Type == BuffType.Snare)).Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time >= W.Delay && W.IsReady())
+                                W.Cast(T.ServerPosition, Packets());
+                        }
+                    }
+                }
+            }
+            else if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 1)
+            {
+                if (WW && T != null)
+                {
+                    if (W.IsReady())
+                    {
+                        var pred = W.GetPrediction(T);
+                        if (EE)
+                        {
+                            if (E.IsReady() && pred.Hitchance == HitChance.VeryHigh) W.Cast(T.ServerPosition, Packets());
+                        }
+                        else
+                        {
+                            if (pred.Hitchance == HitChance.VeryHigh) W.Cast(T.ServerPosition, Packets());
+                        }
+                    }
+                }
+
+                if (EE && T != null)
+                {
+                    if (Player.Distance(T.Position) <= E.Range)
+                    {
+                        if (E.IsReady() && !IsImmune(T) || !menu.Item("DontEShields").GetValue<bool>())
+                        {
+                            if (WW)
+                            {
+                                if (!W.IsReady()) castE((Obj_AI_Hero)T);
+                            }
+                            else
+                            {
+                                castE((Obj_AI_Hero)T);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (RR && T != null)
+            {
+                if (R.IsReady() && !HasBuffs(T) && DetectCollision(T, R.Delay))
+                {
+                    if (Source == "NE" && menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
+                    {
+                        if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
+                        {
+                            if (menu.Item("IgnoreR").GetValue<bool>() || !W.IsReady())
+                                R.CastOnUnit(T, Packets());
+                        }
+                        else
+                        {
+                            if (T.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && (b.Type == BuffType.Charm || b.Type == BuffType.Knockback || b.Type == BuffType.Stun || b.Type == BuffType.Suppression || b.Type == BuffType.Snare)).Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time >= W.Delay)
+                                R.CastOnUnit(T, Packets());
+                        }
+                    }
+                    else
+                    {
+                        R.CastOnUnit(T, Packets());
+                    }
+
+                }
+            }
+
+            if (QQ && T != null && minions <= 1 && !HasBuffs(T) && DetectCollision(T, Q.Delay))
+            {
+                if (Source == "NE" && menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
+                {
+                    if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
+                    {
+                        if (menu.Item("IgnoreQ").GetValue<bool>() || !W.IsReady())
+                        {
+                            CastQ((Obj_AI_Hero)T);
+                        }
+                    }
+                    else
+                    {
+                        if (T.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && (b.Type == BuffType.Charm || b.Type == BuffType.Knockback || b.Type == BuffType.Stun || b.Type == BuffType.Suppression || b.Type == BuffType.Snare)).Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time >= W.Delay)
+                            CastQ((Obj_AI_Hero)T);
+                    }
+                }
+                else if (Source != "EWQHarass" && Source != "QHarass")
+                {
+                    CastQ((Obj_AI_Hero)T);
+                }
+                else if (Source == "EWQHarass")
+                {
+                    if (!menu.Item("WaitW").GetValue<bool>() || !W.IsReady())
+                        CastQ((Obj_AI_Hero)T);
+                }
+                else if (Source == "QHarass")
+                {
+                    if (Player.Distance(T.Position) <= Q.Range)
+                        CastQ((Obj_AI_Hero)T);
+                }
+
+            }
+
+            if (IGNN && T != null && IgniteSlot != SpellSlot.Unknown)
+            {
+                if (Player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready && !HasBuffs(T))
+                {
+                    if (Source == "NE" && menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
+                    {
+                        if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
+                        {
+                            if (menu.Item("IgnoreIGN").GetValue<bool>() || !W.IsReady())
+                                Player.Spellbook.CastSpell(IgniteSlot, T);
+                        }
+                        else
+                        {
+                            if (T.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && (b.Type == BuffType.Charm || b.Type == BuffType.Knockback || b.Type == BuffType.Stun || b.Type == BuffType.Suppression || b.Type == BuffType.Snare)).Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time >= W.Delay)
+                                Player.Spellbook.CastSpell(IgniteSlot, T);
+                        }
+                    }
+                    else
+                    {
+                        Player.Spellbook.CastSpell(IgniteSlot, T);
+                    }
+                }
+            }
+        }
+
+        //The Main function that decides which combo to use and what is the needed cooldown
+        static string GetBestCombo(Obj_AI_Hero x, string Source)
+        {
+            string BestCombo = null;
+
+            var op = menu.Item("op" + x.BaseSkinName).GetValue<Slider>().Value * .01 + 1;
+
+            if (GetComboDamage(x, Source, true, false, true, false, false) > x.Health * op) //E+Q
+            {
+                if (HasMana(true, false, true, false))
+                {
+                    BestCombo = "E+Q";
+                }
+            }
+            else if (GetComboDamage(x, Source, true, false, false, false, false) > x.Health * op) //Q
+            {
+                if (HasMana(true, false, false, false))
+                {
+                    BestCombo = "Q";
+                }
+            }
+            else if (GetComboDamage(x, Source, false, true, true, false, false) > x.Health * op) //E+W
+            {
+                if (HasMana(false, true, true, false))
+                {
+                    BestCombo = "E+W";
+                }
+            }
+            else if (GetComboDamage(x, Source, false, true, false, false, false) > x.Health * op) //W
+            {
+                if (HasMana(false, true, false, false))
+                {
+                    BestCombo = "W";
+                }
+            }
+            else if (GetComboDamage(x, Source, true, true, true, false, false) > x.Health * op) //E+W+Q
+            {
+                if (HasMana(true, true, true, false))
+                {
+                    BestCombo = "E+W+Q";
+                }
+            }
+            if (menu.Item("Priority").GetValue<StringList>().SelectedIndex == 0)
+            {
+                if (GetComboDamage(x, Source, false, true, true, true, false) > x.Health * op) //E+W+R
+                {
+                    if (HasMana(false, true, true, true))
+                    {
+                        BestCombo = "E+W+R";
+                    }
+                }
+                else if (GetComboDamage(x, Source, true, true, true, true, false) > x.Health * op) //E+W+R+Q
+                {
+                    if (HasMana(true, true, true, true))
+                    {
+                        BestCombo = "E+W+R+Q";
+                    }
+                }
+                else if (GetComboDamage(x, Source, false, false, true, true, false) > x.Health * op) //E+R
+                {
+                    if (HasMana(false, false, true, true))
+                    {
+                        BestCombo = "E+R";
+                    }
+                }
+                else if (GetComboDamage(x, Source, false, false, false, true, false) > x.Health * op) //R
+                {
+                    if (HasMana(false, false, false, true))
+                    {
+                        BestCombo = "R";
+                    }
+                }
+                else if (GetComboDamage(x, Source, true, false, true, false, true) > x.Health * op) //E+Q+IGN
+                {
+                    if (HasMana(true, false, true, false))
+                    {
+                        BestCombo = "E+Q+IGN";
+                    }
+                }
+                else if (GetComboDamage(x, Source, false, true, true, false, true) > x.Health * op) //E+W+IGN
+                {
+                    if (HasMana(false, true, true, false))
+                    {
+                        BestCombo = "E+W+IGN";
+                    }
+                }
+                else if (GetComboDamage(x, Source, true, true, true, false, true) > x.Health * op) //E+W+Q+IGN
+                {
+                    if (HasMana(true, true, true, false))
+                    {
+                        BestCombo = "E+W+Q+IGN";
+                    }
+                }
+                else if (GetComboDamage(x, Source, true, true, true, true, true) > x.Health * op) //E+W+R+Q+IGN
+                {
+                    if (HasMana(true, true, true, true))
+                    {
+                        BestCombo = "E+W+R+Q+IGN";
+                    }
+                }
+                else if (GetComboDamage(x, Source, false, false, false, false, true) > x.Health * op)  //IGN
+                {
+                    if (HasMana(false, false, false, false))
+                    {
+                        BestCombo = "IGN";
+                    }
+                }
+            }
+            else if (menu.Item("Priority").GetValue<StringList>().SelectedIndex == 1)
+            {
+                if (GetComboDamage(x, Source, true, false, true, false, true) > x.Health * op) //E+Q+IGN
+                {
+                    if (HasMana(true, false, true, false))
+                    {
+                        BestCombo = "E+Q+IGN";
+                    }
+                }
+                else if (GetComboDamage(x, Source, false, true, true, false, true) > x.Health * op) //E+W+IGN
+                {
+                    if (HasMana(false, true, true, false))
+                    {
+                        BestCombo = "E+W+IGN";
+                    }
+                }
+                else if (GetComboDamage(x, Source, true, true, true, false, true) > x.Health * op) //E+W+Q+IGN
+                {
+                    if (HasMana(true, true, true, false))
+                    {
+                        BestCombo = "E+W+Q+IGN";
+                    }
+                }
+                else if (GetComboDamage(x, Source, true, true, true, true, true) > x.Health * op) //E+W+R+Q+IGN
+                {
+                    if (HasMana(true, true, true, true))
+                    {
+                        BestCombo = "E+W+R+Q+IGN";
+                    }
+                }
+                else if (GetComboDamage(x, Source, false, false, false, false, true) > x.Health * op)  //IGN
+                {
+                    if (HasMana(false, false, false, false))
+                    {
+                        BestCombo = "IGN";
+                    }
+                }
+                else if (GetComboDamage(x, Source, false, true, true, true, false) > x.Health * op) //E+W+R
+                {
+                    if (HasMana(false, true, true, true))
+                    {
+                        BestCombo = "E+W+R";
+                    }
+                }
+                else if (GetComboDamage(x, Source, true, true, true, true, false) > x.Health * op) //E+W+R+Q
+                {
+                    if (HasMana(true, true, true, true))
+                    {
+                        BestCombo = "E+W+R+Q";
+                    }
+                }
+                else if (GetComboDamage(x, Source, false, false, true, true, false) > x.Health * op) //E+R
+                {
+                    if (HasMana(false, false, true, true))
+                    {
+                        BestCombo = "E+R";
+                    }
+                }
+                else if (GetComboDamage(x, Source, false, false, false, true, false) > x.Health * op) //R
+                {
+                    if (HasMana(false, false, false, true))
+                    {
+                        BestCombo = "R";
+                    }
+                }
+            }
+
+            if (BestCombo == null) //Not Killable
+            {
+                BestCombo = "Unkillable";
+            }
+
+            if (x.IsDead)
+            {
+                Ccombo = null;
+                Cccombo = null;
+            }
+
+            if (Source == "Comboing")
+            {
+                if (Ccombo == null && BestCombo != "Unkillable")
+                {
+                    Delay = CastTime(BestCombo);
+                    Delay1 = Environment.TickCount;
+                    Ccombo = BestCombo;
+                }
+            }
+
+            if (Source == "KS")
+            {
+                if (Cccombo == null && BestCombo != "Unkillable")
+                {
+                    Delayy = CastTime(BestCombo);
+                    Delayy1 = Environment.TickCount;
+                    Cccombo = BestCombo;
+                }
+            }
+
+            if (Source != "KS" && Source != "Comboing")
+            {
+                if (!x.IsVisible)
+                    BestCombo = "N/A";
+            }
+
+            if (Source == "Comboing" || Source == "KS")
+            {
+                if (Source == "Comboing")
+                {
+                    if (Ccombo != null)
+                        return Ccombo;
+                    else
+                        return BestCombo;
+                }
+                else
+                {
+                    if (Cccombo != null)
+                        return Cccombo;
+                    else
+                        return BestCombo;
+                }
+            }
+            else
+            {
+                return BestCombo;
+            }
+
+        }
+
+        //Jungle Laneclear
+        static void JungleLaneclear()
+        {
+            if (menu.Item("UseAAJungle").GetValue<bool>())
+            {
+                var AAminion = MinionManager.GetMinions(525, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault();
+                if (AAminion != null)
+                {
+                    Player.IssueOrder(GameObjectOrder.AttackUnit, AAminion);
+                }
+            }
+
+            if (menu.Item("UseEJungle").GetValue<bool>() && E.IsReady())
+            {
+                var minion = MinionManager.GetMinions(E.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault();
+                if (minion != null)
+                    castE(minion);
+            }
+
+            if (menu.Item("UseQJungle").GetValue<bool>() && Q.IsReady())
+            {
+                var targetClear = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault();
+                var targetLaneclear = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault(m => m.Health < (Player.GetSpellDamage(m, SpellSlot.Q)));
+
+                if (targetLaneclear != null)
+                {
+                    Q.Cast(targetLaneclear, Packets());
+                }
+                else if (targetClear != null)
+                {
+                    Q.Cast(targetClear, Packets());
+                }
+            }
+
+            if (menu.Item("UseWJungle").GetValue<bool>() && W.IsReady())
+            {
+                var JungleWMinions = MinionManager.GetMinions(Player.Position, W.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
+                List<Vector2> minionerinos2 =
+         (from minions in JungleWMinions select minions.Position.To2D()).ToList();
+                var ePos2 = MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).Position;
+
+                if (ePos2.Distance(Player.Position.To2D()) < W.Range && MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).MinionsHit > 0)
+                {
+                    W.Cast(ePos2, Packets());
+                }
+            }
+        }
+
+        //Q last Hitting
+        static void lastHit()
+        {
+            if (!Orbwalking.CanMove(40)) return;
+            if (Q.IsReady())
+            {
+                if (_m != null)
+                    CastQ(_m);
+            }
+        }
+
+        //W Lane Crearing
+        static void lastHitW()
+        {
+            var laneMinions = MinionManager.GetMinions(Player.Position, W.Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth);
+            List<Vector2> minionerinos2 =
+     (from minions in laneMinions select minions.Position.To2D()).ToList();
+            var ePos2 = MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).Position;
+
+            if (ePos2.Distance(Player.Position.To2D()) < W.Range && MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).MinionsHit >= menu.Item("WAmount").GetValue<Slider>().Value)
+            {
+                W.Cast(ePos2, Packets());
+            }
+        }
+
+        //        //Calculates the damage from selected abilities
+        static float GetComboDamage(Obj_AI_Base enemy, string source, bool A, bool B, bool C, bool D, bool F)
+        {
+            double damage = 0d;
+            double cmana = 0d;
+
+            if (W.IsReady() && B)
+            {
+                cmana += Player.Spellbook.GetSpell(SpellSlot.W).ManaCost;
+                if (source == "Comboing" || source == "KS" || source == "Table")
+                {
+                    if (!C)
+                        if (cmana <= Player.Mana) damage += Player.GetSpellDamage(enemy, SpellSlot.W);
+                        else cmana -= Player.Spellbook.GetSpell(SpellSlot.W).ManaCost;
+                    else if (E.IsReady())
+                        if (cmana <= Player.Mana) damage += Player.GetSpellDamage(enemy, SpellSlot.W);
+                        else cmana -= Player.Spellbook.GetSpell(SpellSlot.W).ManaCost;
+                }
+                else
+                {
+                    if (cmana <= Player.Mana) damage += Player.GetSpellDamage(enemy, SpellSlot.W);
+                    else cmana -= Player.Spellbook.GetSpell(SpellSlot.W).ManaCost;
+                }
+            }
+
+            if (R.IsReady() && D)
+            {
+                cmana += Player.Spellbook.GetSpell(SpellSlot.R).ManaCost;
+                if (source == "Comboing" || source == "KS" || source == "Table")
+                {
+                    if (!C)
+                        if (cmana <= Player.Mana) damage += Player.GetSpellDamage(enemy, SpellSlot.R);
+                        else cmana -= Player.Spellbook.GetSpell(SpellSlot.R).ManaCost;
+                    else if (E.IsReady())
+                        if (cmana <= Player.Mana) damage += Player.GetSpellDamage(enemy, SpellSlot.R);
+                        else cmana -= Player.Spellbook.GetSpell(SpellSlot.R).ManaCost;
+                }
+                else
+                {
+                    if (cmana <= Player.Mana) damage += Player.GetSpellDamage(enemy, SpellSlot.R);
+                    else cmana -= Player.Spellbook.GetSpell(SpellSlot.R).ManaCost;
+                }
+            }
+
+            if (Q.IsReady() && A)
+            {
+                cmana += Player.Spellbook.GetSpell(SpellSlot.Q).ManaCost;
+                if (source == "Comboing" || source == "KS" || source == "Table")
+                {
+                    if (!C)
+                        if (cmana <= Player.Mana) damage += Player.GetSpellDamage(enemy, SpellSlot.Q);
+                        else cmana -= Player.Spellbook.GetSpell(SpellSlot.Q).ManaCost;
+                    else if (E.IsReady())
+                        if (cmana <= Player.Mana) damage += Player.GetSpellDamage(enemy, SpellSlot.Q);
+                        else cmana -= Player.Spellbook.GetSpell(SpellSlot.Q).ManaCost;
+                }
+                else
+                {
+                    if (cmana <= Player.Mana) damage += Player.GetSpellDamage(enemy, SpellSlot.Q);
+                    else cmana -= Player.Spellbook.GetSpell(SpellSlot.Q).ManaCost;
+                }
+            }
+
+            if (IgniteSlot != SpellSlot.Unknown && Player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready && F)
+            {
+                if (source == "Comboing" || source == "KS" || source == "Table")
+                {
+                    if (!C)
+                        damage += ObjectManager.Player.GetSummonerSpellDamage(enemy, Damage.SummonerSpell.Ignite);
+                    else if (E.IsReady())
+                        damage += ObjectManager.Player.GetSummonerSpellDamage(enemy, Damage.SummonerSpell.Ignite);
+                }
+                else
+                {
+                    damage += ObjectManager.Player.GetSummonerSpellDamage(enemy, Damage.SummonerSpell.Ignite);
+                }
+            }
+            //}
+
+            if (Items.HasItem(3155, (Obj_AI_Hero)enemy))
+            {
+                damage = damage - 250;
+            }
+
+            if (Items.HasItem(3156, (Obj_AI_Hero)enemy))
+            {
+                damage = damage - 400;
+            }
+            return (float)damage - 20;
+        }
+
+        //Checks if you have enough mana for casting selected abilities
+        static bool HasMana(bool A, bool B, bool C, bool D)
+        {
+            int QMana = 0;
+            if (A) QMana = qMana[Q.Level];
+            int WMana = 0;
+            if (B) WMana = wMana[W.Level];
+            int EMana = 0;
+            if (C) EMana = eMana[E.Level];
+            int RMana = 0;
+            if (D) RMana = rMana[R.Level];
+            int together = QMana + WMana + EMana + RMana;
+            if (Player.Mana >= together)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //Returns the time in seconds needed to regen mana for Q,E+W+Q,E+W+Q+R combos.
+        static Tuple<int, int> manaCheck()
+        {
+            int QMana = qMana[Q.Level];
+            int EWQMana = qMana[Q.Level] + wMana[W.Level] + eMana[E.Level];
+            int EWQRMana = qMana[Q.Level] + wMana[W.Level] + eMana[E.Level] + rMana[R.Level];
+            int end = 0;
+            int EndValue = 0;
+
+            if (Player.Mana < QMana)
+            {
+                if (Q.Level != 0)
+                {
+                    double ManaRegen = ObjectManager.Player.PARRegenRate;
+                    double NeededMana = qMana[Q.Level] - Player.Mana;
+                    EndValue = (int)Math.Round(NeededMana / ManaRegen);
+                    end = 1;
+                }
+            }
+
+            else if (Player.Mana < EWQMana)
+            {
+                if (Q.Level != 0 && W.Level != 0 && E.Level != 0)
+                {
+                    double ManaRegen = ObjectManager.Player.PARRegenRate;
+                    double NeededMana = qMana[Q.Level] + wMana[W.Level] + eMana[E.Level] - Player.Mana;
+                    EndValue = (int)Math.Round(NeededMana / ManaRegen);
+                    end = 2;
+                }
+            }
+
+            else if (Player.Mana < EWQRMana)
+            {
+                if (Q.Level != 0 && W.Level != 0 && E.Level != 0 && R.Level != 0)
+                {
+                    double ManaRegen = ObjectManager.Player.PARRegenRate;
+                    double NeededMana = qMana[Q.Level] + wMana[W.Level] + eMana[E.Level] + rMana[R.Level] - Player.Mana;
+                    EndValue = (int)Math.Round(NeededMana / ManaRegen);
+                    end = 3;
+                }
+            }
+
+            return Tuple.Create(end, EndValue);
+        }
+
+        ////Check if needed abilities are ready
+        //static bool UpCD(bool A, bool B, bool C, bool D, bool EEE, bool F)
+        //{
+        //    bool AR = Q.IsReady();
+        //    bool BR = W.IsReady();
+        //    bool CR = E.IsReady();
+        //    bool DR = R.IsReady();
+        //    bool ER = Dfg.IsReady();
+        //    bool FR = IgniteSlot != SpellSlot.Unknown && Player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready;
+
+        //    if (A && !AR && Q.Level > 0)
+        //    {
+        //        return false;
+        //    }
+        //    else if (B && !BR && W.Level > 0)
+        //    {
+        //        return false;
+        //    }
+        //    else if (C && !CR && E.Level > 0)
+        //    {
+        //        return false;
+        //    }
+        //    else if (D && !DR && R.Level > 0)
+        //    {
+        //        return false;
+        //    }
+        //    else if (EEE && !ER && IgniteSlot == SpellSlot.Unknown)
+        //    {
+        //        return false;
+        //    }
+        //    else if (F && !FR && DFGSlot == SpellSlot.Unknown)
+        //    {
+        //        return false;
+        //    }
+        //    return true;
+        //}
+
+        ////Calculates the biggest needed cooldown for performing combo
+        //static double UpCDD(bool A, bool B, bool C, bool D, bool EEE, bool F)
+        //{
+        //    bool AR = Q.IsReady();
+        //    bool BR = W.IsReady();
+        //    bool CR = E.IsReady();
+        //    bool DR = R.IsReady();
+        //    bool ER = Dfg.IsReady();
+        //    bool FR = IgniteSlot != SpellSlot.Unknown && Player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready;
+
+        //    double timeleft = 0f;
+        //    if (A && !AR)
+        //        if ((Math.Round(Q.Instance.CooldownExpires - Game.Time)) > timeleft)
+        //            timeleft = Math.Round(Q.Instance.CooldownExpires - Game.Time);
+        //    if (B && !BR)
+        //        if ((Math.Round(W.Instance.CooldownExpires - Game.Time)) > timeleft)
+        //            timeleft = Math.Round(W.Instance.CooldownExpires - Game.Time);
+        //    if (C && !CR)
+        //        if ((Math.Round(E.Instance.CooldownExpires - Game.Time)) > timeleft)
+        //            timeleft = Math.Round(E.Instance.CooldownExpires - Game.Time);
+        //    if (D && !DR)
+        //        if ((Math.Round(R.Instance.CooldownExpires - Game.Time)) > timeleft)
+        //            timeleft = (Math.Round(R.Instance.CooldownExpires - Game.Time));
+        //    if (EEE && !ER)
+        //        if (Math.Round((ObjectManager.Player.Spellbook.GetSpell(DFGSlot).CooldownExpires - Game.Time)) > timeleft)
+        //            timeleft = Math.Round((ObjectManager.Player.Spellbook.GetSpell(DFGSlot).CooldownExpires - Game.Time));
+        //    if (F && !FR)
+        //        if (Math.Round((ObjectManager.Player.Spellbook.GetSpell(IgniteSlot).CooldownExpires - Game.Time)) > timeleft)
+        //            timeleft = Math.Round((ObjectManager.Player.Spellbook.GetSpell(IgniteSlot).CooldownExpires - Game.Time));
+        //    return Math.Round(timeleft);
+        //}
+
+        //Checks if needed abilities are leveled up/exist
+        static bool Exists(bool A, bool B, bool C, bool D, bool F)
+        {
+            int x = 0;
+
+            if (A && Q.Level == 0)
+                x++;
+            if (B && W.Level == 0)
+                x++;
+            if (C && E.Level == 0)
+                x++;
+            if (D && R.Level == 0)
+                x++;
+            if (F && IgniteSlot == SpellSlot.Unknown)
+                x++;
+
+            if (x > 0) return false;
+            else return true;
+        }
+
+        //Returns how much time will you spend on casting spells
+        static float CastTime(Obj_AI_Base enemy, bool A, bool B, bool C, bool D, bool EEE, bool F)
+        {
+            float time = 0f;
+            if (A) time += 0.6f * 1000;
+            if (B) time += 1.2f * 1000;
+            if (C) time += 0.50f * 1000;
+            if (D) time += 0.6f * 1000;
+            if (F) time += 1f * 1000;
+            return time;
+        }
+
+        //Returns how much time will you spend on casting spells
+        static float CastTime(string combo)
+        {
+            float time = 0f;
+            if (combo.Contains("Q")) time += 0.6f * 1000;
+            if (combo.Contains("W")) time += 1.2f * 1000;
+            if (combo.Contains("E")) time += 0.50f * 1000;
+            if (combo.Contains("R")) time += 0.6f * 1000;
+            if (combo.Contains("IGN")) time += 3f * 1000;
+            return time;
+        }
+
+        //Tenacity and stun time check
+        static bool tenacitycheck(Obj_AI_Hero target)
+        {
+            if (E.Level == 0 || W.Level == 0) return true;
+            if (Items.HasItem(3721, (Obj_AI_Hero)target) || Items.HasItem(3111, (Obj_AI_Hero)target) || Items.HasItem(3170, (Obj_AI_Hero)target) || Items.HasItem(3172, (Obj_AI_Hero)target))
+            {
+                var time = 1.5f + 0.25f * E.Level - 0.25f;
+                time = time * 0.75f;
+                if (time < W.Delay)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        //Returns how much more damage you need to deal to the target to ensure the kill OR how much you will overdamage to them
+        static Tuple<int, string> GetExtraNeeded(Obj_AI_Hero target)
+        {
+            var combodamage = GetComboDamage(target, "Cunts", true, true, true, true, true);
+            float Damage = 0f;
+            int OutPut = 0;
+            string Text = null;
+
+            if (combodamage > target.Health)
+            {
+                Damage = (float)Math.Round(combodamage - target.Health);
+                OutPut = (int)Damage;
+                Text = "Extra:";
+            }
+            else
+            {
+                Damage = (float)Math.Round(target.Health - combodamage);
+                OutPut = (int)Damage;
+                Text = "Need:";
+            }
+            if (!target.IsVisible)
+            {
+                Text = "N/A";
+            }
+            if (target.IsDead)
+            {
+                Text = "Dead";
+            }
+
+            return Tuple.Create(OutPut, Text);
+        }
+
+        //Left Click Target Locker
+        static void Game_OnWndProc(WndEventArgs args)
+        {
+            if (args.Msg != (uint)WindowsMessages.WM_LBUTTONDOWN)
+            {
+                return;
+            }
+
+            if (menu.Item("LockTargets").GetValue<bool>())
+            {
+                foreach (var objAiHero in from hero in ObjectManager.Get<Obj_AI_Hero>()
+                                          where hero.IsValidTarget()
+                                          select hero
+                                              into h
+                                              orderby h.Distance(Game.CursorPos) descending
+                                              select h
+                                                  into enemy
+                                                  where enemy.Distance(Game.CursorPos) < 150f
+                                                  select enemy)
+                {
+                    if (objAiHero != null && objAiHero.IsVisible && !objAiHero.IsDead)
+                    {
+                        if (Environment.TickCount + Game.Ping - TargetLockCD > 200)
+                        {
+                            if (ChoosedTarget == null)
+                            {
+                                ChoosedTarget = objAiHero;
+                            }
+                            else
+                            {
+                                if (ChoosedTarget.Name == objAiHero.Name)
+                                {
+                                    ChoosedTarget = null;
+                                }
+                                else
+                                {
+                                    ChoosedTarget = objAiHero;
+                                }
+                            }
+                            TargetLockCD = Environment.TickCount;
+                        }
+                    }
+                }
+            }
+        }
+
+        //Check if packet casting is turned ON/OFF
+        static bool Packets()
+        {
+            return menu.Item("packet").GetValue<bool>();
+        }
+
+        //Gets Current Target
+        static Obj_AI_Hero GetTarget()
+        {
+            Obj_AI_Hero Target = null;
+            if (ChoosedTarget == null)
+            {
+                Target = TargetSelector.GetTarget(1060, TargetSelector.DamageType.Magical);
+            }
+            else
+            {
+                Target = ChoosedTarget;
+            }
+            return Target;
+        }
+
+        //Checks if the target will be affected by spell
+        static bool IsImmune(Obj_AI_Hero target)
+        {
+            foreach (var buff in IgnoreList)
+            {
+                if (target.HasBuff(buff.DisplayName) || target.HasBuff(buff.Name)) return true;
+            }
+            return false;
+        }
+
+        //Checks if the target will be killed by spell
+        static bool HasBuffs(Obj_AI_Hero target)
+        {
+            foreach (var buff in buffList)
+            {
+                if (target.HasBuff(buff.DisplayName) || target.HasBuff(buff.Name))
+                {
+                    if (menu.Item("dont" + buff.Name).GetValue<bool>())
+                        return true;
+                }
+            }
+            return false;
+        }
+// 사건의 지평선 E 예측 수정
+/*
+        static void castE(Obj_AI_Base target)
+        {
+            PredictionOutput pred = Prediction.GetPrediction(target, E.Delay);
+            Vector2 castVec = pred.UnitPosition.To2D() -
+                              Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
+
+            if (pred.Hitchance >= HitChance.High && E.IsReady())
+            {
+                E.Cast(castVec, false);
+            }
+        }
+
+        //E CAST(UNIT)
+        static void castE(Obj_AI_Hero target)
+        {
+            PredictionOutput pred = Prediction.GetPrediction(target, E.Delay);
+            Vector2 castVec = pred.UnitPosition.To2D() -
+                              Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
+
+            if (pred.Hitchance >= HitChance.High && E.IsReady())
+            {
+                E.Cast(castVec, false);
+            }
+        }
+		*/
+        //E CAST(UNIT)
+//ECAST 발동문
+        static void castE(Obj_AI_Base target)
+        {
+            PredictionOutput pred = Prediction.GetPrediction(target, E.Delay);
+            Vector2 castVec = pred.UnitPosition.To2D() +
+                              Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
+            Vector2 castVec2 = pred.UnitPosition.To2D() -
+                              Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
+							  
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 360)
+            {
+                E.Cast(castVec, false);
+            }
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 360)
+            {
+                E.Cast(castVec2, false);
+            }
+        }
+
+        //E CAST(UNIT)
+        static void castE(Obj_AI_Hero target)
+        {
+            PredictionOutput pred = Prediction.GetPrediction(target, E.Delay);
+            Vector2 castVec = pred.UnitPosition.To2D() +
+                              Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
+            Vector2 castVec2 = pred.UnitPosition.To2D() -
+                              Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
+							  
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 360)
+            {
+                E.Cast(castVec, false);
+            }
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 360)
+            {
+                E.Cast(castVec2, false);
+            }
+        }
+
+        //E CAST(COORDINATES)
+        static void castE(Vector3 pos)
+        {
+            Vector2 castVec = pos.To2D() -
+                              Vector2.Normalize(pos.To2D() - Player.Position.To2D()) * E.Width;
+
+            if (E.IsReady())
+            {
+                E.Cast(castVec, Packets());
+            }
+        }
+
+        //E CAST(COORDINATES)
+        static void castE(Vector2 pos)
+        {
+            Vector2 castVec = pos;
+
+            if (E.IsReady())
+            {
+                E.Cast(castVec, Packets());
+            }
+        }
+
+        //Get Nearest Enemy Hero around "unit"
+        static Obj_AI_Hero GetNearestEnemy(Obj_AI_Hero unit)
+        {
+            return ObjectManager.Get<Obj_AI_Hero>()
+                .Where(x => x.IsEnemy && x.IsValid && Player.Distance(x.Position) <= E.Range)
+                .OrderBy(x => unit.ServerPosition.Distance(x.ServerPosition))
+                .FirstOrDefault();
+        }
+
+        //Uses Items
+        static void useItem(int id, Obj_AI_Hero target = null)
+        {
+            if (Items.HasItem(id) && Items.CanUseItem(id))
+            {
+                Items.UseItem(id, target);
+            }
+        }
+
+        //Loads standart or xSLx Orbwalker
+        static void chooseOrbwalker(bool mode)
+        {
+            if (mode)
+            {
+                Orbwalker = new Orbwalking.Orbwalker(orbwalkerMenu);
+                Orb = 1;
+                Game.PrintChat("Regular Orbwalker Loaded");
+            }
+        }
+
+        //static void GenModelPacket(string champ, int skinId)
+        //{
+        //     Packet.S2C.UpdateModel.Encoded(new Packet.S2C.UpdateModel.Struct(Player.NetworkId, skinId, champ))
+        //        .Process();
+        //}
+
+        //Automatically uses Health Pots when ignite/morde buff is on you
+        static void AutoHP()
+        {
+            if (Player.HasBuff("summonerdot") || Player.HasBuff("MordekaiserChildrenOfTheGrave"))
+            {
+                if (!Utility.InFountain(Player))
+
+                    if (Items.HasItem(biscuit.Id) && Items.CanUseItem(biscuit.Id) && !Player.HasBuff("ItemMiniRegenPotion"))
+                    {
+                        biscuit.Cast(Player);
+                    }
+                    else if (Items.HasItem(HPpot.Id) && Items.CanUseItem(HPpot.Id) && !Player.HasBuff("RegenerationPotion") && !Player.HasBuff("Health Potion"))
+                    {
+                        HPpot.Cast(Player);
+                    }
+                    else if (Items.HasItem(Flask.Id) && Items.CanUseItem(Flask.Id) && !Player.HasBuff("ItemCrystalFlask"))
+                    {
+                        Flask.Cast(Player);
+                    }
+            }
+        }
+        //hole
+        //Buys listed items(Gets called once in a game in fountain when you have 475 gold)
+        static void BuyItems()
+        {
+            if (Utility.InFountain(Player) && ObjectManager.Player.Gold == 475 && !boughtItemOne)
+            {
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Warding_Totem_Trinket);
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Faerie_Charm);
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Health_Potion);
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Health_Potion);
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Health_Potion);
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Health_Potion);
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Health_Potion);
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Mana_Potion);
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Mana_Potion);
+                ObjectManager.Player.BuyItem(LeagueSharp.ItemId.Mana_Potion);
+                boughtItemOne = true;
+            }
+        }
+
+        //Uses E on the end point of enemy Gapclosers
+        static void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
+        {
+            if (!menu.Item("UseGap").GetValue<bool>()) return;
+            if (E.IsReady() && gapcloser.Sender.IsValidTarget(E.Range))
+                castE((Vector3)gapcloser.End);
+        }
+
+        //Interrupts Dangerous enemy spells with E
+        static void Interrupter_OnPosibleToInterrupt(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs spell)
+        {
+            if (!menu.Item("UseInt").GetValue<bool>()) return;
+
+            if (Player.Distance(unit.Position) < E.Range && unit != null && E.IsReady())
+            {
+                castE((Obj_AI_Hero)unit);
+            }
+        }
+
+        static void TowerAttackOnCreate(GameObject sender, EventArgs args)
+        {
+            if (!E.IsReady() || !menu.Item("StunUnderTower").GetValue<bool>())
+            {
+                return;
+            }
+
+            if (sender.IsValid<Obj_SpellMissile>())
+            {
+                var missile = (Obj_SpellMissile)sender;
+
+                // Ally Turret -> Enemy Hero
+                if (missile.SpellCaster.IsValid<Obj_AI_Turret>() && missile.SpellCaster.IsAlly &&
+                    missile.Target.IsValid<Obj_AI_Hero>() && missile.Target.IsEnemy)
+                {
+                    var turret = (Obj_AI_Turret)missile.SpellCaster;
+                    if (Player.Distance(missile.Target.Position) < 1060)
+                        castE((Obj_AI_Hero)missile.Target);
+                }
+            }
+        }
+
+        //static void ObjSpellMissileOnOnCreate(GameObject sender, EventArgs args)
+        //{
+        //    if (!sender.IsValid || !(sender is Obj_SpellMissile))
+        //    {
+        //        return; //not sure if needed
+        //    }
+
+        //    var missile = (Obj_SpellMissile)sender;
+        //    var unit = missile.SpellCaster;
+        //    if (!unit.IsValid || (unit.Team == ObjectManager.Player.Team))
+        //    {
+        //        return;
+        //    }
+        //    var missilePosition = missile.Position.To2D();
+        //    var unitPosition = missile.StartPosition.To2D();
+        //    var endPos = missile.EndPosition.To2D();
+        //    if (Player.Distance(missile.Position) <= E.Range)
+        //    {
+        //        castE(endPos);
+        //    }
+
+        //}
+
+        static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (!sender.IsValid || !menu.Item("YasuoWall").GetValue<bool>() || sender.Team == ObjectManager.Player.Team || args.SData.Name != "YasuoWMovingWall" || args.SData.Name != "YasuoWMovingWall")
+                return;
+            _wallCastT = Environment.TickCount;
+            _yasuoWallCastedPos = sender.ServerPosition.To2D();
+        }
+
+        static void OnCreate(GameObject obj, EventArgs args)
+        {
+            if (Player.Distance(obj.Position) > 1500 || !ObjectManager.Get<Obj_AI_Hero>().Any(h => h.ChampionName == "Yasuo" && h.IsEnemy && h.IsVisible && !h.IsDead)) return;
+            //Yasuo Wall
+            if (obj.IsValid &&
+                System.Text.RegularExpressions.Regex.IsMatch(
+                    obj.Name, "_w_windwall.\\.troy",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            {
+                _yasuoWall = obj;
+            }
+        }
+
+        static void OnDelete(GameObject obj, EventArgs args)
+        {
+            if (Player.Distance(obj.Position) > 1500 || !ObjectManager.Get<Obj_AI_Hero>().Any(h => h.ChampionName == "Yasuo" && h.IsEnemy && h.IsVisible && !h.IsDead)) return;
+            //Yasuo Wall
+            if (obj.IsValid && System.Text.RegularExpressions.Regex.IsMatch(
+                obj.Name, "_w_windwall.\\.troy",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            {
+                _yasuoWall = null;
+            }
+        }
+
+        static bool DetectCollision(GameObject target, float x)
+        {
+            if (_yasuoWall == null || !ObjectManager.Get<Obj_AI_Hero>().Any(h => h.ChampionName == "Yasuo" && h.IsEnemy && h.IsVisible && !h.IsDead)) return true;
+
+            var level = _yasuoWall.Name.Substring(_yasuoWall.Name.Length - 6, 1);
+            var wallWidth = (300 + 50 * Convert.ToInt32(level));
+            var wallDirection = (_yasuoWall.Position.To2D() - _yasuoWallCastedPos).Normalized().Perpendicular();
+            var wallStart = _yasuoWall.Position.To2D() + ((int)(wallWidth / 2)) * wallDirection;
+            var wallEnd = wallStart - wallWidth * wallDirection;
+
+            var intersection = wallStart.Intersection(wallEnd, Player.Position.To2D(), target.Position.To2D());
+
+            return !intersection.Point.IsValid() || !(Environment.TickCount + Game.Ping + x - _wallCastT < 4000);
+
         }
     }
 }
