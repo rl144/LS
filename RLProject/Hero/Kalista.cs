@@ -109,7 +109,7 @@ namespace RLProject.Champions
 		static float Eharrass()
         {
             int lvl = Player.Level;
-            int eharrass = (80 + 12 * lvl);
+            int eharrass = (40 + 15 * lvl);
             return eharrass;
         }
 
