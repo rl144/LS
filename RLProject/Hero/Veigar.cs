@@ -339,12 +339,12 @@ namespace RLProject.Champions
                 RLProject.Menu.SubMenu("Combo").SubMenu("DontRIGN").AddItem(new MenuItem("dont" + buff.Name, buff.MenuName).SetValue(true));
             RLProject.Menu.SubMenu("Combo").SubMenu("DontRIGN").AddItem(new MenuItem("YasuoWall", "Yasuo Wall").SetValue(true));
 
-            menu.AddToMainMenu();
+//            menu.AddToMainMenu();
 
-            //if (menu.Item("skinch").GetValue<bool>())
+            //if (RLProject.Menu.Item("skinch").GetValue<bool>())
             //{
-            //    GenModelPacket(Player.ChampionName, menu.Item("skinchm").GetValue<Slider>().Value);
-            //    LastSkin = menu.Item("skinchm").GetValue<Slider>().Value;
+            //    GenModelPacket(Player.ChampionName, RLProject.Menu.Item("skinchm").GetValue<Slider>().Value);
+            //    LastSkin = RLProject.Menu.Item("skinchm").GetValue<Slider>().Value;
             //}
 
             //Events
@@ -435,7 +435,7 @@ namespace RLProject.Champions
             #endregion
 
             #region OnUpdate
-            if (ChoosedTarget != null && ChoosedTarget.IsDead || !menu.Item("LockTargets").GetValue<bool>())
+            if (ChoosedTarget != null && ChoosedTarget.IsDead || !RLProject.Menu.Item("LockTargets").GetValue<bool>())
                 ChoosedTarget = null;
 
             Target = GetTarget();
@@ -445,49 +445,49 @@ namespace RLProject.Champions
             //check if player is dead
             if (Player.IsDead) return;
 
-            if (menu.Item("Reset").GetValue<KeyBind>().Active)
+            if (RLProject.Menu.Item("Reset").GetValue<KeyBind>().Active)
             {
                 ChoosedTarget = null;
             }
 
-            if (menu.Item("PotOnIGN").GetValue<bool>())
+            if (RLProject.Menu.Item("PotOnIGN").GetValue<bool>())
             {
                 AutoHP();
             }
 
-            if (menu.Item("buystart").GetValue<KeyBind>().Active)
+            if (RLProject.Menu.Item("buystart").GetValue<KeyBind>().Active)
             {
                 BuyItems();
             }
 
-            if (!menu.Item("Combo").GetValue<KeyBind>().Active)
+            if (!RLProject.Menu.Item("Combo").GetValue<KeyBind>().Active)
             {
-                if (menu.Item("JungleActive").GetValue<KeyBind>().Active)
+                if (RLProject.Menu.Item("JungleActive").GetValue<KeyBind>().Active)
                 {
                     JungleLaneclear();
                 }
 
-                if (menu.Item("HarassActive").GetValue<KeyBind>().Active)
+                if (RLProject.Menu.Item("HarassActive").GetValue<KeyBind>().Active)
                 {
-                    if (Player.Mana / Player.MaxMana * 100 < menu.Item("husage").GetValue<Slider>().Value) return;
-                    if (menu.Item("SaveEH").GetValue<bool>() && !HasMana(false, false, true, false)) return;
+                    if (Player.Mana / Player.MaxMana * 100 < RLProject.Menu.Item("husage").GetValue<Slider>().Value) return;
+                    if (RLProject.Menu.Item("SaveEH").GetValue<bool>() && !HasMana(false, false, true, false)) return;
                     Harass();
                 }
 
-                if (menu.Item("LastHitWW").GetValue<KeyBind>().Active)
+                if (RLProject.Menu.Item("LastHitWW").GetValue<KeyBind>().Active)
                 {
-                    if (Player.Mana / Player.MaxMana * 100 < menu.Item("wusage").GetValue<Slider>().Value) return;
-                    if (menu.Item("SaveEW").GetValue<bool>() && !HasMana(false, false, true, false)) return;
+                    if (Player.Mana / Player.MaxMana * 100 < RLProject.Menu.Item("wusage").GetValue<Slider>().Value) return;
+                    if (RLProject.Menu.Item("SaveEW").GetValue<bool>() && !HasMana(false, false, true, false)) return;
                     lastHitW();
-                    if (menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 1 || menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 3) if (Player.ServerPosition.Distance(Game.CursorPos) > 55) Player.IssueOrder(GameObjectOrder.MoveTo, point);
+                    if (RLProject.Menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 1 || RLProject.Menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 3) if (Player.ServerPosition.Distance(Game.CursorPos) > 55) Player.IssueOrder(GameObjectOrder.MoveTo, point);
                 }
 
-                if (menu.Item("AllInActive").GetValue<KeyBind>().Active)
+                if (RLProject.Menu.Item("AllInActive").GetValue<KeyBind>().Active)
                 {
                     AllIn();
                 }
 
-                if (menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active)
+                if (RLProject.Menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active)
                 {
                     //if (Player.ServerPosition.Distance(Game.CursorPos) > 55 && !KeMinimap.Minimap.MouseOver) Player.IssueOrder(GameObjectOrder.MoveTo, point);
                     //if (E.IsReady())
@@ -510,42 +510,42 @@ namespace RLProject.Champions
                             }
                         }
                     }
-                    if (menu.Item("ToOrb").GetValue<bool>()) if (Player.ServerPosition.Distance(Game.CursorPos) > 80) Player.IssueOrder(GameObjectOrder.MoveTo, point);
+                    if (RLProject.Menu.Item("ToOrb").GetValue<bool>()) if (Player.ServerPosition.Distance(Game.CursorPos) > 80) Player.IssueOrder(GameObjectOrder.MoveTo, point);
                 }
             }
             else
             {
                 Combo();
-                //if (menu.Item("ToOrb").GetValue<bool>()) if (Orb == 2) xSLx_Orbwalker.xSLxOrbwalker.Orbwalk(Game.CursorPos, Target); else if (Orb == 1) Orbwalking.Orbwalk(Target, Game.CursorPos);
+                //if (RLProject.Menu.Item("ToOrb").GetValue<bool>()) if (Orb == 2) xSLx_Orbwalker.xSLxOrbwalker.Orbwalk(Game.CursorPos, Target); else if (Orb == 1) Orbwalking.Orbwalk(Target, Game.CursorPos);
             }
 
-            if (menu.Item("AutoKST").GetValue<KeyBind>().Active)
+            if (RLProject.Menu.Item("AutoKST").GetValue<KeyBind>().Active)
             {
                 AutoKS();
             }
 
-            if (menu.Item("manaStatus").GetValue<bool>())
+            if (RLProject.Menu.Item("manaStatus").GetValue<bool>())
             {
                 ManaMode = manaCheck().Item1;
                 NeededCD = manaCheck().Item2;
             }
 
-            if (menu.Item("ExtraNeeded").GetValue<KeyBind>().Active)
+            if (RLProject.Menu.Item("ExtraNeeded").GetValue<KeyBind>().Active)
             {
                 enemyDictionary = ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget()).ToDictionary(enemy => enemy, enemy => GetExtraNeeded(enemy).Item1);
             }
 
-            if (menu.Item("InfoTable").GetValue<KeyBind>().Active || menu.Item("OptimalCombo").GetValue<bool>())
+            if (RLProject.Menu.Item("InfoTable").GetValue<KeyBind>().Active || RLProject.Menu.Item("OptimalCombo").GetValue<bool>())
             {
-                enemyDictionary1 = ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget() && menu.Item("il" + enemy.BaseSkinName).GetValue<bool>() == false).ToDictionary(enemy => enemy, enemy => GetBestCombo(enemy, "Table"));
+                enemyDictionary1 = ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget() && RLProject.Menu.Item("il" + enemy.BaseSkinName).GetValue<bool>() == false).ToDictionary(enemy => enemy, enemy => GetBestCombo(enemy, "Table"));
             }
 
-            if (menu.Item("LastHitQQ").GetValue<KeyBind>().Active || menu.Item("LastHitQ").GetValue<KeyBind>().Active)
+            if (RLProject.Menu.Item("LastHitQQ").GetValue<KeyBind>().Active || RLProject.Menu.Item("LastHitQ").GetValue<KeyBind>().Active)
             {
-                if (Player.Mana / Player.MaxMana * 100 < menu.Item("qusage").GetValue<Slider>().Value) return;
-                if (menu.Item("SaveE").GetValue<bool>() && !HasMana(false, false, true, false)) return;
-                if (menu.Item("AllInActive").GetValue<KeyBind>().Active || menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active || menu.Item("HarassActive").GetValue<KeyBind>().Active || menu.Item("Combo").GetValue<KeyBind>().Active && menu.Item("dontfarm").GetValue<bool>()) return;
-                if (menu.Item("OnlySiege").GetValue<bool>())
+                if (Player.Mana / Player.MaxMana * 100 < RLProject.Menu.Item("qusage").GetValue<Slider>().Value) return;
+                if (RLProject.Menu.Item("SaveE").GetValue<bool>() && !HasMana(false, false, true, false)) return;
+                if (RLProject.Menu.Item("AllInActive").GetValue<KeyBind>().Active || RLProject.Menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active || RLProject.Menu.Item("HarassActive").GetValue<KeyBind>().Active || RLProject.Menu.Item("Combo").GetValue<KeyBind>().Active && RLProject.Menu.Item("dontfarm").GetValue<bool>()) return;
+                if (RLProject.Menu.Item("OnlySiege").GetValue<bool>())
                 {
                     _m = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth).FirstOrDefault(m => m.BaseSkinName.Contains("Siege") && m.Health < ((Player.GetSpellDamage(m, SpellSlot.Q))) && HealthPrediction.GetHealthPrediction(m, (int)(Player.Distance(m, false) / Q.Speed), (int)(Q.Delay * 1000 + Game.Ping / 2)) > 0);
                 }
@@ -554,16 +554,16 @@ namespace RLProject.Champions
                     _m = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth).FirstOrDefault(m => m.Health < ((Player.GetSpellDamage(m, SpellSlot.Q))) && HealthPrediction.GetHealthPrediction(m, (int)(Player.Distance(m, false) / Q.Speed), (int)(Q.Delay * 1000 + Game.Ping / 2)) > 0);
                 }
                 lastHit();
-                if (menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 2 || menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 3) if (Player.ServerPosition.Distance(Game.CursorPos) > 55) Player.IssueOrder(GameObjectOrder.MoveTo, point);
+                if (RLProject.Menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 2 || RLProject.Menu.Item("LaneclearMove").GetValue<StringList>().SelectedIndex == 3) if (Player.ServerPosition.Distance(Game.CursorPos) > 55) Player.IssueOrder(GameObjectOrder.MoveTo, point);
             }
 
-            if (menu.Item("Wimm").GetValue<bool>())
+            if (RLProject.Menu.Item("Wimm").GetValue<bool>())
             {
                 WimmTarget = ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget()).FirstOrDefault(m => m.IsValidTarget(E.Range) && m.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && b.Name != "VeigarStun" && (b.Type == BuffType.Charm || b.Type == BuffType.Knockback || b.Type == BuffType.Stun || b.Type == BuffType.Suppression || b.Type == BuffType.Snare)).Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time >= W.Delay);
-                if (WimmTarget != null && !WimmTarget.HasBuff("VeigarStun") && !menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active)
+                if (WimmTarget != null && !WimmTarget.HasBuff("VeigarStun") && !RLProject.Menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active)
                     W.Cast(WimmTarget);
             }
-            if (menu.Item("Wimm").GetValue<bool>() && menu.Item("Wimmz").GetValue<bool>())
+            if (RLProject.Menu.Item("Wimm").GetValue<bool>() && RLProject.Menu.Item("Wimmz").GetValue<bool>())
             {
                 WimmTargett = ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget()).FirstOrDefault(m => m.IsValidTarget(E.Range) && m.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && b.Name == "zhonyasringshield").Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time < W.Delay);
                 if (WimmTargett != null && WimmTargett.Buffs.Where(b => b.Name == "zhonyasringshield").Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time > W.Delay - 1f)
@@ -581,12 +581,12 @@ namespace RLProject.Champions
             //check if player is dead
             if (Player.IsDead) return;
 
-            if (menu.Item("noteactive").GetValue<bool>())
+            if (RLProject.Menu.Item("noteactive").GetValue<bool>())
             {
                 var y = 0f;
                 foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && enemy.IsValidTarget()))
                 {
-                    if (menu.Item("notebuffs").GetValue<bool>() && menu.Item("Combo").GetValue<KeyBind>().Active)
+                    if (RLProject.Menu.Item("notebuffs").GetValue<bool>() && RLProject.Menu.Item("Combo").GetValue<KeyBind>().Active)
                     {
                         //Game.PrintChat("actually");
                         if (HasBuffs(enemy))
@@ -599,7 +599,7 @@ namespace RLProject.Champions
                             }
                         }
                     }
-                    if (menu.Item("notetenacity").GetValue<bool>())
+                    if (RLProject.Menu.Item("notetenacity").GetValue<bool>())
                     {
                         if (!tenacitycheck(enemy))
                         {
@@ -611,26 +611,26 @@ namespace RLProject.Champions
 
             if (Target != null && Target.IsVisible)
             {
-                if (ChoosedTarget != null && menu.Item("LockTargets").GetValue<bool>())
+                if (ChoosedTarget != null && RLProject.Menu.Item("LockTargets").GetValue<bool>())
                 {
-                    if (menu.Item("TText").GetValue<bool>()) Render.Circle.DrawCircle(ChoosedTarget.Position, 75, Color.LightGreen);
+                    if (RLProject.Menu.Item("TText").GetValue<bool>()) Render.Circle.DrawCircle(ChoosedTarget.Position, 75, Color.LightGreen);
                     Drawing.DrawText(Player.HPBarPosition.X + 55, Player.HPBarPosition.Y + 25, System.Drawing.Color.LightGreen, "Lock:" + ChoosedTarget.ChampionName);
                 }
                 else
                 {
-                    if (menu.Item("TText").GetValue<bool>()) Render.Circle.DrawCircle(Target.Position, 75, Color.Red);
+                    if (RLProject.Menu.Item("TText").GetValue<bool>()) Render.Circle.DrawCircle(Target.Position, 75, Color.Red);
                 }
             }
             else if (Target != null)
             {
-                if (ChoosedTarget != null && menu.Item("LockTargets").GetValue<bool>())
+                if (ChoosedTarget != null && RLProject.Menu.Item("LockTargets").GetValue<bool>())
                 {
-                    if (menu.Item("LText").GetValue<bool>()) Drawing.DrawText(Player.HPBarPosition.X + 55, Player.HPBarPosition.Y + 25, System.Drawing.Color.LightGreen, "Lock:" + ChoosedTarget.ChampionName);
+                    if (RLProject.Menu.Item("LText").GetValue<bool>()) Drawing.DrawText(Player.HPBarPosition.X + 55, Player.HPBarPosition.Y + 25, System.Drawing.Color.LightGreen, "Lock:" + ChoosedTarget.ChampionName);
                 }
             }
 
             //Draw Extra or Needed for kill damage
-            if (menu.Item("ExtraNeeded").GetValue<KeyBind>().Active)
+            if (RLProject.Menu.Item("ExtraNeeded").GetValue<KeyBind>().Active)
             {
                 foreach (Obj_AI_Hero enemy in enemyDictionary.Keys)
                 {
@@ -654,7 +654,7 @@ namespace RLProject.Champions
                                 Drawing.DrawText(enemy.HPBarPosition.X + 7, enemy.HPBarPosition.Y + 1, Color.Red, "Killable(" + ENdamage + "k+)");
                             else
                                 Drawing.DrawText(enemy.HPBarPosition.X + 7, enemy.HPBarPosition.Y + 1, Color.Red, "Killable(" + ENdamage + ")");
-                            if (menu.Item("ExtraNeeded1").GetValue<bool>())
+                            if (RLProject.Menu.Item("ExtraNeeded1").GetValue<bool>())
                             {
                                 var hpBarPos = enemy.HPBarPosition;
 
@@ -690,7 +690,7 @@ namespace RLProject.Champions
                                 Drawing.DrawText(enemy.HPBarPosition.X + 7, enemy.HPBarPosition.Y + 1, Color.White, "Unkillable(" + ENdamage + "k+)");
                             else
                                 Drawing.DrawText(enemy.HPBarPosition.X + 7, enemy.HPBarPosition.Y + 1, Color.White, "Unkillable(" + ENdamage + ")");
-                            if (menu.Item("ExtraNeeded1").GetValue<bool>())
+                            if (RLProject.Menu.Item("ExtraNeeded1").GetValue<bool>())
                             {
                                 var hpBarPos = enemy.HPBarPosition;
 
@@ -724,7 +724,7 @@ namespace RLProject.Champions
                 }
             }
 
-            if (menu.Item("OptimalCombo").GetValue<bool>())
+            if (RLProject.Menu.Item("OptimalCombo").GetValue<bool>())
             {
                 foreach (Obj_AI_Hero enemy in enemyDictionary1.Keys)
                 {
@@ -738,21 +738,21 @@ namespace RLProject.Champions
                 }
             }
 
-            if (menu.Item("LastHitQQ").GetValue<KeyBind>().Active || menu.Item("LastHitQ").GetValue<KeyBind>().Active)
+            if (RLProject.Menu.Item("LastHitQQ").GetValue<KeyBind>().Active || RLProject.Menu.Item("LastHitQ").GetValue<KeyBind>().Active)
             {
-                var MinMar = menu.Item("MinionMarker").GetValue<Circle>();
+                var MinMar = RLProject.Menu.Item("MinionMarker").GetValue<Circle>();
                 if (_m != null)
                     Render.Circle.DrawCircle(_m.Position, 75, MinMar.Color);
             }
 
             #region Indicators
-            if (menu.Item("HUDdisplay").GetValue<bool>())
+            if (RLProject.Menu.Item("HUDdisplay").GetValue<bool>())
             {
-                float X = (float)menu.Item("HUDX").GetValue<Slider>().Value / 100;
-                float Y = (float)menu.Item("HUDY").GetValue<Slider>().Value / 100;
-                foreach (var hud in HUDlist.Where(hud => "U" + hud.MenuText == menu.Item("U" + hud.MenuText).Name && menu.Item("U" + hud.MenuText).GetValue<bool>()))
+                float X = (float)RLProject.Menu.Item("HUDX").GetValue<Slider>().Value / 100;
+                float Y = (float)RLProject.Menu.Item("HUDY").GetValue<Slider>().Value / 100;
+                foreach (var hud in HUDlist.Where(hud => "U" + hud.MenuText == RLProject.Menu.Item("U" + hud.MenuText).Name && RLProject.Menu.Item("U" + hud.MenuText).GetValue<bool>()))
                 {
-                    if (menu.Item(hud.MenuComboText).GetValue<KeyBind>().Active)
+                    if (RLProject.Menu.Item(hud.MenuComboText).GetValue<KeyBind>().Active)
                         Drawing.DrawText(Drawing.Width * X, Drawing.Height * Y, System.Drawing.Color.Yellow, hud.DisplayTextON);
                     else
                         Drawing.DrawText(Drawing.Width * X, Drawing.Height * Y, System.Drawing.Color.DarkRed, hud.DisplayTextOFF);
@@ -761,7 +761,7 @@ namespace RLProject.Champions
             }
             #endregion
             #region Mana Status
-            if (menu.Item("manaStatus").GetValue<bool>())
+            if (RLProject.Menu.Item("manaStatus").GetValue<bool>())
             {
                 if (ManaMode != 0)
                 {
@@ -782,7 +782,7 @@ namespace RLProject.Champions
             }
             #endregion
             #region InfoTable
-            if (menu.Item("InfoTable").GetValue<KeyBind>().Active)
+            if (RLProject.Menu.Item("InfoTable").GetValue<KeyBind>().Active)
             {
                 var x = Drawing.Width * 0.85f;
                 var y = Drawing.Height * 0.61f;
@@ -849,7 +849,7 @@ namespace RLProject.Champions
             #endregion
             foreach (Spell spell in SpellList)
             {
-                var menuItem = menu.Item(spell.Slot + "Range").GetValue<Circle>();
+                var menuItem = RLProject.Menu.Item(spell.Slot + "Range").GetValue<Circle>();
                 if (menuItem.Active)
                     Render.Circle.DrawCircle(Player.Position, spell.Range, menuItem.Color);
             }
@@ -858,51 +858,51 @@ namespace RLProject.Champions
         //Automatic Kill Steal
         static void AutoKS()
         {
-            if (menu.Item("AllInActive").GetValue<KeyBind>().Active || menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active || menu.Item("HarassActive").GetValue<KeyBind>().Active || menu.Item("Combo").GetValue<KeyBind>().Active && menu.Item("DisableKS").GetValue<bool>()) return;
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && !enemy.IsDead && enemy.IsValidTarget() && Player.Distance(enemy.Position) <= NeededRange(menu.Item("UseQKS").GetValue<bool>(), menu.Item("UseWKS").GetValue<bool>(), menu.Item("UseWKS").GetValue<bool>(), menu.Item("UseRKS").GetValue<bool>(), menu.Item("UseIGNKS").GetValue<bool>()) && Player.Distance(enemy.Position) <= E.Range))
+            if (RLProject.Menu.Item("AllInActive").GetValue<KeyBind>().Active || RLProject.Menu.Item("Stun Closest Enemy").GetValue<KeyBind>().Active || RLProject.Menu.Item("HarassActive").GetValue<KeyBind>().Active || RLProject.Menu.Item("Combo").GetValue<KeyBind>().Active && RLProject.Menu.Item("DisableKS").GetValue<bool>()) return;
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsEnemy && !enemy.IsDead && enemy.IsValidTarget() && Player.Distance(enemy.Position) <= NeededRange(RLProject.Menu.Item("UseQKS").GetValue<bool>(), RLProject.Menu.Item("UseWKS").GetValue<bool>(), RLProject.Menu.Item("UseWKS").GetValue<bool>(), RLProject.Menu.Item("UseRKS").GetValue<bool>(), RLProject.Menu.Item("UseIGNKS").GetValue<bool>()) && Player.Distance(enemy.Position) <= E.Range))
             {
-                if (GetComboDamage(enemy, "Cunts", true, false, false, false, false) > enemy.Health && menu.Item("UseQKS").GetValue<bool>())
+                if (GetComboDamage(enemy, "Cunts", true, false, false, false, false) > enemy.Health && RLProject.Menu.Item("UseQKS").GetValue<bool>())
                 {
                     if (HasMana(true, false, false, false))
                     {
                         UseSpells(enemy, "Source", true, false, false, false, false);
                     }
                 }
-                else if (GetComboDamage(enemy, "Cunts", false, true, false, false, false) > enemy.Health && menu.Item("UseWKS").GetValue<bool>())
+                else if (GetComboDamage(enemy, "Cunts", false, true, false, false, false) > enemy.Health && RLProject.Menu.Item("UseWKS").GetValue<bool>())
                 {
                     if (HasMana(false, true, false, false))
                     {
                         UseSpells(enemy, "NE", false, true, false, false, false);
                     }
                 }
-                else if (GetComboDamage(enemy, "Cunts", true, false, false, false, false) > enemy.Health && menu.Item("UseQKS").GetValue<bool>() && menu.Item("UseDFGKS").GetValue<bool>())
+                else if (GetComboDamage(enemy, "Cunts", true, false, false, false, false) > enemy.Health && RLProject.Menu.Item("UseQKS").GetValue<bool>() && RLProject.Menu.Item("UseDFGKS").GetValue<bool>())
                 {
                     if (HasMana(true, false, false, false))
                     {
                         UseSpells(enemy, "Source", true, false, false, false, false);
                     }
                 }
-                else if (GetComboDamage(enemy, "Cunts", false, false, false, true, false) > enemy.Health && menu.Item("UseRKS").GetValue<bool>())
+                else if (GetComboDamage(enemy, "Cunts", false, false, false, true, false) > enemy.Health && RLProject.Menu.Item("UseRKS").GetValue<bool>())
                 {
                     if (HasMana(false, false, false, true))
                     {
                         UseSpells(enemy, "Source", false, false, false, true, false);
                     }
                 }
-                else if (GetComboDamage(enemy, "Cunts", false, false, false, true, false) > enemy.Health && menu.Item("UseRKS").GetValue<bool>() && menu.Item("UseDFGKS").GetValue<bool>())
+                else if (GetComboDamage(enemy, "Cunts", false, false, false, true, false) > enemy.Health && RLProject.Menu.Item("UseRKS").GetValue<bool>() && RLProject.Menu.Item("UseDFGKS").GetValue<bool>())
                 {
                     if (HasMana(false, false, false, true))
                     {
                         UseSpells(enemy, "Source", true, false, false, false, false);
                     }
                 }
-                else if (GetComboDamage(enemy, "Cunts", false, false, false, false, true) > enemy.Health && menu.Item("UseIGNKS").GetValue<bool>())
+                else if (GetComboDamage(enemy, "Cunts", false, false, false, false, true) > enemy.Health && RLProject.Menu.Item("UseIGNKS").GetValue<bool>())
                 {
                     UseSpells(enemy, "Source", false, false, false, false, true);
                 }
-                else if (GetComboDamage(enemy, "Cunts", menu.Item("UseQKS").GetValue<bool>(), menu.Item("UseWKS").GetValue<bool>(), false, menu.Item("UseRKS").GetValue<bool>(), menu.Item("UseIGNKS").GetValue<bool>()) > enemy.Health)
+                else if (GetComboDamage(enemy, "Cunts", RLProject.Menu.Item("UseQKS").GetValue<bool>(), RLProject.Menu.Item("UseWKS").GetValue<bool>(), false, RLProject.Menu.Item("UseRKS").GetValue<bool>(), RLProject.Menu.Item("UseIGNKS").GetValue<bool>()) > enemy.Health)
                 {
-                    UseSpells(enemy, "Source", menu.Item("UseQKS").GetValue<bool>(), menu.Item("UseWKS").GetValue<bool>(), false, menu.Item("UseRKS").GetValue<bool>(), menu.Item("UseIGNKS").GetValue<bool>());
+                    UseSpells(enemy, "Source", RLProject.Menu.Item("UseQKS").GetValue<bool>(), RLProject.Menu.Item("UseWKS").GetValue<bool>(), false, RLProject.Menu.Item("UseRKS").GetValue<bool>(), RLProject.Menu.Item("UseIGNKS").GetValue<bool>());
                 }
             }
         }
@@ -932,28 +932,28 @@ namespace RLProject.Champions
         //Harass Combo(Independent of CD and target HP)
         static void Harass()
         {
-            if (menu.Item("HarassMode").GetValue<StringList>().SelectedIndex == 0) UseSpells(Target, "EWQHarass", true, true, true, false, false);
-            else if (menu.Item("HarassMode").GetValue<StringList>().SelectedIndex == 1) UseSpells(Target, "EWHarass", false, true, true, false, false);
-            else if (menu.Item("HarassMode").GetValue<StringList>().SelectedIndex == 2) UseSpells(Target, "QHarass", true, false, false, false, false);
+            if (RLProject.Menu.Item("HarassMode").GetValue<StringList>().SelectedIndex == 0) UseSpells(Target, "EWQHarass", true, true, true, false, false);
+            else if (RLProject.Menu.Item("HarassMode").GetValue<StringList>().SelectedIndex == 1) UseSpells(Target, "EWHarass", false, true, true, false, false);
+            else if (RLProject.Menu.Item("HarassMode").GetValue<StringList>().SelectedIndex == 2) UseSpells(Target, "QHarass", true, false, false, false, false);
         }
 
         //Use All Available Spells Combo(Independent of CD and target HP)
         static void AllIn()
         {
-            if (menu.Item("ToOrb").GetValue<bool>()) if (Orb == 2) Orbwalking.Orbwalk(Target, Game.CursorPos); else if (Orb == 1) Orbwalking.Orbwalk(Target, Game.CursorPos);
+            if (RLProject.Menu.Item("ToOrb").GetValue<bool>()) if (Orb == 2) Orbwalking.Orbwalk(Target, Game.CursorPos); else if (Orb == 1) Orbwalking.Orbwalk(Target, Game.CursorPos);
             UseSpells(Target, "AllIn", true, true, true, true, true);
         }
 
         //The Main Smart Combo that chooses the most efficient combo that will ensure the kill
         static void Combo()
         {
-            if (Target != null && Player.Distance(Target.Position) <= E.Range && menu.Item("il" + Target.BaseSkinName).GetValue<bool>() == false)
+            if (Target != null && Player.Distance(Target.Position) <= E.Range && RLProject.Menu.Item("il" + Target.BaseSkinName).GetValue<bool>() == false)
             {
                 string TheCombo = null;
 
                 TheCombo = GetBestCombo(Target, "Comboing");
 
-                if (TheCombo != null && Target.MoveSpeed >= Player.MoveSpeed && menu.Item("notems").GetValue<bool>()) Drawing.DrawText(Player.HPBarPosition.X + 9, Player.HPBarPosition.Y + 37, System.Drawing.Color.LightGreen, Target.ChampionName + "" + "MS is higher" + "(" + Math.Round((Target.MoveSpeed - Player.MoveSpeed)) + ")");
+                if (TheCombo != null && Target.MoveSpeed >= Player.MoveSpeed && RLProject.Menu.Item("notems").GetValue<bool>()) Drawing.DrawText(Player.HPBarPosition.X + 9, Player.HPBarPosition.Y + 37, System.Drawing.Color.LightGreen, Target.ChampionName + "" + "MS is higher" + "(" + Math.Round((Target.MoveSpeed - Player.MoveSpeed)) + ")");
 
                 if (TheCombo == "E+Q" && HasMana(true, false, true, false)) //E+Q
                     UseSpells(Target, "N", true, false, true, false, false);
@@ -1006,15 +1006,15 @@ namespace RLProject.Champions
                 else if (TheCombo == "IGN" && HasMana(false, false, false, false)) //IGN
                     UseSpells(Target, "N", false, false, false, false, true);
                 else if (TheCombo == "Unkillable" && HasMana(false, false, false, false)) //Unkillable
-                    if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 0)
+                    if (RLProject.Menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 0)
                         return;
-                    else if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 1)
+                    else if (RLProject.Menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 1)
                         Harass();
-                    else if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 2)
+                    else if (RLProject.Menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 2)
                         UseSpells(Target, "N", true, false, false, false, false);
-                    else if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 3)
+                    else if (RLProject.Menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 3)
                         UseSpells(Target, "NE", false, true, true, false, false);
-                    else if (menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 4)
+                    else if (RLProject.Menu.Item("ComboMode").GetValue<StringList>().SelectedIndex == 4)
                         UseSpells(Target, "NE", true, true, true, false, false);
             }
         }
@@ -1026,13 +1026,13 @@ namespace RLProject.Champions
             var minions = Qprediction.CollisionObjects.Count(thing => thing.IsMinion);
             if (Player.Distance(T, true) < Math.Pow(NeededRange(QQ, WW, EE, RR, IGNN), 2) && Player.Distance(T, true) > Math.Pow(NeededRange(QQ, WW, EE, RR, IGNN), 2)) ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, T);
 
-            if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
+            if (RLProject.Menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
             {
                 if (EE && T != null)
                 {
                     if (Player.Distance(T.Position) <= E.Range)
                     {
-                        if (E.IsReady() && !IsImmune(T) || !menu.Item("DontEShields").GetValue<bool>())
+                        if (E.IsReady() && !IsImmune(T) || !RLProject.Menu.Item("DontEShields").GetValue<bool>())
                         {
                             castE((Obj_AI_Hero)T);
                         }
@@ -1044,7 +1044,7 @@ namespace RLProject.Champions
                     if (W.IsReady())
                     {
                         var pred = W.GetPrediction(T);
-                        if (Source == "NE" && menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
+                        if (Source == "NE" && RLProject.Menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
                         {
                             if (pred.Hitchance == HitChance.Immobile || T.Buffs.Where(b => b.IsActive && Game.Time < b.EndTime && (b.Type == BuffType.Charm || b.Type == BuffType.Knockback || b.Type == BuffType.Stun || b.Type == BuffType.Suppression || b.Type == BuffType.Snare)).Aggregate(0f, (current, buff) => Math.Max(current, buff.EndTime)) - Game.Time >= W.Delay && W.IsReady())
                                 W.Cast(T.ServerPosition, Packets());
@@ -1057,7 +1057,7 @@ namespace RLProject.Champions
                     }
                 }
             }
-            else if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 1)
+            else if (RLProject.Menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 1)
             {
                 if (WW && T != null)
                 {
@@ -1079,7 +1079,7 @@ namespace RLProject.Champions
                 {
                     if (Player.Distance(T.Position) <= E.Range)
                     {
-                        if (E.IsReady() && !IsImmune(T) || !menu.Item("DontEShields").GetValue<bool>())
+                        if (E.IsReady() && !IsImmune(T) || !RLProject.Menu.Item("DontEShields").GetValue<bool>())
                         {
                             if (WW)
                             {
@@ -1098,11 +1098,11 @@ namespace RLProject.Champions
             {
                 if (R.IsReady() && !HasBuffs(T) && DetectCollision(T, R.Delay))
                 {
-                    if (Source == "NE" && menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
+                    if (Source == "NE" && RLProject.Menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
                     {
-                        if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
+                        if (RLProject.Menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
                         {
-                            if (menu.Item("IgnoreR").GetValue<bool>() || !W.IsReady())
+                            if (RLProject.Menu.Item("IgnoreR").GetValue<bool>() || !W.IsReady())
                                 R.CastOnUnit(T, Packets());
                         }
                         else
@@ -1121,11 +1121,11 @@ namespace RLProject.Champions
 
             if (QQ && T != null && minions <= 1 && !HasBuffs(T) && DetectCollision(T, Q.Delay))
             {
-                if (Source == "NE" && menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
+                if (Source == "NE" && RLProject.Menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
                 {
-                    if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
+                    if (RLProject.Menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
                     {
-                        if (menu.Item("IgnoreQ").GetValue<bool>() || !W.IsReady())
+                        if (RLProject.Menu.Item("IgnoreQ").GetValue<bool>() || !W.IsReady())
                         {
                             CastQ((Obj_AI_Hero)T);
                         }
@@ -1142,7 +1142,7 @@ namespace RLProject.Champions
                 }
                 else if (Source == "EWQHarass")
                 {
-                    if (!menu.Item("WaitW").GetValue<bool>() || !W.IsReady())
+                    if (!RLProject.Menu.Item("WaitW").GetValue<bool>() || !W.IsReady())
                         CastQ((Obj_AI_Hero)T);
                 }
                 else if (Source == "QHarass")
@@ -1157,11 +1157,11 @@ namespace RLProject.Champions
             {
                 if (Player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready && !HasBuffs(T))
                 {
-                    if (Source == "NE" && menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
+                    if (Source == "NE" && RLProject.Menu.Item("ComboWaitMode").GetValue<StringList>().SelectedIndex == 0)
                     {
-                        if (menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
+                        if (RLProject.Menu.Item("CastMode").GetValue<StringList>().SelectedIndex == 0)
                         {
-                            if (menu.Item("IgnoreIGN").GetValue<bool>() || !W.IsReady())
+                            if (RLProject.Menu.Item("IgnoreIGN").GetValue<bool>() || !W.IsReady())
                                 Player.Spellbook.CastSpell(IgniteSlot, T);
                         }
                         else
@@ -1183,7 +1183,7 @@ namespace RLProject.Champions
         {
             string BestCombo = null;
 
-            var op = menu.Item("op" + x.BaseSkinName).GetValue<Slider>().Value * .01 + 1;
+            var op = RLProject.Menu.Item("op" + x.BaseSkinName).GetValue<Slider>().Value * .01 + 1;
 
             if (GetComboDamage(x, Source, true, false, true, false, false) > x.Health * op) //E+Q
             {
@@ -1220,7 +1220,7 @@ namespace RLProject.Champions
                     BestCombo = "E+W+Q";
                 }
             }
-            if (menu.Item("Priority").GetValue<StringList>().SelectedIndex == 0)
+            if (RLProject.Menu.Item("Priority").GetValue<StringList>().SelectedIndex == 0)
             {
                 if (GetComboDamage(x, Source, false, true, true, true, false) > x.Health * op) //E+W+R
                 {
@@ -1286,7 +1286,7 @@ namespace RLProject.Champions
                     }
                 }
             }
-            else if (menu.Item("Priority").GetValue<StringList>().SelectedIndex == 1)
+            else if (RLProject.Menu.Item("Priority").GetValue<StringList>().SelectedIndex == 1)
             {
                 if (GetComboDamage(x, Source, true, false, true, false, true) > x.Health * op) //E+Q+IGN
                 {
@@ -1417,7 +1417,7 @@ namespace RLProject.Champions
         //Jungle Laneclear
         static void JungleLaneclear()
         {
-            if (menu.Item("UseAAJungle").GetValue<bool>())
+            if (RLProject.Menu.Item("UseAAJungle").GetValue<bool>())
             {
                 var AAminion = MinionManager.GetMinions(525, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault();
                 if (AAminion != null)
@@ -1426,14 +1426,14 @@ namespace RLProject.Champions
                 }
             }
 
-            if (menu.Item("UseEJungle").GetValue<bool>() && E.IsReady())
+            if (RLProject.Menu.Item("UseEJungle").GetValue<bool>() && E.IsReady())
             {
                 var minion = MinionManager.GetMinions(E.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault();
                 if (minion != null)
                     castE(minion);
             }
 
-            if (menu.Item("UseQJungle").GetValue<bool>() && Q.IsReady())
+            if (RLProject.Menu.Item("UseQJungle").GetValue<bool>() && Q.IsReady())
             {
                 var targetClear = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault();
                 var targetLaneclear = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault(m => m.Health < (Player.GetSpellDamage(m, SpellSlot.Q)));
@@ -1448,7 +1448,7 @@ namespace RLProject.Champions
                 }
             }
 
-            if (menu.Item("UseWJungle").GetValue<bool>() && W.IsReady())
+            if (RLProject.Menu.Item("UseWJungle").GetValue<bool>() && W.IsReady())
             {
                 var JungleWMinions = MinionManager.GetMinions(Player.Position, W.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
                 List<Vector2> minionerinos2 =
@@ -1481,7 +1481,7 @@ namespace RLProject.Champions
      (from minions in laneMinions select minions.Position.To2D()).ToList();
             var ePos2 = MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).Position;
 
-            if (ePos2.Distance(Player.Position.To2D()) < W.Range && MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).MinionsHit >= menu.Item("WAmount").GetValue<Slider>().Value)
+            if (ePos2.Distance(Player.Position.To2D()) < W.Range && MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).MinionsHit >= RLProject.Menu.Item("WAmount").GetValue<Slider>().Value)
             {
                 W.Cast(ePos2, Packets());
             }
@@ -1821,7 +1821,7 @@ namespace RLProject.Champions
                 return;
             }
 
-            if (menu.Item("LockTargets").GetValue<bool>())
+            if (RLProject.Menu.Item("LockTargets").GetValue<bool>())
             {
                 foreach (var objAiHero in from hero in ObjectManager.Get<Obj_AI_Hero>()
                                           where hero.IsValidTarget()
@@ -1862,7 +1862,7 @@ namespace RLProject.Champions
         //Check if packet casting is turned ON/OFF
         static bool Packets()
         {
-            return menu.Item("packet").GetValue<bool>();
+            return RLProject.Menu.Item("packet").GetValue<bool>();
         }
 
         //Gets Current Target
@@ -1897,7 +1897,7 @@ namespace RLProject.Champions
             {
                 if (target.HasBuff(buff.DisplayName) || target.HasBuff(buff.Name))
                 {
-                    if (menu.Item("dont" + buff.Name).GetValue<bool>())
+                    if (RLProject.Menu.Item("dont" + buff.Name).GetValue<bool>())
                         return true;
                 }
             }
@@ -2071,7 +2071,7 @@ namespace RLProject.Champions
         //Uses E on the end point of enemy Gapclosers
         static void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
-            if (!menu.Item("UseGap").GetValue<bool>()) return;
+            if (!RLProject.Menu.Item("UseGap").GetValue<bool>()) return;
             if (E.IsReady() && gapcloser.Sender.IsValidTarget(E.Range))
                 castE((Vector3)gapcloser.End);
         }
@@ -2079,7 +2079,7 @@ namespace RLProject.Champions
         //Interrupts Dangerous enemy spells with E
         static void Interrupter_OnPosibleToInterrupt(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs spell)
         {
-            if (!menu.Item("UseInt").GetValue<bool>()) return;
+            if (!RLProject.Menu.Item("UseInt").GetValue<bool>()) return;
 
             if (Player.Distance(unit.Position) < E.Range && unit != null && E.IsReady())
             {
@@ -2089,7 +2089,7 @@ namespace RLProject.Champions
 
         static void TowerAttackOnCreate(GameObject sender, EventArgs args)
         {
-            if (!E.IsReady() || !menu.Item("StunUnderTower").GetValue<bool>())
+            if (!E.IsReady() || !RLProject.Menu.Item("StunUnderTower").GetValue<bool>())
             {
                 return;
             }
@@ -2134,7 +2134,7 @@ namespace RLProject.Champions
 
         static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-            if (!sender.IsValid || !menu.Item("YasuoWall").GetValue<bool>() || sender.Team == ObjectManager.Player.Team || args.SData.Name != "YasuoWMovingWall" || args.SData.Name != "YasuoWMovingWall")
+            if (!sender.IsValid || !RLProject.Menu.Item("YasuoWall").GetValue<bool>() || sender.Team == ObjectManager.Player.Team || args.SData.Name != "YasuoWMovingWall" || args.SData.Name != "YasuoWMovingWall")
                 return;
             _wallCastT = Environment.TickCount;
             _yasuoWallCastedPos = sender.ServerPosition.To2D();
