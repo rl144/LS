@@ -276,7 +276,7 @@ namespace RLProject.Champions
 						var t = (int) (Player.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
 								1000 * (int) Player.Distance(minion.ServerPosition) / (int) GetMyProjectileSpeed();
 						var predHealth = HealthPrediction.GetHealthPrediction(minion, t, FarmDelay);
-						var predE = 10 + 10 * E.Level + 0.6 * (ObjectHandler.Player.BaseAttackDamage + ObjectHandler.Player.FlatPhysicalDamageMod)
+						var predE = 10 + 10 * E.Level + 0.6 * (ObjectHandler.Player.BaseAttackDamage + ObjectHandler.Player.FlatPhysicalDamageMod);
 						if (minion.Team != GameObjectTeam.Neutral && MinionManager.IsMinion(minion, true))
 						{
 							if (predHealth <= predE)
