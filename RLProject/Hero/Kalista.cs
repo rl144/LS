@@ -254,14 +254,45 @@ namespace RLProject.Champions
                     Q.Cast(Qtarget);
             }
 
-            if (RLProject.Menu.Item("harrassUseE", true).GetValue<Boolean>() && E.IsReady())
+            if (RLProject.Menu.Item("harassUseE", true).GetValue<Boolean>() && E.IsReady())
             {
                 var EMinion = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Enemy).Where(x => x.Health <= E.GetDamage(x)).OrderBy(x => x.Health).FirstOrDefault();
                 var ETarget = HeroManager.Enemies.Where(x => E.CanCast(x) && E.GetDamage(x) >= ehrs && !x.HasBuffOfType(BuffType.Invulnerability) && !x.HasBuffOfType(BuffType.SpellShield)).OrderByDescending(x => E.GetDamage(x)).FirstOrDefault();
-
+		
                 if (ETarget.Health <= E.GetDamage(ETarget) || (E.CanCast(EMinion) && E.CanCast(ETarget)))
                     E.Cast();
+				else if (ETarget.Health > E.GetDamage(ETarget) && E.CanCast(ETarget)) 
+				{
+					foreach (var minion in
+						ObjectHandler.Get<Obj_AI_Minion>()
+							.Where(
+								minion =>
+									minion.IsValidTarget() && !E.CanCast(minion) && InAutoAttackRange(minion) &&
+									minion.Health <
+									(20 + 2.6 *
+									(ObjectHandler.Player.BaseAttackDamage + ObjectHandler.Player.FlatPhysicalDamageMod)))
+						)
+					{
+						var t = (int) (Player.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
+								1000 * (int) Player.Distance(minion.ServerPosition) / (int) GetMyProjectileSpeed();
+						var predHealth = HealthPrediction.GetHealthPrediction(minion, t, FarmDelay);
+						var predE = 10 + 10 * E.Level + 0.6 * (ObjectHandler.Player.BaseAttackDamage + ObjectHandler.Player.FlatPhysicalDamageMod)
+						if (minion.Team != GameObjectTeam.Neutral && MinionManager.IsMinion(minion, true))
+						{
+							if (predHealth <= predE)
+							{
+								FireOnNonKillableMinion(minion);
+							}
+
+							if (predHealth > predE && predHealth <= Player.GetAutoAttackDamage(minion, true))
+							{
+								return minion;
+							}
+						}
+					}
+				}
             }
+			
         }
 
         static void Laneclear()
