@@ -1453,9 +1453,9 @@ namespace RLProject.Champions
                 var JungleWMinions = MinionManager.GetMinions(Player.Position, W.Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
                 List<Vector2> minionerinos2 =
          (from minions in JungleWMinions select minions.Position.To2D()).ToList();
-                var ePos2 = MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).Position;
+                var ePos2 = MinionManager.GetBestCircularFarmLocation(minionerinos2, W.Width, W.Range).Position;
 
-                if (ePos2.Distance(Player.Position.To2D()) < W.Range && MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).MinionsHit > 0)
+                if (ePos2.Distance(Player.Position.To2D()) < W.Range && MinionManager.GetBestCircularFarmLocation(minionerinos2, W.Width, W.Range).MinionsHit > 0)
                 {
                     W.Cast(ePos2, Packets());
                 }
@@ -1479,9 +1479,9 @@ namespace RLProject.Champions
             var laneMinions = MinionManager.GetMinions(Player.Position, W.Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth);
             List<Vector2> minionerinos2 =
      (from minions in laneMinions select minions.Position.To2D()).ToList();
-            var ePos2 = MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).Position;
+            var ePos2 = MinionManager.GetBestCircularFarmLocation(minionerinos2, W.Width, W.Range).Position;
 
-            if (ePos2.Distance(Player.Position.To2D()) < W.Range && MinionManager.GetBestCircularLaneclearLocation(minionerinos2, W.Width, W.Range).MinionsHit >= RLProject.Menu.Item("WAmount").GetValue<Slider>().Value)
+            if (ePos2.Distance(Player.Position.To2D()) < W.Range && MinionManager.GetBestCircularFarmLocation(minionerinos2, W.Width, W.Range).MinionsHit >= RLProject.Menu.Item("WAmount").GetValue<Slider>().Value)
             {
                 W.Cast(ePos2, Packets());
             }
@@ -2010,16 +2010,6 @@ namespace RLProject.Champions
             }
         }
 
-        //Loads standart or xSLx Orbwalker
-        static void chooseOrbwalker(bool mode)
-        {
-            if (mode)
-            {
-                Orbwalker = new Orbwalking.Orbwalker(orbwalkerMenu);
-                Orb = 1;
-                Game.PrintChat("Regular Orbwalker Loaded");
-            }
-        }
 
         //static void GenModelPacket(string champ, int skinId)
         //{

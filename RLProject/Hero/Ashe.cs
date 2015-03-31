@@ -217,7 +217,7 @@ namespace RLProject.Champions
 
         static void Harass()
         {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value))
+            if (!Orbwalking.CanMove(1) || !(Player.ManaPercent() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value))
                 return;
 
             if (RLProject.Menu.Item("harassUseW", true).GetValue<Boolean>())
@@ -231,7 +231,7 @@ namespace RLProject.Champions
 
         static void Laneclear()
         {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("laneclearMana", true).GetValue<Slider>().Value))
+            if (!Orbwalking.CanMove(1) || !(Player.ManaPercent() > RLProject.Menu.Item("laneclearMana", true).GetValue<Slider>().Value))
                 return;
 
             var Minions = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.Enemy);
@@ -250,7 +250,7 @@ namespace RLProject.Champions
 
         static void Jungleclear()
         {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("jungleclearMana", true).GetValue<Slider>().Value))
+            if (!Orbwalking.CanMove(1) || !(Player.ManaPercent() > RLProject.Menu.Item("jungleclearMana", true).GetValue<Slider>().Value))
                 return;
 
             var Mobs = MinionManager.GetMinions(Player.ServerPosition, Orbwalking.GetRealAutoAttackRange(Player) + 100, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
