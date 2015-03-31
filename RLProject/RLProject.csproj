@@ -75,6 +75,8 @@
     <Compile Include="DamageIndicator.cs" />
     <Compile Include="RLProject.cs" />
     <Compile Include="Base.cs" />
+    <Compile Include="Buffs.cs" />
+    <Compile Include="HUD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
