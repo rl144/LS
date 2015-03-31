@@ -261,6 +261,7 @@ namespace RLProject.Champions
 		
                 if (ETarget.Health <= E.GetDamage(ETarget) || (E.CanCast(EMinion) && E.CanCast(ETarget)))
                     E.Cast();
+				/*	
 				else if (ETarget.Health > E.GetDamage(ETarget) && E.CanCast(ETarget)) 
 				{
 					var predE = 10 + 10 * E.Level + 0.6 * (ObjectManager.Player.BaseAttackDamage + ObjectManager.Player.FlatPhysicalDamageMod);
@@ -279,18 +280,15 @@ namespace RLProject.Champions
 						var predHealth = HealthPrediction.GetHealthPrediction(minion, t, 0);
 						if (minion.Team != GameObjectTeam.Neutral && MinionManager.IsMinion(minion, true))
 						{
-							if (predHealth <= predE)
+							if (predHealth > predE && predHealth <= Player.CalcDamage(minion, Damage.DamageType.Physical, predE) + Player.GetAutoAttackDamage(minion, true))
 							{
-								Orbwalking.Orbwalk(minion, Game.CursorPos);
-							}
-
-							if (predHealth > predE && predHealth <= predE + Player.GetAutoAttackDamage(minion, true))
-							{
-								return;
+							Player.IssueOrder(GameObjectOrder.AttackUnit, minion);
 							}
 						}
 					}
 				}
+				
+				*/
             }
 			
         }
