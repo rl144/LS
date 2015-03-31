@@ -191,7 +191,7 @@ namespace RLProject.Champions
 
         static void Harass()
         {
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercent() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value))
+            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("harassMana", true).GetValue<Slider>().Value))
                 return;
 
             if (RLProject.Menu.Item("harassUseQ", true).GetValue<Boolean>() && Q.IsReady())
@@ -250,7 +250,7 @@ namespace RLProject.Champions
                     W.Cast();
             }
 
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercent() > RLProject.Menu.Item("laneclearMana", true).GetValue<Slider>().Value))
+            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("laneclearMana", true).GetValue<Slider>().Value))
                 return;
 
             if (RLProject.Menu.Item("laneclearUseE", true).GetValue<Boolean>() && E.IsReady())
@@ -289,7 +289,7 @@ namespace RLProject.Champions
                 return;
             }
 
-            if (!Orbwalking.CanMove(1) || !(Player.ManaPercent() > RLProject.Menu.Item("jungleclearMana", true).GetValue<Slider>().Value))
+            if (!Orbwalking.CanMove(1) || !(Player.ManaPercentage() > RLProject.Menu.Item("jungleclearMana", true).GetValue<Slider>().Value))
                 return;
 
             if (RLProject.Menu.Item("jungleclearUseQ", true).GetValue<Boolean>() && Q.IsReady())
