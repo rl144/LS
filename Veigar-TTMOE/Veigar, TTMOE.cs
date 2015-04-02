@@ -215,7 +215,7 @@ namespace Veigar__TTMOE
 
             //Initializing Spells
 			//950으로하면 명중률 너무 떨어짐 910로 수정
-            Q = new Spell(SpellSlot.Q, 910);
+            Q = new Spell(SpellSlot.Q, 950);
             W = new Spell(SpellSlot.W, 900);
             E = new Spell(SpellSlot.E, 1050);
             R = new Spell(SpellSlot.R, 650);
@@ -404,7 +404,7 @@ namespace Veigar__TTMOE
             var qpred = Q.GetPrediction(target, true);
             var qcollision = Q.GetCollision(Player.ServerPosition.To2D(), new List<Vector2> { qpred.CastPosition.To2D() });
             var minioncol = qcollision.Where(x => !(x is Obj_AI_Hero)).Count(x => x.IsMinion);
-			if (target.IsValidTarget(Q.Range) && minioncol <= 1 && qpred.Hitchance >= HitChance.High)
+			if (target.IsValidTarget(Q.Range) && Player.ServerPosition.Distance(target.ServerPosition) <= 900 && minioncol <= 1 && qpred.Hitchance >= HitChance.High)
             {
             Q.Cast(qpred.CastPosition, Packets());
             }
@@ -1994,11 +1994,11 @@ namespace Veigar__TTMOE
             Vector2 castVec2 = pred.UnitPosition.To2D() -
                               Vector2.Normalize(pred.UnitPosition.To2D() - Player.Position.To2D()) * E.Width;
 							  
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 360)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) <= 700 - E.Width)
             {
                 E.Cast(castVec, false);
             }
-            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 360)
+            if (pred.Hitchance >= HitChance.High && E.IsReady() && Vector3.Distance(Player.Position, pred.UnitPosition) > 700 - E.Width)
             {
                 E.Cast(castVec2, false);
             }
