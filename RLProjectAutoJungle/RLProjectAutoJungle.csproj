@@ -7,8 +7,8 @@
     <ProjectGuid>{93F1AF21-9F6A-4834-8A1F-CC051B78E588}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JeonJunglePlay</RootNamespace>
-    <AssemblyName>JeonJunglePlay</AssemblyName>
+    <RootNamespace>RLProjectJunglePlay</RootNamespace>
+    <AssemblyName>RLProjectJunglePlay</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PreBuildEvent />
@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaptureLib.cs" />
-    <Compile Include="JeonItem.cs" />
+    <Compile Include="RLProjectItem.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readini.cs" />

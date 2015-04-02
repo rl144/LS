@@ -2,7 +2,7 @@
 using System.Text;
 using System;
 
-namespace JeonJunglePlay
+namespace RLProjectJunglePlay
 {
     class CaptureLib
     {
