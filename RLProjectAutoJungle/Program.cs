@@ -1055,9 +1055,9 @@ index = 14
 				int turretcount = GetEnemyList().Where(x => x.Distance(Player.Position) <= 20000).Count();
                     if (Player.InShop() && Player.HealthPercentage() > 80)
 					{
-					if(turretcount >= 1)
-						Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
-					else
+					//if(turretcount >= 1)
+					//	Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
+					//else
 						Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                     }
 					else
@@ -1403,8 +1403,8 @@ index = 14
                     {
                         if (turret.Distance(Player.Position) > TRRange && face_ehro <= RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > TRRange && face_ally >= 2 && Player.HealthPercentage() >= 30)
                         {
-							if(turretcount <= 1)
-							{
+							//if(turretcount <= 1)
+							//{
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 								if (Player.ChampionName == "Nidalee")
 								{
@@ -1420,8 +1420,8 @@ index = 14
 										}
 									}
 								}
-							}
-							else
+							//}
+							/*else
 							{
                             Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
 								if (Player.ChampionName == "Nidalee")
@@ -1438,21 +1438,21 @@ index = 14
 										}
 									}
 								}
-							}
+							}*/
 							DoCast_Hero();
 							DoLaneClear();
                         }
                             
                         else if (GetMinions(turret) > 1 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && !IsAttackedByTurret && face_ally >= 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35)
                         {
-							if(turretcount <= 1)
-							{
+							//if(turretcount <= 1)
+							//{
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-							}
-							else
+							//}
+							/*else
 							{
                             Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
-							}
+							}/*
 //							DoCast_Hero();
 //							DoLaneClear();
                         }
@@ -1475,7 +1475,7 @@ index = 14
                             
                         afktime = 0;
                     }
-					if (GetMinions(turret) == 0 && turret.Distance(Player.Position) <= TRRange + 350)
+					if (GetMinions(turret) == 0 && turret.Distance(Player.Position) <= TRRange + 200)
 						Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 						
 					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1)
