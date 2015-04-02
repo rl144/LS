@@ -12,13 +12,17 @@ using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
 
-namespace JeonJunglePlay
+namespace RLProjectJunglePlay
 {
     public class Program
     {
 		public static List<Obj_AI_Hero> GetEnemyList()//회피용 영웅탐지 추가
 		{
 			return ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
+		}
+		public static List<Obj_AI_Turret> GetEnemyTurretList()//터렛 탐지 추가(just for test)
+		{
+			return ObjectManager.Get<Obj_AI_Turret>().Where(x => x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
 		}
 		public static List<Obj_AI_Hero> GetAllyList()//회피용 영웅탐지 추가
 		{
@@ -29,7 +33,7 @@ namespace JeonJunglePlay
         public static Spell Q, W, E, R;
         private static Vector3 spawn;
         private static Vector3 enemy_spawn;
-        public static Menu JeonAutoJungleMenu;
+        public static Menu RLProjectAutoJungleMenu;
 		public static Orbwalking.Orbwalker Orbwalker; //테스트추가 오브워
 		public static Orbwalking.OrbwalkingMode ActiveMode { get; set; }
         public static float gamestart = 0, pastTime = 0, pastTimeAFK, afktime = 0;
@@ -59,7 +63,7 @@ namespace JeonJunglePlay
         private static readonly Spell Aspectofcougar = new Spell(SpellSlot.R);
         private static readonly List<Spell> HumanSpellList = new List<Spell>();
         private static readonly List<Spell> CougarSpellList = new List<Spell>();
-		public static int TRRange = 900;
+		public static int TRRange = 950;
         public class MonsterINFO
         {
             public Vector3 Position;
@@ -402,99 +406,207 @@ index = 16
 }
 };
         #endregion
-        #region ad = default
-        public static List<ItemToShop> buyThings = new List<ItemToShop>
+        #region hi
+        public static List<ItemToShop> buyThings_HI = new List<ItemToShop>
 {
 new ItemToShop()
 {
-Price = 450,
+Price = 450 + 820,
 needItem = ItemId.Hunters_Machete,
 item = ItemId.Stalkers_Blade,
 index = 1
 },
 new ItemToShop()
 {
-Price = 450,
+Price = 820,
 needItem = ItemId.Stalkers_Blade,
-item = ItemId.Dagger,
+item = ItemId.Fiendish_Codex,
 index = 2
 },
 new ItemToShop()
 {
-Price = 950,
-needItem = ItemId.Dagger,
-item = ItemId.Stalkers_Blade_Enchantment_Devourer,
+Price = 580 + 720,
+needItem = ItemId.Fiendish_Codex,
+item = ItemId.Stalkers_Blade_Enchantment_Magus,
 index = 3
+},
+{
+Price = 360,
+needItem = ItemId.Stalkers_Blade_Enchantment_Magus,
+item = ItemId.Long_Sword,
+index = 4
+},
+{
+Price = 360,
+needItem = ItemId.Long_Sword,
+item = ItemId.Long_Sword,
+index = 5
+},
+new ItemToShop()
+{
+Price = 1100,
+needItem = ItemId.Long_Sword,
+item = ItemId.Sorcerers_Shoes,
+index = 6
+},
+new ItemToShop()
+{
+Price = 680,
+needItem = ItemId.Sorcerers_Shoes,
+item = ItemId.Bilgewater_Cutlass,
+index = 7
+},
+new ItemToShop()
+{
+Price = 1200,
+needItem = ItemId.Bilgewater_Cutlass,
+item = ItemId.Hextech_Revolver,
+index = 8
+},
+new ItemToShop()
+{
+Price = 800,
+needItem = ItemId.Hextech_Revolver,
+item = ItemId.Hextech_Gunblade,
+index = 9
+},
+new ItemToShop()
+{
+Price = 1200,
+needItem = ItemId.Hextech_Gunblade,
+item = ItemId.Seekers_Armguard,
+index = 10
+},
+new ItemToShop()
+{
+Price = 1600,
+needItem = ItemId.Seekers_Armguard,
+item = ItemId.Needlessly_Large_Rod,
+index = 11
+},
+new ItemToShop()
+{
+Price = 500,
+needItem = ItemId.Needlessly_Large_Rod,
+item = ItemId.Zhonyas_Hourglass,
+index = 12
+},
+new ItemToShop()
+{
+Price = 860,
+needItem = ItemId.Zhonyas_Hourglass,
+item = ItemId.Blasting_Wand,
+index = 13
+},
+new ItemToShop()
+{
+Price = 1600,
+needItem = ItemId.Blasting_Wand,
+item = ItemId.Needlessly_Large_Rod,
+index = 14
+},
+new ItemToShop()
+{
+Price = 840,
+needItem = ItemId.Needlessly_Large_Rod,
+item = ItemId.Rabadons_Deathcap,
+index = 15
+},
+new ItemToShop()
+{
+Price = 860,
+needItem = ItemId.Rabadons_Deathcap,
+item = ItemId.Blasting_Wand,
+index = 16
+},
+new ItemToShop()
+{
+Price = 1435,
+needItem = ItemId.Blasting_Wand,
+item = ItemId.Void_Staff,
+index = 17
+}
+};
+        #endregion
+        #region ad = default
+        public static List<ItemToShop> buyThings = new List<ItemToShop>
+{
+new ItemToShop()
+{
+Price = 1850,
+needItem = ItemId.Hunters_Machete,
+item = ItemId.Stalkers_Blade_Enchantment_Devourer,
+index = 1
 },
 new ItemToShop()
 {
 Price = 1475,
 needItem = ItemId.Stalkers_Blade_Enchantment_Devourer,
 item = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
-index = 4
+index = 2
 },
 new ItemToShop()
 {
 Price = 1400,
 needItem = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
 item = ItemId.Bilgewater_Cutlass,
-index = 5
+index = 3
 },
 new ItemToShop()
 {
 Price = 1800,
 needItem = ItemId.Bilgewater_Cutlass,
 item = ItemId.Blade_of_the_Ruined_King,
-index = 6
+index = 4
 },
 new ItemToShop()
 {
 Price = 875,
 needItem = ItemId.Blade_of_the_Ruined_King,
 item = ItemId.Pickaxe,
-index = 7
+index = 5
 },
 new ItemToShop()
 {
 Price = 1025,
 needItem = ItemId.Pickaxe,
 item = ItemId.Tiamat_Melee_Only,
-index = 8
+index = 6
 },
 new ItemToShop()
 {
 Price = 1100,
 needItem = ItemId.Tiamat_Melee_Only,
 item = ItemId.Zeal,
-index = 9
+index = 7
 },
 new ItemToShop()
 {
 Price = 1700,
 needItem = ItemId.Zeal,
 item = ItemId.Phantom_Dancer,
-index = 10
+index = 8
 },
 new ItemToShop()
 {
 Price = 1400,
 needItem = ItemId.Phantom_Dancer,
 item = ItemId.Ravenous_Hydra_Melee_Only,
-index = 11
+index = 9
 },
 new ItemToShop()
 {
 Price = 1550,
 needItem = ItemId.Ravenous_Hydra_Melee_Only,
 item = ItemId.B_F_Sword,
-index = 12
+index = 10
 },
 new ItemToShop()
 {
 Price = 2250,
 needItem = ItemId.B_F_Sword,
 item = ItemId.Infinity_Edge,
-index = 13
+index = 11
 }
 /*new ItemToShop()
 {
@@ -705,7 +817,7 @@ index = 14
         private static void Game_OnGameLoad(EventArgs args)
         {
             ////////////////////customizing//////////////////
-            var dir = new DirectoryInfo(Config.LeagueSharpDirectory.ToString() + @"\JeonAutoJungle");
+            var dir = new DirectoryInfo(Config.LeagueSharpDirectory.ToString() + @"\RLProjectAutoJungle");
             var setFile = new FileInfo(dir + "/" + Player.ChampionName + ".ini");
             #region File Stream
             try
@@ -721,23 +833,23 @@ index = 14
             { }
             #endregion
             ////////////////////////////////////////////////
-            JeonAutoJungleMenu = new Menu("JeonAutoJungle", "JeonAutoJungle", true);
-            JeonAutoJungleMenu.AddItem(new MenuItem("isActive", "Activate")).SetValue(true);
-            JeonAutoJungleMenu.AddItem(new MenuItem("maxstacks", "Max Stacks").SetValue(new Slider(9, 1, 150)));
-            JeonAutoJungleMenu.AddItem(new MenuItem("maxlv", "Max level").SetValue(new Slider(9, 1, 18)));
-            JeonAutoJungleMenu.AddItem(new MenuItem("autorecallheal", "Recall[for heal]")).SetValue(true);
-            JeonAutoJungleMenu.AddItem(new MenuItem("hpper", "Recall on HP(%)").SetValue(new Slider(50, 0, 100)));
-			JeonAutoJungleMenu.AddItem(new MenuItem("ehhro", "Enemy in Range").SetValue(new Slider(1, 1, 5)));
-			JeonAutoJungleMenu.AddItem(new MenuItem("ehhro2", "Enemy in Far Range").SetValue(new Slider(3, 1, 5)));
-            JeonAutoJungleMenu.AddItem(new MenuItem("autorecallitem", "Recall[for item]")).SetValue(true);
-            JeonAutoJungleMenu.AddItem(new MenuItem("evading", "Detect TurretAttack")).SetValue(true);
-            JeonAutoJungleMenu.AddItem(new MenuItem("Invade", "InvadeEnemyJungle?")).SetValue(true);
-            JeonAutoJungleMenu.AddItem(new MenuItem("k_dragon", "Add Dragon to Route on Lv").SetValue(new Slider(10, 1, 18)));
+            RLProjectAutoJungleMenu = new Menu("RLProjectAutoJungle", "RLProjectAutoJungle", true);
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("isActive", "Activate")).SetValue(true);
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("maxstacks", "Max Stacks").SetValue(new Slider(9, 1, 150)));
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("maxlv", "Max level").SetValue(new Slider(9, 1, 18)));
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("autorecallheal", "Recall[for heal]")).SetValue(true);
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("hpper", "Recall on HP(%)").SetValue(new Slider(50, 0, 100)));
+			RLProjectAutoJungleMenu.AddItem(new MenuItem("ehhro", "Enemy in Range").SetValue(new Slider(1, 1, 5)));
+			RLProjectAutoJungleMenu.AddItem(new MenuItem("ehhro2", "Enemy in Far Range").SetValue(new Slider(3, 1, 5)));
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("autorecallitem", "Recall[for item]")).SetValue(true);
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("evading", "Detect TurretAttack")).SetValue(true);
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("Invade", "InvadeEnemyJungle?")).SetValue(true);
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("k_dragon", "Add Dragon to Route on Lv").SetValue(new Slider(10, 1, 18)));
             if (Player.ChampionName == "MasterYi")
-                JeonAutoJungleMenu.AddItem(new MenuItem("yi_W", "Cast MasterYi-W(%)").SetValue(new Slider(60, 0, 100)));
-            Orbwalker = new Orbwalking.Orbwalker(JeonAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Orbwalker", "Orbwalker")));
-            TargetSelector.AddToMenu(JeonAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Target Selector", "Target Selector")));
-				JeonAutoJungleMenu.AddToMainMenu();
+                RLProjectAutoJungleMenu.AddItem(new MenuItem("yi_W", "Cast MasterYi-W(%)").SetValue(new Slider(60, 0, 100)));
+            Orbwalker = new Orbwalking.Orbwalker(RLProjectAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Orbwalker", "Orbwalker")));
+            TargetSelector.AddToMenu(RLProjectAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Target Selector", "Target Selector")));
+				RLProjectAutoJungleMenu.AddToMainMenu();
 				//메뉴
 				setSmiteSlot();
             if (Player.ChampionName == "Nidalee")//for 니달리
@@ -899,7 +1011,7 @@ index = 14
         }
 		private static void Game_OnUpdate(EventArgs args) 
         {
-		int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
+		int maxlv = RLProjectAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
 		int level = Player.Level;	
             setSmiteSlot();
             Target = GetTarget();
@@ -907,7 +1019,7 @@ index = 14
             _cougarForm = Player.Spellbook.GetSpell(SpellSlot.Q).Name != "JavelinToss";
             if (Player.Spellbook.IsChanneling)
                 return;
-            if (!JeonAutoJungleMenu.Item("isActive").GetValue<Boolean>() || smiteSlot == SpellSlot.Unknown)
+            if (!RLProjectAutoJungleMenu.Item("isActive").GetValue<Boolean>() || smiteSlot == SpellSlot.Unknown)
                 return;
             #region detect afk
             if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling())
@@ -915,9 +1027,16 @@ index = 14
                 afktime += 1;
                 if (afktime > 6) // 잠수 5초 경과
                 {
-                    if (Player.InShop() && Player.HealthPercentage() > 70)
-                        Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-                    else
+                    var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+				int turretcount = GetEnemyList().Where(x => x.Distance(Player.Position) <= 20000).Count();
+                    if (Player.InShop() && Player.HealthPercentage() > 80)
+					{
+					if(turretcount >= 1)
+						Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10));
+					else
+						Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+                    }
+					else
                         Player.Spellbook.CastSpell(SpellSlot.Recall);
                     afktime = 0;
                 }
@@ -931,7 +1050,7 @@ index = 14
             #region InvadeEnemyJungle
             if (!IsBlueTeam)
             {
-                if (!JeonAutoJungleMenu.Item("Invade").GetValue<Boolean>())
+                if (!RLProjectAutoJungleMenu.Item("Invade").GetValue<Boolean>())
                 {
                     MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 0;
                     MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 0;
@@ -970,7 +1089,7 @@ index = 14
             }
             else
             {
-                if (!JeonAutoJungleMenu.Item("Invade").GetValue<Boolean>())
+                if (!RLProjectAutoJungleMenu.Item("Invade").GetValue<Boolean>())
                 {
                     MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 0;
                     MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 0;
@@ -1017,7 +1136,7 @@ index = 14
             }
             #endregion
             #region check somethings about dragon
-            if (Player.Level > JeonAutoJungleMenu.Item("k_dragon").GetValue<Slider>().Value)
+            if (Player.Level > RLProjectAutoJungleMenu.Item("k_dragon").GetValue<Slider>().Value)
             {
                 if (MonsterList.First(temp => temp.ID == down_crab.ID).order == 14)
                 {
@@ -1097,8 +1216,8 @@ index = 14
                                 afktime = 0;
                             }
                             DoCast_Hero();
-                            if (Player.HealthPercentage() < JeonAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
-                            && JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
+                            if (Player.HealthPercentage() < RLProjectAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
+                            && RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
                             {
                                 Game.PrintChat("YOUR HP IS SO LOW. RECALL!");
                                 Player.Spellbook.CastSpell(SpellSlot.Recall);
@@ -1106,7 +1225,7 @@ index = 14
                                 recallhp = Player.Health;
                             }
                             else if (Player.Gold > buyThings.First().Price
-                            && JeonAutoJungleMenu.Item("autorecallitem").GetValue<Boolean>()
+                            && RLProjectAutoJungleMenu.Item("autorecallitem").GetValue<Boolean>()
                             && Player.InventoryItems.Length < 9) // HP LESS THAN 25%
                             {
                                 Game.PrintChat("CAN BUY " + buyThings.First().item.ToString() + ". RECALL!");
@@ -1153,7 +1272,7 @@ index = 14
                     }
                 }
                 if (Player.InShop())
-					if(JeonAutoJungleMenu.Item("Invade").GetValue<Boolean>())
+					if(RLProjectAutoJungleMenu.Item("Invade").GetValue<Boolean>())
 					{
 						if(!IsBlueTeam && now == 7 || !IsBlueTeam && now == 15 ||
 							IsBlueTeam && now == 7 || IsBlueTeam && now == 14) //정글 게 뻘짓 줄이기
@@ -1180,7 +1299,7 @@ index = 14
             #region 스택이 넘는지 체크 - check ur stacks
             foreach (var buff in Player.Buffs.Where(b => b.DisplayName == "Enchantment_Slayer_Stacks"))
             {
-                int maxstacks = JeonAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
+                int maxstacks = RLProjectAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
                 if (buff.Count >= maxstacks && !IsOVER || level >= maxlv)// || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //--테스트
                 {
                     IsOVER = true;
@@ -1205,12 +1324,13 @@ index = 14
 				var turrett = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
 				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2400).Count();
 				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 900).Count();				
-				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 1000).Count();				
+				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 1000).Count();
+				int turretcount = GetEnemyList().Where(x => x.Distance(Player.Position) <= 20000).Count();				
                 if (!IsAttackStart)
                 {
-					if (face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || face_ally >= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
+					if (face_ehro <= RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || face_ally >= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
                         IsAttackStart = true;
-                    else if (face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam || face_ally >= 2  && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
+                    else if (face_ehro <= RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam || face_ally >= 2  && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
                         IsAttackStart = true;
                     else
                     {
@@ -1254,49 +1374,66 @@ index = 14
                 else
                 {
                     var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
-    //                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+					//                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
                     if (IsOVER && !IsAttackedByTurret && Player.HealthPercentage() >= 35)
                     {
-                        if (turret.Distance(Player.Position) > TRRange && face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > TRRange && face_ally >= 2 && Player.HealthPercentage() >= 30)
+                        if (turret.Distance(Player.Position) > TRRange && face_ehro <= RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > TRRange && face_ally >= 2 && Player.HealthPercentage() >= 30)
                         {
+							if(turretcount <= 1)
+							{
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
+									{
+										if(!_cougarForm && Aspectofcougar.IsReady())
+										{
+										Aspectofcougar.Cast();
+										}
+										if(Pounce.IsReady())
+										{
+										Pounce.Cast(enemy_spawn);
+										}
+									}
+								}
+							}
+							else
+							{
+                            Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
+									{
+										if(!_cougarForm && Aspectofcougar.IsReady())
+										{
+										Aspectofcougar.Cast();
+										}
+										if(Pounce.IsReady())
+										{
+										Pounce.Cast(turret.Position);
+										}
+									}
+								}
+							}
 							DoCast_Hero();
 							DoLaneClear();
-								if (Player.ChampionName == "Nidalee")
-								{
-									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
-									{
-										if(!_cougarForm && Aspectofcougar.IsReady())
-										{
-										Aspectofcougar.Cast();
-										}
-										if(Pounce.IsReady())
-										{
-										Pounce.Cast(enemy_spawn);
-										}
-									}
-								}
                         }
+						
+						else if (GetMinions(turret) == 0 && turret.Distance(Player.Position) <= TRRange + 350)
+						Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
                             
-                        else if (GetMinions(turret) > 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && face_ally >= 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35)
+                        else if (GetMinions(turret) > 1 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && !IsAttackedByTurret && face_ally >= 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35)
                         {
+							if(turretcount <= 1)
+							{
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+							}
+							else
+							{
+                            Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10);
+							}
 //							DoCast_Hero();
 //							DoLaneClear();
-								if (Player.ChampionName == "Nidalee")
-								{
-									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
-									{
-										if(!_cougarForm && Aspectofcougar.IsReady())
-										{
-										Aspectofcougar.Cast();
-										}
-										if(Pounce.IsReady())
-										{
-										Pounce.Cast(enemy_spawn);
-										}
-									}
-								}
                         }
 
                         else
@@ -1319,16 +1456,16 @@ index = 14
                     }
 					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1)
 					DoLaneClear();
-                    if (turret.Distance(Player.Position) > TRRange)
+                    if (turret.Distance(Player.Position) > TRRange + 150)
                         IsAttackedByTurret = false;
                     if (Player.IsDead)
                         IsAttackedByTurret = false;
                 }
 //도망가기용
 				if (Player.HealthPercentage() < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1400//hpper
-				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
+				&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
 				turrett.Distance(Player.Position) <= TRRange && Player.HealthPercentage() < 33
-				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
+				&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
@@ -1346,7 +1483,7 @@ index = 14
 				}
 				if (Player.HealthPercentage() < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
 				&& turrett.Distance(Player.Position) > 2250
-				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
+				&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("Time To Recall Yeah!");
 					Player.Spellbook.CastSpell(SpellSlot.Recall);
@@ -1449,7 +1586,7 @@ index = 14
             {
                 var m = (Obj_SpellMissile)sender;
                 if (m.SpellCaster.IsValid<Obj_AI_Turret>() && m.SpellCaster.IsEnemy &&
-                m.Target.IsValid<Obj_AI_Hero>() && m.Target.IsMe && JeonAutoJungleMenu.Item("evading").GetValue<Boolean>())
+                m.Target.IsValid<Obj_AI_Hero>() && m.Target.IsMe && RLProjectAutoJungleMenu.Item("evading").GetValue<Boolean>())
                 {
                     Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
 								if (Player.ChampionName == "Nidalee")
@@ -1488,7 +1625,7 @@ index = 14
 "Turret_T1_C_03_A",
 "Turret_T1_C_07_A"
 };
-                    if (turrest.Contains(sender.Name) && JeonAutoJungleMenu.Item("evading").GetValue<Boolean>())
+                    if (turrest.Contains(sender.Name) && RLProjectAutoJungleMenu.Item("evading").GetValue<Boolean>())
                     {
                         Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
 								if (Player.ChampionName == "Nidalee")
@@ -1590,6 +1727,15 @@ index = 14
                 if (W.IsReady())
                     W.Cast();
             }
+            else if (Player.ChampionName.ToUpper() == "AKALI")
+            {
+                if (Q.IsReady() && Player.Position.Distance(mob1.Position) <= 600)
+                    Q.CastOnUnit(mob1);
+                if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
+                    E.CastOnUnit(mob1);
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 200)
+                    R.Cast();
+            }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 600)
             {
 				if (Javelin.IsReady())
@@ -1627,7 +1773,7 @@ index = 14
             {
                 if (Q.IsReady())
                     Q.CastOnUnit(mob1);
-                if (W.IsReady() && Player.HealthPercentage() < JeonAutoJungleMenu.Item("yi_W").GetValue<Slider>().Value)
+                if (W.IsReady() && Player.HealthPercentage() < RLProjectAutoJungleMenu.Item("yi_W").GetValue<Slider>().Value)
                     W.Cast();
                 if (E.IsReady())
                     E.Cast();
@@ -1675,6 +1821,15 @@ index = 14
                     E.CastOnUnit(mob1);
                 if (W.IsReady())
                     W.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "AKALI")
+            {
+                if (Q.IsReady() && Player.Position.Distance(mob1.Position) <= 600)
+                    Q.CastOnUnit(mob1);
+                if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
+                    E.CastOnUnit(mob1);
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 200)
+                    R.Cast();
             }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 1000)
             {
@@ -1763,6 +1918,15 @@ index = 14
                     E.CastOnUnit(mob1);
                 if (W.IsReady())
                     W.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "AKALI")
+            {
+                if (Q.IsReady() && Player.Position.Distance(mob1.Position) <= 600)
+                    Q.CastOnUnit(mob1);
+                if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
+                    E.CastOnUnit(mob1);
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 200 && Player.HealthPercentage() < 40)
+                    R.Cast();
             }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 400)
             {
@@ -1988,6 +2152,12 @@ index = 14
                 buyThings.Clear();
                 buyThings = buyThings_TANK;
                 Game.PrintChat("Set ItemTree for TANK - Finished");
+            }
+            else if (Readini.GetItemTreetype(setFile.FullName) == "HI")
+            {
+                buyThings.Clear();
+                buyThings = buyThings_HI;
+                Game.PrintChat("Set ItemTree for AP+AD - Finished");
             }
             else if (Readini.GetItemTreetype(setFile.FullName) == "X")
             {

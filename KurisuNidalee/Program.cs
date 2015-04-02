@@ -1,34 +1,55 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using System.IO;
 using LeagueSharp;
 using LeagueSharp.Common;
-using System.Collections.Generic;
-using Color = System.Drawing.Color;
 using SharpDX;
 
-namespace KurisuNidalee
+namespace JeonJunglePlay
 {
-    //  _____ _   _     _         
-    // |   | |_|_| |___| |___ ___ 
-    // | | | | | . | .'| | -_| -_|
-    // |_|___|_|___|__,|_|___|___|
-    // Copyright © Kurisu Solutions 2015
-
-    internal class Program
+    public class Program
     {
-        private static Menu _mainMenu;
-        private static Obj_AI_Base _target;
-        private static Orbwalking.Orbwalker _orbwalker;
-        private static readonly Obj_AI_Hero Me = ObjectManager.Player;
-        private static bool _cougarForm;
-        private static bool _hasBlue;
-
-        static void Main(string[] args)
-        {
-            Console.WriteLine("KurisuNidalee injected..");
-            CustomEvents.Game.OnGameLoad += Initialize;
-        }
-
+		public static List<Obj_AI_Hero> GetEnemyList()//회피용 영웅탐지 추가
+		{
+			return ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
+		}
+		public static List<Obj_AI_Hero> GetAllyList()//회피용 영웅탐지 추가
+		{
+			return ObjectManager.Get<Obj_AI_Hero>().Where(x => !x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
+		}
+        public static Obj_AI_Hero Player = ObjectManager.Player;
+        private static Obj_AI_Hero Target = null; // 타겟 추
+        public static Spell Q, W, E, R;
+        private static Vector3 spawn;
+        private static Vector3 enemy_spawn;
+        public static Menu JeonAutoJungleMenu;
+		public static Orbwalking.Orbwalker Orbwalker; //테스트추가 오브워
+		public static Orbwalking.OrbwalkingMode ActiveMode { get; set; }
+        public static float gamestart = 0, pastTime = 0, pastTimeAFK, afktime = 0;
+        public static List<MonsterINFO> MonsterList = new List<MonsterINFO>();
+        public static int now = 1, max = 20, num = 0;
+        public static float recallhp = 0;
+        public static bool recall = false, IsOVER = false, IsAttackedByTurret = false, IsAttackStart = false,
+        IsCastW = false;
+        public static bool canBuyItems = true, IsBlueTeam, IsStart = true, IsFind = false;
+        public static bool _cougarForm;
+        public static SpellSlot smiteSlot = SpellSlot.Unknown;
+        public static Spell smite;
+        public static SpellDataInst Qdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.Q);
+        public static SpellDataInst Wdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W);
+        public static SpellDataInst Edata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E);
+        public static SpellDataInst Rdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R);
+        public static List<Spell> cast2mob = new List<Spell>();
+        public static List<Spell> cast2hero = new List<Spell>();
+        public static List<Spell> cast4laneclear = new List<Spell>();	
+		//니달리를 위해서
         private static readonly Spell Javelin = new Spell(SpellSlot.Q, 1500f);
         private static readonly Spell Bushwack = new Spell(SpellSlot.W, 900f);
         private static readonly Spell Primalsurge = new Spell(SpellSlot.E, 650f);
@@ -36,1129 +57,1959 @@ namespace KurisuNidalee
         private static readonly Spell Pounce = new Spell(SpellSlot.W, 375f);
         private static readonly Spell Swipe = new Spell(SpellSlot.E, 275f);
         private static readonly Spell Aspectofcougar = new Spell(SpellSlot.R);
-
         private static readonly List<Spell> HumanSpellList = new List<Spell>();
         private static readonly List<Spell> CougarSpellList = new List<Spell>();
-        private static readonly IEnumerable<int> NidaItems = new[] { 3128, 3144, 3153, 3092 };
-
-        private static bool TargetHunted(Obj_AI_Base target)
+		public static int TRRange = 900;
+        public class MonsterINFO
         {
-            return target.HasBuff("nidaleepassivehunted", true);
-        }
-
-        private static bool NotLearned(Spell spell)
-        {
-            return Me.Spellbook.CanUseSpell(spell.Slot) == SpellState.NotLearned;
-        }
-
-        private static readonly string[] Jungleminions =
-        {
-            "SRU_Razorbeak", "SRU_Krug", "Sru_Crab",
-            "SRU_Baron", "SRU_Dragon", "SRU_Blue", "SRU_Red", "SRU_Murkwolf", "SRU_Gromp"     
-        };
-
-        #region Nidalee: Initialize
-        private static void Initialize(EventArgs args)
-        {
-            // Check champion
-            if (Me.ChampionName != "Nidalee")
+            public Vector3 Position;
+            public string ID;
+            public string name;
+            public int order;
+            public int respawntime;
+            public int Range = 300;
+            public MonsterINFO()
             {
-                return;
+                MonsterList.Add(this);
             }
-
-            // Load main menu
-            NidaMenu();
-
+        }
+        public class ItemToShop
+        {
+            public int Price, index;
+            public ItemId item;
+            public ItemId needItem;
+            public ItemToShop()
+            {
+                num += 1;
+            }
+        }
+        #region 몬스터
+        public static MonsterINFO Baron = new MonsterINFO
+        {
+            ID = "Baron",
+            Position = new Vector3(4910f, 10268f, -71.24f),
+            name = "SRU_BaronSpawn",
+            respawntime = 420
+        };
+        public static MonsterINFO Dragon = new MonsterINFO
+        {
+            ID = "Dragon",
+            Position = new Vector3(9836f, 4408f, -71.24f),
+            name = "SRU_Dragon",
+            respawntime = 360
+        };
+        public static MonsterINFO top_crab = new MonsterINFO
+        {
+            ID = "top_crab",
+            Position = new Vector3(4266f, 9634f, -67.87f),
+            name = "noneuses",
+            respawntime = 180,
+            Range = 3000
+        };
+        public static MonsterINFO BLUE_MID = new MonsterINFO
+        {
+            ID = "blue_MID",
+            Position = new Vector3(5294.531f, 5537.924f, 50.46155f),
+            name = "noneuses",
+            respawntime = 180,
+            Range = 3000
+        };
+        public static MonsterINFO PURPLE_MID = new MonsterINFO
+        {
+            ID = "purple_MID",
+            Position = new Vector3(9443.35f, 9339.06f, 53.30994f),
+            name = "noneuses",
+            respawntime = 180,
+            Range = 3000
+        };
+        public static MonsterINFO down_crab = new MonsterINFO
+        {
+            ID = "down_crab",
+            Position = new Vector3(10524f, 5116f, -62.81f),
+            name = "noneuses",
+            respawntime = 180,
+            Range = 3000
+        };
+        public static MonsterINFO bteam_Razorbeak = new MonsterINFO { ID = "bteam_Razorbeak", Position = new Vector3(6974f, 5460f, 54f), name = "SRU_Razorbeak" };
+        public static MonsterINFO bteam_Red = new MonsterINFO
+        {
+            ID = "bteam_Red",
+            Position = new Vector3(7796f, 4028f, 54f),
+            name = "SRU_Red",
+            respawntime = 300
+        };
+        public static MonsterINFO bteam_Krug = new MonsterINFO { ID = "bteam_Krug", Position = new Vector3(8394f, 2750f, 50f), name = "SRU_Krug" };
+        public static MonsterINFO bteam_Blue = new MonsterINFO
+        {
+            ID = "bteam_Blue",
+            Position = new Vector3(3832f, 7996f, 52f),
+            name = "SRU_Blue",
+            respawntime = 300
+        };
+        public static MonsterINFO bteam_Gromp = new MonsterINFO { ID = "bteam_Gromp", Position = new Vector3(2112f, 8372f, 51.7f), name = "SRU_Gromp" };
+        public static MonsterINFO bteam_Wolf = new MonsterINFO { ID = "bteam_Wolf", Position = new Vector3(3844f, 6474f, 52.46f), name = "SRU_Murkwolf" };
+        public static MonsterINFO pteam_Razorbeak = new MonsterINFO { ID = "pteam_Razorbeak", Position = new Vector3(7856f, 9492f, 52.33f), name = "SRU_Razorbeak" };
+        public static MonsterINFO pteam_Red = new MonsterINFO
+        {
+            ID = "pteam_Red",
+            Position = new Vector3(7124f, 10856f, 56.34f),
+            name = "SRU_Red",
+            respawntime = 300
+        };
+        public static MonsterINFO pteam_Krug = new MonsterINFO { ID = "pteam_Krug", Position = new Vector3(6495f, 12227f, 56.47f), name = "SRU_Krug" };
+        public static MonsterINFO pteam_Blue = new MonsterINFO
+        {
+            ID = "pteam_Blue",
+            Position = new Vector3(10850f, 6938f, 51.72f),
+            name = "SRU_Blue",
+            respawntime = 300
+        };
+        public static MonsterINFO pteam_Gromp = new MonsterINFO { ID = "pteam_Gromp", Position = new Vector3(12766f, 6464f, 51.66f), name = "SRU_Gromp" };
+        public static MonsterINFO pteam_Wolf = new MonsterINFO { ID = "pteam_Wolf", Position = new Vector3(10958f, 8286f, 62.46f), name = "SRU_Murkwolf" };
+        #endregion
+        #region 아이템
+        #region ap
+        public static List<ItemToShop> buyThings_AP = new List<ItemToShop>
+{
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Hunters_Machete,
+item = ItemId.Rangers_Trailblazer,
+index = 1
+},
+new ItemToShop()
+{
+Price = 820,
+needItem = ItemId.Rangers_Trailblazer,
+item = ItemId.Fiendish_Codex,
+index = 2
+},
+new ItemToShop()
+{
+Price = 580,
+needItem = ItemId.Fiendish_Codex,
+item = ItemId.Rangers_Trailblazer_Enchantment_Magus,
+index = 3
+},
+new ItemToShop()
+{
+Price = 1100,
+needItem = ItemId.Rangers_Trailblazer_Enchantment_Magus,
+item = ItemId.Sorcerers_Shoes,
+index = 4
+},
+new ItemToShop()
+{
+Price = 820,
+needItem = ItemId.Sorcerers_Shoes,
+item = ItemId.Fiendish_Codex,
+index = 5
+},
+new ItemToShop()
+{
+Price = 600,
+needItem = ItemId.Fiendish_Codex,
+item = ItemId.Forbidden_Idol,
+index = 6
+},
+new ItemToShop()
+{
+Price = 880,
+needItem = ItemId.Forbidden_Idol,
+item = ItemId.Morellonomicon,
+index = 7
+},
+new ItemToShop()
+{
+Price = 1200,
+needItem = ItemId.Morellonomicon,
+item = ItemId.Seekers_Armguard,
+index = 8
+},
+new ItemToShop()
+{
+Price = 1600,
+needItem = ItemId.Seekers_Armguard,
+item = ItemId.Needlessly_Large_Rod,
+index = 9
+},
+new ItemToShop()
+{
+Price = 500,
+needItem = ItemId.Needlessly_Large_Rod,
+item = ItemId.Zhonyas_Hourglass,
+index = 10
+},
+new ItemToShop()
+{
+Price = 860,
+needItem = ItemId.Zhonyas_Hourglass,
+item = ItemId.Blasting_Wand,
+index = 11
+},
+new ItemToShop()
+{
+Price = 1600,
+needItem = ItemId.Blasting_Wand,
+item = ItemId.Needlessly_Large_Rod,
+index = 12
+},
+new ItemToShop()
+{
+Price = 840,
+needItem = ItemId.Needlessly_Large_Rod,
+item = ItemId.Rabadons_Deathcap,
+index = 13
+},
+new ItemToShop()
+{
+Price = 860,
+needItem = ItemId.Rabadons_Deathcap,
+item = ItemId.Blasting_Wand,
+index = 14
+},
+new ItemToShop()
+{
+Price = 1435,
+needItem = ItemId.Blasting_Wand,
+item = ItemId.Void_Staff,
+index = 15
+},
+new ItemToShop()
+{
+Price = 2750,
+needItem = ItemId.Void_Staff,
+item = ItemId.Banshees_Veil,
+index = 16
+}
+};
+        #endregion
+        #region bap
+        public static List<ItemToShop> buyThings_BAP = new List<ItemToShop>
+{
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Hunters_Machete,
+item = ItemId.Stalkers_Blade,
+index = 1
+},
+new ItemToShop()
+{
+Price = 820,
+needItem = ItemId.Stalkers_Blade,
+item = ItemId.Fiendish_Codex,
+index = 2
+},
+new ItemToShop()
+{
+Price = 580,
+needItem = ItemId.Fiendish_Codex,
+item = ItemId.Stalkers_Blade_Enchantment_Magus,
+index = 3
+},
+new ItemToShop()
+{
+Price = 1100,
+needItem = ItemId.Stalkers_Blade_Enchantment_Magus,
+item = ItemId.Sorcerers_Shoes,
+index = 4
+},
+new ItemToShop()
+{
+Price = 820,
+needItem = ItemId.Sorcerers_Shoes,
+item = ItemId.Fiendish_Codex,
+index = 5
+},
+new ItemToShop()
+{
+Price = 600,
+needItem = ItemId.Fiendish_Codex,
+item = ItemId.Forbidden_Idol,
+index = 6
+},
+new ItemToShop()
+{
+Price = 880,
+needItem = ItemId.Forbidden_Idol,
+item = ItemId.Morellonomicon,
+index = 7
+},
+new ItemToShop()
+{
+Price = 1200,
+needItem = ItemId.Morellonomicon,
+item = ItemId.Seekers_Armguard,
+index = 8
+},
+new ItemToShop()
+{
+Price = 1600,
+needItem = ItemId.Seekers_Armguard,
+item = ItemId.Needlessly_Large_Rod,
+index = 9
+},
+new ItemToShop()
+{
+Price = 500,
+needItem = ItemId.Needlessly_Large_Rod,
+item = ItemId.Zhonyas_Hourglass,
+index = 10
+},
+new ItemToShop()
+{
+Price = 860,
+needItem = ItemId.Zhonyas_Hourglass,
+item = ItemId.Blasting_Wand,
+index = 11
+},
+new ItemToShop()
+{
+Price = 1600,
+needItem = ItemId.Blasting_Wand,
+item = ItemId.Needlessly_Large_Rod,
+index = 12
+},
+new ItemToShop()
+{
+Price = 840,
+needItem = ItemId.Needlessly_Large_Rod,
+item = ItemId.Rabadons_Deathcap,
+index = 13
+},
+new ItemToShop()
+{
+Price = 860,
+needItem = ItemId.Rabadons_Deathcap,
+item = ItemId.Blasting_Wand,
+index = 14
+},
+new ItemToShop()
+{
+Price = 1435,
+needItem = ItemId.Blasting_Wand,
+item = ItemId.Void_Staff,
+index = 15
+},
+new ItemToShop()
+{
+Price = 2750,
+needItem = ItemId.Void_Staff,
+item = ItemId.Banshees_Veil,
+index = 16
+}
+};
+        #endregion
+        #region ad = default
+        public static List<ItemToShop> buyThings = new List<ItemToShop>
+{
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Hunters_Machete,
+item = ItemId.Stalkers_Blade,
+index = 1
+},
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Stalkers_Blade,
+item = ItemId.Dagger,
+index = 2
+},
+new ItemToShop()
+{
+Price = 950,
+needItem = ItemId.Dagger,
+item = ItemId.Stalkers_Blade_Enchantment_Devourer,
+index = 3
+},
+new ItemToShop()
+{
+Price = 1475,
+needItem = ItemId.Stalkers_Blade_Enchantment_Devourer,
+item = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
+index = 4
+},
+new ItemToShop()
+{
+Price = 1400,
+needItem = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
+item = ItemId.Bilgewater_Cutlass,
+index = 5
+},
+new ItemToShop()
+{
+Price = 1800,
+needItem = ItemId.Bilgewater_Cutlass,
+item = ItemId.Blade_of_the_Ruined_King,
+index = 6
+},
+new ItemToShop()
+{
+Price = 875,
+needItem = ItemId.Blade_of_the_Ruined_King,
+item = ItemId.Pickaxe,
+index = 7
+},
+new ItemToShop()
+{
+Price = 1025,
+needItem = ItemId.Pickaxe,
+item = ItemId.Tiamat_Melee_Only,
+index = 8
+},
+new ItemToShop()
+{
+Price = 1100,
+needItem = ItemId.Tiamat_Melee_Only,
+item = ItemId.Zeal,
+index = 9
+},
+new ItemToShop()
+{
+Price = 1700,
+needItem = ItemId.Zeal,
+item = ItemId.Phantom_Dancer,
+index = 10
+},
+new ItemToShop()
+{
+Price = 1400,
+needItem = ItemId.Phantom_Dancer,
+item = ItemId.Ravenous_Hydra_Melee_Only,
+index = 11
+},
+new ItemToShop()
+{
+Price = 1550,
+needItem = ItemId.Ravenous_Hydra_Melee_Only,
+item = ItemId.B_F_Sword,
+index = 12
+},
+new ItemToShop()
+{
+Price = 2250,
+needItem = ItemId.B_F_Sword,
+item = ItemId.Infinity_Edge,
+index = 13
+}
+/*new ItemToShop()
+{
+Price = 2900,
+needItem = ItemId.Infinity_Edge,
+item = ItemId.Last_Whisper,
+index = 14
+}
+*/};
+        #endregion
+        #region as
+        public static List<ItemToShop> buyThings_AS = new List<ItemToShop>
+{
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Hunters_Machete,
+item = ItemId.Rangers_Trailblazer,
+index = 1
+},
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Rangers_Trailblazer,
+item = ItemId.Dagger,
+index = 2
+},
+new ItemToShop()
+{
+Price = 950,
+needItem = ItemId.Dagger,
+item = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
+index = 3
+},
+new ItemToShop()
+{
+Price = 1475,
+needItem = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
+/*item = ItemId.Boots_of_Speed,
+index = 4
+},
+new ItemToShop()
+{
+Price = 675,
+needItem = ItemId.Boots_of_Speed,
+*/item = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
+index = 4
+},
+new ItemToShop()
+{
+Price = 1400,
+needItem = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
+item = ItemId.Bilgewater_Cutlass,
+index = 5
+},
+new ItemToShop()
+{
+Price = 1800,
+needItem = ItemId.Bilgewater_Cutlass,
+item = ItemId.Blade_of_the_Ruined_King,
+index = 6
+},
+new ItemToShop()
+{
+Price = 900,
+needItem = ItemId.Blade_of_the_Ruined_King,
+item = ItemId.Recurve_Bow,
+index = 7
+},
+new ItemToShop()
+{
+Price = 500+750+450,
+needItem = ItemId.Recurve_Bow,
+item = ItemId.Wits_End,
+index = 8
+},
+new ItemToShop()
+{
+Price = 1900,
+needItem = ItemId.Wits_End,
+item = ItemId.Tiamat_Melee_Only,
+index = 9
+},
+new ItemToShop()
+{
+Price = 800+600,
+needItem = ItemId.Tiamat_Melee_Only,
+item = ItemId.Ravenous_Hydra_Melee_Only,
+index = 10
+},
+new ItemToShop()
+{
+Price = 2900,
+needItem = ItemId.Ravenous_Hydra_Melee_Only,
+item = ItemId.Last_Whisper,
+index = 11
+}
+};
+        #endregion
+        #region tanky
+        public static List<ItemToShop> buyThings_TANK = new List<ItemToShop>
+{
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Hunters_Machete,
+item = ItemId.Rangers_Trailblazer,
+index = 1
+},
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Rangers_Trailblazer,
+item = ItemId.Dagger,
+index = 2
+},
+new ItemToShop()
+{
+Price = 950,
+needItem = ItemId.Dagger,
+item = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
+index = 3
+},
+new ItemToShop()
+{
+Price = 1000,
+needItem = ItemId.Rangers_Trailblazer_Enchantment_Devourer,
+item = ItemId.Ionian_Boots_of_Lucidity,
+index = 4
+},
+new ItemToShop()
+{
+Price = 500,
+needItem = ItemId.Ionian_Boots_of_Lucidity,
+item = ItemId.Null_Magic_Mantle,
+index = 5
+},
+new ItemToShop()
+{
+Price = 900,
+needItem = ItemId.Null_Magic_Mantle,
+item = ItemId.Recurve_Bow,
+index = 6
+},
+new ItemToShop()
+{
+Price = 1200,
+needItem = ItemId.Recurve_Bow,
+item = ItemId.Wits_End,
+index = 7
+},
+new ItemToShop()
+{
+Price = 950,
+needItem = ItemId.Wits_End,
+item = ItemId.Glacial_Shroud,
+index = 8
+},
+new ItemToShop()
+{
+Price = 1050+450,
+needItem = ItemId.Glacial_Shroud,
+item = ItemId.Frozen_Heart,
+index = 9
+},
+new ItemToShop()
+{
+Price = 500,
+needItem = ItemId.Frozen_Heart,
+item = ItemId.Null_Magic_Mantle,
+index = 10
+},
+new ItemToShop()
+{
+Price = 400+1150,
+needItem = ItemId.Null_Magic_Mantle,
+item = ItemId.Banshees_Veil,
+index = 11
+},
+new ItemToShop()
+{
+Price = 1200,
+needItem = ItemId.Banshees_Veil,
+item = ItemId.Sheen,
+index = 12
+},
+new ItemToShop()
+{
+Price = 1325,
+needItem = ItemId.Sheen,
+item = ItemId.Phage,
+index = 13
+},
+new ItemToShop()
+{
+Price = 1178,
+needItem = ItemId.Phage,
+item = ItemId.Trinity_Force,
+index = 14
+},
+};
+        #endregion
+        #endregion
+        private static void Main(string[] args)
+        {
+            CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
+        }
+        private static void Game_OnGameLoad(EventArgs args)
+        {
+            ////////////////////customizing//////////////////
+            var dir = new DirectoryInfo(Config.LeagueSharpDirectory.ToString() + @"\JeonAutoJungle");
+            var setFile = new FileInfo(dir + "/" + Player.ChampionName + ".ini");
+            #region File Stream
+            try
+            {
+                if (!dir.Exists)
+                    dir.Create();
+                if (!setFile.Exists)
+                {
+                    Readini.Setini(setFile.FullName);
+                }
+            }
+            catch
+            { }
+            #endregion
+            ////////////////////////////////////////////////
+            JeonAutoJungleMenu = new Menu("JeonAutoJungle", "JeonAutoJungle", true);
+            JeonAutoJungleMenu.AddItem(new MenuItem("isActive", "Activate")).SetValue(true);
+            JeonAutoJungleMenu.AddItem(new MenuItem("maxstacks", "Max Stacks").SetValue(new Slider(9, 1, 150)));
+            JeonAutoJungleMenu.AddItem(new MenuItem("maxlv", "Max level").SetValue(new Slider(9, 1, 18)));
+            JeonAutoJungleMenu.AddItem(new MenuItem("autorecallheal", "Recall[for heal]")).SetValue(true);
+            JeonAutoJungleMenu.AddItem(new MenuItem("hpper", "Recall on HP(%)").SetValue(new Slider(50, 0, 100)));
+			JeonAutoJungleMenu.AddItem(new MenuItem("ehhro", "Enemy in Range").SetValue(new Slider(1, 1, 5)));
+			JeonAutoJungleMenu.AddItem(new MenuItem("ehhro2", "Enemy in Far Range").SetValue(new Slider(3, 1, 5)));
+            JeonAutoJungleMenu.AddItem(new MenuItem("autorecallitem", "Recall[for item]")).SetValue(true);
+            JeonAutoJungleMenu.AddItem(new MenuItem("evading", "Detect TurretAttack")).SetValue(true);
+            JeonAutoJungleMenu.AddItem(new MenuItem("Invade", "InvadeEnemyJungle?")).SetValue(true);
+            JeonAutoJungleMenu.AddItem(new MenuItem("k_dragon", "Add Dragon to Route on Lv").SetValue(new Slider(10, 1, 18)));
+            if (Player.ChampionName == "MasterYi")
+                JeonAutoJungleMenu.AddItem(new MenuItem("yi_W", "Cast MasterYi-W(%)").SetValue(new Slider(60, 0, 100)));
+            Orbwalker = new Orbwalking.Orbwalker(JeonAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Orbwalker", "Orbwalker")));
+            TargetSelector.AddToMenu(JeonAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Target Selector", "Target Selector")));
+				JeonAutoJungleMenu.AddToMainMenu();
+				//메뉴
+				setSmiteSlot();
+            if (Player.ChampionName == "Nidalee")//for 니달리
+            {
             // Add drawing skill list
             CougarSpellList.AddRange(new[] { Takedown, Pounce, Swipe });
             HumanSpellList.AddRange(new[] { Javelin, Bushwack, Primalsurge });
-
             // Set skillshot prediction (i has rito decode now)
             Javelin.SetSkillshot(0.125f, 40f, 1300f, true, SkillshotType.SkillshotLine);
             Bushwack.SetSkillshot(0.50f, 100f, 1500f, false, SkillshotType.SkillshotCircle);
             Swipe.SetSkillshot(0.50f, 375f, 1500f, false, SkillshotType.SkillshotCone);
             Pounce.SetSkillshot(0.50f, 400f, 1500f, false, SkillshotType.SkillshotCone);
-
-            // GameOnGameUpdate Event
-            Game.OnUpdate += NidaleeOnUpdate;
-
-            // DrawingOnDraw Event
-            Drawing.OnDraw += NidaleeOnDraw;
-
-            // OnProcessSpellCast Event
-            Obj_AI_Base.OnProcessSpellCast += NidaleeTracker;
-
-            // AntiGapcloer Event
-            AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
+            }
+			
+            #region 스펠설정
+            Q = new Spell(SpellSlot.Q, GetSpellRange(Qdata));
+            W = new Spell(SpellSlot.W, GetSpellRange(Wdata));
+            E = new Spell(SpellSlot.E, GetSpellRange(Edata));
+            R = new Spell(SpellSlot.R, GetSpellRange(Rdata));
+            #endregion
+            #region 지점 설정
+            if (Player.Team.ToString() == "Chaos")
+            {
+                spawn = new Vector3(14318f, 14354, 171.97f);
+                enemy_spawn = new Vector3(415.33f, 453.38f, 182.66f);
+                Game.PrintChat("Set PurpleTeam Spawn");
+                IsBlueTeam = false;
+                MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 1;
+                MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 2;
+                MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 3;
+                MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 4;
+                MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 5;
+                MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 6;
+                MonsterList.First(temp => temp.ID == top_crab.ID).order = 7;
+                MonsterList.First(temp => temp.ID == PURPLE_MID.ID).order = 8;
+                MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 9;
+                MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 10;
+                MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 11;
+                MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 12;
+                MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 13;
+                MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 14;
+                MonsterList.First(temp => temp.ID == down_crab.ID).order = 15;
+            }
+            else
+            {
+                spawn = new Vector3(415.33f, 453.38f, 182.66f);
+                enemy_spawn = new Vector3(14318f, 14354, 171.97f);
+                Game.PrintChat("Set BlueTeam Spawn");
+                IsBlueTeam = true;
+                MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 1;
+                MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 2;
+                MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 3;
+                MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 8;
+                MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 9;
+                MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 10;
+                MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 6;
+                MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 5;
+                MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 4;
+                MonsterList.First(temp => temp.ID == top_crab.ID).order = 7;
+                MonsterList.First(temp => temp.ID == BLUE_MID.ID).order = 15;
+                MonsterList.First(temp => temp.ID == down_crab.ID).order = 14;
+                MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 11;
+                MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 12;
+                MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 13;
+            }
+            max = MonsterList.OrderByDescending(h => h.order).First().order;
+            #endregion
+            #region 챔피언 설정
+            if (Player.ChampionName.ToUpper() == "NUNU")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("NUNU BOT ACTIVE");
+                Readini.GetSpelltree(setFile.FullName);
+            }
+            else if (Player.ChampionName.ToUpper() == "WARWICK")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("WARWICK BOT ACTIVE");
+                Readini.GetSpelltree(setFile.FullName);
+            }
+            else if (Player.ChampionName.ToUpper() == "MASTERYI")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("MASTER YI BOT ACTIVE");
+                Readini.GetSpelltree(setFile.FullName);
+            }
+            else if (Player.ChampionName.ToUpper() == "CHOGATH")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("CHOGATH BOT ACTIVE");
+                Readini.GetSpelltree(setFile.FullName);
+            }
+            else if (Player.ChampionName.ToUpper() == "MAOKAI")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("MAOKAI BOT ACTIVE");
+                Readini.GetSpelltree(setFile.FullName);
+            }
+            else if (Player.ChampionName.ToUpper() == "NASUS")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("NASUS BOT ACTIVE");
+                Readini.GetSpelltree(setFile.FullName);
+            }
+            else if (Player.ChampionName.ToUpper() == "XINZHAO")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("XINZHAO is now going to Chawchaw");
+                Readini.GetSpelltree(setFile.FullName);
+            }
+            else if (Player.ChampionName.ToUpper() == "NIDALEE")
+            {
+                GetItemTree(setFile);
+                Game.PrintChat("NIDALEE CARRY IP");
+                Readini.GetSpelltree(setFile.FullName);
+            }
+            else
+            {
+                #region Read ini
+                Game.PrintChat("Read ini file");
+                Readini.GetSpelltree(setFile.FullName);
+                GetItemTree(setFile);
+                Readini.GetSpells(setFile.FullName, ref cast2mob, ref cast2hero, ref cast4laneclear);
+                #endregion readini
+            }
+            #endregion
+            #region 현재 아이템 단계 설정 - 도중 리로드시 필요
+            if (buyThings.Any(h => Items.HasItem(Convert.ToInt32(h.needItem))))
+            {
+                if (buyThings.First().needItem != buyThings.Last(h => Items.HasItem(Convert.ToInt32(h.needItem))).needItem)
+                {
+                    var lastitem = buyThings.Last(h => Items.HasItem(Convert.ToInt32(h.needItem)));
+                    Game.PrintChat("Find new ItemList");
+                    List<ItemToShop> newlist = buyThings.Where(t => t.index >= lastitem.index).ToList();
+                    buyThings.Clear();
+                    buyThings = newlist;
+                }
+            }
+            #endregion
+            gamestart = Game.Time; // 시작시간 설정
+            Game.OnUpdate += Game_OnUpdate;
+            GameObject.OnCreate += OnCreate;
+            Obj_AI_Base.OnProcessSpellCast += OnSpell;
+            if (smiteSlot == SpellSlot.Unknown)
+                Game.PrintChat("YOU ARE NOT JUNGLER(NO SMITE)");
         }
-
-        private static void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
+        private static Obj_AI_Hero GetTarget()
         {
-            if (!_mainMenu.Item("gapp").GetValue<bool>())
+            Obj_AI_Hero Target = null;
+            /*if (ChoosedTarget == null)
+            {*/
+                Target = TargetSelector.GetTarget(700, TargetSelector.DamageType.Physical);
+/*            }
+            else
+            {
+                Target = ChoosedTarget;
+            }*/
+            return Target;
+        }
+		private static void Game_OnUpdate(EventArgs args) 
+        {
+		int maxlv = JeonAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
+		int level = Player.Level;	
+            setSmiteSlot();
+            Target = GetTarget();
+			if (Player.ChampionName == "Nidalee")
+            _cougarForm = Player.Spellbook.GetSpell(SpellSlot.Q).Name != "JavelinToss";
+            if (Player.Spellbook.IsChanneling)
                 return;
-
-            var attacker = gapcloser.Sender;
-            if (attacker.IsValidTarget(Javelin.Range))
+            if (!JeonAutoJungleMenu.Item("isActive").GetValue<Boolean>() || smiteSlot == SpellSlot.Unknown)
+                return;
+            #region detect afk
+            if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling())
             {
-                if (!_cougarForm)
+                afktime += 1;
+                if (afktime > 6) // 잠수 5초 경과
                 {
-                    var prediction = Javelin.GetPrediction(attacker);
-                    if (prediction.Hitchance != HitChance.Collision && HQ == 0)
-                        Javelin.Cast(prediction.CastPosition);
-
-                    if (Aspectofcougar.IsReady())
-                        Aspectofcougar.Cast();
+                    if (Player.InShop() && Player.HealthPercentage() > 70)
+                        Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+                    else
+                        Player.Spellbook.CastSpell(SpellSlot.Recall);
+                    afktime = 0;
                 }
-
-                if (_cougarForm)
+                pastTimeAFK = Game.Time;
+            }
+            #endregion
+            #region 0.5초마다 발동 // 오류 없애줌
+            if (Environment.TickCount - pastTime <= 500) return;
+            pastTime = Environment.TickCount;
+            #endregion
+            #region InvadeEnemyJungle
+            if (!IsBlueTeam)
+            {
+                if (!JeonAutoJungleMenu.Item("Invade").GetValue<Boolean>())
                 {
-                    if (attacker.Distance(Me.ServerPosition) <= Takedown.Range && CQ == 0)
-                        Takedown.CastOnUnit(Me);
-                    if (attacker.Distance(Me.ServerPosition) <= Swipe.Range && CE == 0)
-                        Swipe.Cast(attacker.ServerPosition);
+                    MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == top_crab.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == PURPLE_MID.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == down_crab.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 0;
+					MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 1;
+					MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 2;
+					MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 3;
+					MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 4;
+					MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 5;
+					MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 6;
+                }
+                else
+                {
+					MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 1;
+					MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 2;
+					MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 3;
+					MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 4;
+					MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 5;
+					MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 6;
+					MonsterList.First(temp => temp.ID == top_crab.ID).order = 7;
+					MonsterList.First(temp => temp.ID == PURPLE_MID.ID).order = 8;
+					MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 9;
+					MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 10;
+					MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 11;
+					MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 12;
+					MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 13;
+					MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 14;
+					MonsterList.First(temp => temp.ID == down_crab.ID).order = 15;
                 }
             }
-        }
-
-        #endregion
-
-        #region Nidalee: Menu
-        private static void NidaMenu()
-        {
-            _mainMenu = new Menu("KurisuNidalee", "nidalee", true);
-
-            var nidaOrb = new Menu("Nidalee: Orbwalker", "orbwalker");
-            _orbwalker = new Orbwalking.Orbwalker(nidaOrb);
-
-            _mainMenu.AddSubMenu(nidaOrb);
-
-            var nidaTS = new Menu("Nidalee: Selector", "target selecter");
-            TargetSelector.AddToMenu(nidaTS);
-            _mainMenu.AddSubMenu(nidaTS);
-
-            var nidaKeys = new Menu("Nidalee: Keys", "keybindongs");
-            nidaKeys.AddItem(new MenuItem("usecombo", "Combo")).SetValue(true);
-            nidaKeys.AddItem(new MenuItem("useharass", "Harass")).SetValue(new KeyBind(67, KeyBindType.Press));
-            nidaKeys.AddItem(new MenuItem("usejungle", "Jungleclear")).SetValue(true);
-            nidaKeys.AddItem(new MenuItem("useclear", "Laneclear")).SetValue(true);
-            nidaKeys.AddItem(new MenuItem("uselasthit", "Last Hit")).SetValue(new KeyBind(35, KeyBindType.Press));
-            nidaKeys.AddItem(new MenuItem("useflee", "Flee Mode/Walljump")).SetValue(false);
-            _mainMenu.AddSubMenu(nidaKeys);
-
-            var nidaSpells = new Menu("Nidalee: Combo", "spells");
-            nidaSpells.AddItem(new MenuItem("seth", "Javelin Hitchance")).SetValue(new Slider(3,1,4));
-            nidaSpells.AddItem(new MenuItem("usehumanq", "Use Javelin Toss")).SetValue(true);
-            nidaSpells.AddItem(new MenuItem("usehumanw", "Use Bushwack")).SetValue(true);
-            nidaSpells.AddItem(new MenuItem("usecougarq", "Use Takedown")).SetValue(true);
-            nidaSpells.AddItem(new MenuItem("usecougarw", "Use Pounce")).SetValue(true);
-            nidaSpells.AddItem(new MenuItem("usecougare", "Use Swipe")).SetValue(true);
-            nidaSpells.AddItem(new MenuItem("usecougarr", "Auto Switch Forms")).SetValue(true);
-            _mainMenu.AddSubMenu(nidaSpells);
-
-            var nidaHeals = new Menu("Nidalee: Heal", "hengine");
-            nidaHeals.AddItem(new MenuItem("usedemheals", "Enable")).SetValue(true);
-            nidaHeals.AddItem(new MenuItem("sezz", "Heal Priority: ")).SetValue(new StringList(new[] { "Low HP", "Highest AD" }));
-            nidaHeals.AddItem(new MenuItem("healmanapct", "Minimum Mana %")).SetValue(new Slider(55));
-
-            foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsAlly))
+            else
             {
-                nidaHeals.AddItem(new MenuItem("heal" + hero.ChampionName, hero.ChampionName)).SetValue(true);
-                nidaHeals.AddItem(new MenuItem("healpct" + hero.ChampionName, "Heal " + hero.ChampionName + " if under %")).SetValue(new Slider(50));
-            }
-
-            _mainMenu.AddSubMenu(nidaHeals);
-
-            var nidaHarass = new Menu("Nidalee: Harass", "harass");
-            nidaHarass.AddItem(new MenuItem("usehumanq2", "Use Javelin Toss")).SetValue(true);
-            nidaHarass.AddItem(new MenuItem("autoq", "Auto-Q Toggle")).SetValue(new KeyBind('Y', KeyBindType.Toggle));
-            nidaHarass.AddItem(new MenuItem("humanqpct", "Minimum Mana %")).SetValue(new Slider(55));
-            _mainMenu.AddSubMenu(nidaHarass);
-
-            var nidaJungle = new Menu("Nidalee: Jungle", "jungleclear");
-            nidaJungle.AddItem(new MenuItem("jghumanq", "Use Javelin Toss")).SetValue(true);
-            nidaJungle.AddItem(new MenuItem("jghumanw", "Use Bushwack")).SetValue(true);
-            nidaJungle.AddItem(new MenuItem("jgcougarq", "Use Takedown")).SetValue(true);
-            nidaJungle.AddItem(new MenuItem("jgcougarw", "Use Pounce")).SetValue(true);
-            nidaJungle.AddItem(new MenuItem("jgcougare", "Use Swipe")).SetValue(true);
-            nidaJungle.AddItem(new MenuItem("jgcougarr", "Auto Switch Form")).SetValue(true);
-            nidaJungle.AddItem(new MenuItem("jgheal", "Switch Form to Heal")).SetValue(true);
-            nidaJungle.AddItem(new MenuItem("jgpct", "Minimum Mana %")).SetValue(new Slider(35));
-            _mainMenu.AddSubMenu(nidaJungle);
-
-            var nidalhit = new Menu("Nidalee: Last Hit", "lasthit");
-            nidalhit.AddItem(new MenuItem("lhhumanq", "Use Javelin Toss")).SetValue(false);
-            nidalhit.AddItem(new MenuItem("lhhumanw", "Use Bushwack")).SetValue(false);
-            nidalhit.AddItem(new MenuItem("lhcougarq", "Use Takedown")).SetValue(true);
-            nidalhit.AddItem(new MenuItem("lhcougarw", "Use Pounce")).SetValue(true);
-            nidalhit.AddItem(new MenuItem("lhcougare", "Use Swipe")).SetValue(true);
-            nidalhit.AddItem(new MenuItem("lhcougarr", "Auto Switch Form")).SetValue(false);
-            nidalhit.AddItem(new MenuItem("lhpct", "Minimum Mana %")).SetValue(new Slider(45));
-            _mainMenu.AddSubMenu(nidalhit);
-
-            var nidalc = new Menu("Nidalee: Laneclear", "laneclear");
-            nidalc.AddItem(new MenuItem("lchumanq", "Use Javelin Toss")).SetValue(false);
-            nidalc.AddItem(new MenuItem("lchumanw", "Use Bushwack")).SetValue(false);
-            nidalc.AddItem(new MenuItem("lccougarq", "Use Takedown")).SetValue(true);
-            nidalc.AddItem(new MenuItem("lccougarw", "Use Pounce")).SetValue(true);
-            nidalc.AddItem(new MenuItem("lccougare", "Use Swipe")).SetValue(true);
-            nidalc.AddItem(new MenuItem("lccougarr", "Auto Switch Form")).SetValue(false);
-            nidalc.AddItem(new MenuItem("lcpct", "Minimum Mana %")).SetValue(new Slider(35));
-            _mainMenu.AddSubMenu(nidalc);
-
-            var nidaD = new Menu("Nidalee: Drawings", "drawings");
-            nidaD.AddItem(new MenuItem("drawQ", "Draw Q")).SetValue(new Circle(true, Color.FromArgb(150, Color.White)));
-            nidaD.AddItem(new MenuItem("drawW", "Draw W")).SetValue(new Circle(true, Color.FromArgb(150, Color.White)));
-            nidaD.AddItem(new MenuItem("drawE", "Draw E")).SetValue(new Circle(true, Color.FromArgb(150, Color.White)));
-            nidaD.AddItem(new MenuItem("drawline", "Draw Target")).SetValue(true);
-            nidaD.AddItem(new MenuItem("drawcds", "Draw Cooldowns")).SetValue(true);
-            _mainMenu.AddSubMenu(nidaD);
-
-            var nidaM = new Menu("Nidalee: Misc", "misc");
-            nidaM.AddItem(new MenuItem("useitems", "Use Items")).SetValue(true);
-            nidaM.AddItem(new MenuItem("useignote", "Use Ignite"));
-            nidaM.AddItem(new MenuItem("dash", "Q on Dashing")).SetValue(false);
-            nidaM.AddItem(new MenuItem("gapp", "Q Anti-Gapcloser")).SetValue(false);
-            nidaM.AddItem(new MenuItem("imm", "Q/W on Immobibile")).SetValue(true);
-            nidaM.AddItem(new MenuItem("javelinks", "Killsteal with Javelin")).SetValue(true);
-            nidaM.AddItem(new MenuItem("ksform", "Killsteal switch Form")).SetValue(true);
-            _mainMenu.AddSubMenu(nidaM);
-
-            _mainMenu.AddToMainMenu();
-
-            Game.PrintChat("<font color=\"#FF9900\"><b>KurisuNidalee:</b></font> Loaded");
-
-        }
-
-        #endregion
-
-        #region Nidalee: OnUpdate
-        private static void NidaleeOnUpdate(EventArgs args)
-        {
-            _hasBlue = Me.HasBuff("crestoftheancientgolem", true);
-            _cougarForm = Me.Spellbook.GetSpell(SpellSlot.Q).Name != "JavelinToss";
-
-            _target = TargetSelector.GetTarget(1200, TargetSelector.DamageType.Magical);
-
-            ProcessCooldowns();
-            PrimalSurge();
-            Killsteal();
-
-            if (_mainMenu.Item("usecombo").GetValue<bool>())
-                UseCombo(_target);
-
-            if (_mainMenu.Item("useharass").GetValue<KeyBind>().Active ||
-                _mainMenu.Item("autoq").GetValue<KeyBind>().Active)
-            {
-                UseHarass();
-            }
-
-            if (_mainMenu.Item("useclear").GetValue<bool>())
-                UseLaneFarm();
-            if (_mainMenu.Item("usejungle").GetValue<bool>())
-                UseJungleFarm();
-            if (_mainMenu.Item("uselasthit").GetValue<KeyBind>().Active)
-                UseLastHit();
-            if (_mainMenu.Item("useflee").GetValue<KeyBind>().Active)
-                UseFlee();
-
-
-            if (Me.HasBuff("Takedown", true))
-                Orbwalking.LastAATick = 0;
-
-            if (_mainMenu.Item("imm").GetValue<bool>())
-            {
-                // Human W != 0 -- Bushwack is on CD
-                if (HW != 0 || !_cougarForm && !Bushwack.IsReady())
+                if (!JeonAutoJungleMenu.Item("Invade").GetValue<Boolean>())
                 {
-                    return;
+                    MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == top_crab.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == BLUE_MID.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == down_crab.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 0;
+					MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 1;
+					MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 2;
+					MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 3;
+					MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 4;
+					MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 5;
+					MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 6;
                 }
-
-                var targ =
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .FirstOrDefault(
-                            hero => hero.Distance(Me.ServerPosition, true) <= Bushwack.RangeSqr && hero.IsEnemy);
-
-                if (targ.IsValidTarget(Bushwack.Range))
+                else
                 {
-                    var prediction = Bushwack.GetPrediction(targ);
-                    if (prediction.Hitchance == HitChance.Immobile)
+					MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 1;
+					MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 2;
+					MonsterList.First(temp => temp.ID == bteam_Wolf.ID).order = 3;
+					MonsterList.First(temp => temp.ID == bteam_Razorbeak.ID).order = 8;
+					MonsterList.First(temp => temp.ID == bteam_Red.ID).order = 9;
+					MonsterList.First(temp => temp.ID == bteam_Krug.ID).order = 10;
+					MonsterList.First(temp => temp.ID == pteam_Razorbeak.ID).order = 6;
+					MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 5;
+					MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 4;
+					MonsterList.First(temp => temp.ID == top_crab.ID).order = 7;
+					MonsterList.First(temp => temp.ID == BLUE_MID.ID).order = 15;
+					MonsterList.First(temp => temp.ID == down_crab.ID).order = 14;
+					MonsterList.First(temp => temp.ID == pteam_Gromp.ID).order = 11;
+					MonsterList.First(temp => temp.ID == pteam_Blue.ID).order = 12;
+					MonsterList.First(temp => temp.ID == pteam_Wolf.ID).order = 13;
+                }
+            }
+            max = MonsterList.OrderByDescending(h => h.order).First().order;
+            #endregion
+            #region detect reload
+            if (IsStart && Player.Level > 1)
+            {
+                Game.PrintChat("You did reload");
+                IsStart = false;
+            }
+            #endregion
+            #region check somethings about dragon
+            if (Player.Level > JeonAutoJungleMenu.Item("k_dragon").GetValue<Slider>().Value)
+            {
+                if (MonsterList.First(temp => temp.ID == down_crab.ID).order == 14)
+                {
+                    MonsterList.First(temp => temp.ID == down_crab.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == Dragon.ID).order = 14;
+                }
+                if (MonsterList.First(temp => temp.ID == down_crab.ID).order == 15)
+                {
+                    MonsterList.First(temp => temp.ID == down_crab.ID).order = 0;
+                    MonsterList.First(temp => temp.ID == Dragon.ID).order = 15;
+                }
+            }
+            #endregion
+            #region 오토 플레이 - auto play
+            if (Player.IsMoving)
+                afktime = 0;
+            if (!IsOVER)
+            {
+                if (IsStart) // start
+                {
+                    if (Game.Time - gamestart >= 0)
                     {
-                        Bushwack.Cast(prediction.CastPosition);
+                        Player.IssueOrder(GameObjectOrder.MoveTo, MonsterList.First(t => t.order == 1).Position);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if (Player.Position.Distance(MonsterList.First(t => t.order == 1).Position) > 500)
+									{
+										if(!_cougarForm && Aspectofcougar.IsReady())
+										{
+										Aspectofcougar.Cast();
+										}
+										if(_cougarForm && Pounce.IsReady())
+										{
+										Pounce.Cast(MonsterList.First(t => t.order == 1).Position);
+										}
+									}
+								}
+								
+                        afktime = 0;
+                    }
+                    if (Player.Distance(MonsterList.First(t => t.order == 1).Position) <= 100)
+                    {
+                        if (CheckMonster(MonsterList.First(t => t.order == 1).name, MonsterList.First(t => t.order == 1).Position, MonsterList.First(t => t.order == 1).Range))
+                        {
+                            IsStart = false;
+                            now = 1;
+                            Game.PrintChat("START!");
+                        }
                     }
                 }
-            }      
-        }
-
-        #endregion
-
-        #region Nidalee: Killsteal
-        private static void Killsteal()
-        {
-            if (_mainMenu.Item("javelinks").GetValue<bool>())
-            {
-                foreach (
-                    var targ in
-                        ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValidTarget(Javelin.Range)))
+                else
                 {
-                    var prediction = Javelin.GetPrediction(targ);
-                    var hqdmg = Me.GetSpellDamage(targ, SpellSlot.Q);
-                    if (targ.Health <= hqdmg && HQ == 0)
-                    {                      
-                        if (prediction.Hitchance >= HitChance.Medium)
+                    if (Player.IsDead && now >= 7 && now <= 9)
+                        now = 5;
+                    if (Player.IsDead && now > 12)
+                        now = 12;
+                    MonsterINFO target = MonsterList.First(t => t.order == now);
+                    if (Player.Position.Distance(target.Position) >= 700)
+                    {
+				var ehero = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
+				var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+				if (!recall)
                         {
-                            if (_cougarForm && _mainMenu.Item("ksform").GetValue<bool>())
+                            if (Player.Position.Distance(target.Position) > Player.AttackRange)
                             {
-                                if (Aspectofcougar.IsReady())
-                                    Aspectofcougar.Cast();
+                                Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
+
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(!_cougarForm && Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(target.Position);
+									}
+								}
+                                afktime = 0;
                             }
-                            else
+                            DoCast_Hero();
+                            if (Player.HealthPercentage() < JeonAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
+                            && JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
                             {
-                                Javelin.Cast(prediction.CastPosition);
+							if(ehero.Distance(Player.Position) > 1300 && turret.Distance(Player.Position) > 1500)
+							{
+                                Game.PrintChat("YOUR HP IS SO LOW. RECALL!");
+                                Player.Spellbook.CastSpell(SpellSlot.Recall);
+                                recall = true;
+                                recallhp = Player.Health;
+                            }
+							else
+                                Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+							}
+                            else if (Player.Gold > buyThings.First().Price
+                            && JeonAutoJungleMenu.Item("autorecallitem").GetValue<Boolean>()
+                            && Player.InventoryItems.Length < 9) // HP LESS THAN 25%
+                            {
+							if(ehero.Distance(Player.Position) > 1300 && turret.Distance(Player.Position) > 1500)
+							{
+                                Game.PrintChat("CAN BUY " + buyThings.First().item.ToString() + ". RECALL!");
+                                Player.Spellbook.CastSpell(SpellSlot.Recall);
+                                recall = true;
+                                recallhp = Player.Health;
+							}
+							else
+                                Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
                             }
                         }
                     }
-
-       
-                    if (_cougarForm || (HQ != 0 || !Javelin.IsReady()))
+                    else if (Player.Position.Distance(target.Position) <= 500 && Player.Position.Distance(target.Position) > 250)
                     {
-                        return;
+                        if(!recall)
+						{if (CheckMonster(target.name, target.Position, 600)) //해당지점에 몬스터가 있는지
+                        {
+                            DoCast();
+                            Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
+                            afktime = 0;
+                            if (smite.Slot != SpellSlot.Unknown && smite.IsReady())
+                                DoSmite();
+                        }
+                        else
+                        {
+                                Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
+                                afktime = 0;
+                        }}
+					}
+                    else if (Player.Position.Distance(target.Position) <= 250)
+                    {
+						if(!recall)
+                        {if (CheckMonster(target.name, target.Position, 500)) //해당지점에 몬스터가 있는지
+                        {
+                            DoCast();
+                            Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
+                            afktime = 0;
+                            if (smite.Slot != SpellSlot.Unknown && smite.IsReady())
+                                DoSmite();
+                        }
+                        else
+                        {
+                            now += 1;
+                            if (now > max)
+                                now = 1;
+                        }}
                     }
+                }
+                if (Player.InShop())
+					if(JeonAutoJungleMenu.Item("Invade").GetValue<Boolean>())
+					{
+						if(!IsBlueTeam && now == 7 || !IsBlueTeam && now == 15 ||
+							IsBlueTeam && now == 7 || IsBlueTeam && now == 14) //정글 게 뻘짓 줄이기
+						now += 1;
+					}
+                    recall = false;
 
-                    if (prediction.Hitchance == HitChance.Immobile && _mainMenu.Item("imm").GetValue<bool>())
-                        Javelin.Cast(prediction.CastPosition);
-
-                    if (prediction.Hitchance == HitChance.Dashing && _mainMenu.Item("dash").GetValue<bool>())
-                        Javelin.Cast(prediction.CastPosition);
-
+				if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
+				{
+                    IsOVER = true;
+                    Game.PrintChat("You're level is" + level + ". Now Going to be offense.");
+				}
+            }
+			else
+			{
+				if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
+				{
+                    Game.PrintChat("You're under " + maxlv + "lv. Going back to farm.");
+                    IsOVER = false;
+                    IsAttackStart = false;
+				}
+            }
+			#endregion
+            #region 스택이 넘는지 체크 - check ur stacks
+            foreach (var buff in Player.Buffs.Where(b => b.DisplayName == "Enchantment_Slayer_Stacks"))
+            {
+                int maxstacks = JeonAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
+                if (buff.Count >= maxstacks && !IsOVER || level >= maxlv)// || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //--테스트
+                {
+                    IsOVER = true;
+                    Game.PrintChat("Your Stack Is  " + buff.Count + ". Now Going to be offense.");
+                }
+                if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //-- I don't speak korean :D
+                {
+                    Game.PrintChat("Stacks under " + maxstacks + ". Going back to farm.");
+                    IsOVER = false;
+                    IsAttackStart = false;
                 }
             }
-        }
 
-        #endregion
-
-        #region Nidalee : Misc
-        private static void UseInventoryItems(IEnumerable<int> items, Obj_AI_Base target)
-        {
-            if (!_mainMenu.Item("useitems").GetValue<bool>())
-                return;
-
-            foreach (var i in items.Where(x => Items.CanUseItem(x) && Items.HasItem(x)))
+			
+            #endregion
+            #region 공격 모드 - offensive mode
+            if (IsOVER)
             {
-                if (target.IsValidTarget(800))
+				var ehero = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy & !t.IsDead);
+//				var eheros = GetEnemyList().Where(x => x.IsValid && x.IsEnemy && !x.IsDead && Player.Distance(x.Position) <= 2000);					
+//				Obj_AI_Hero ehro = eheros.FirstOrDefault();
+				var turrett = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2400).Count();
+				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 900).Count();				
+				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 1000).Count();				
+                if (!IsAttackStart)
                 {
-                    if (i == 3092)
-                        Items.UseItem(i, target.ServerPosition);
+					if (face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || face_ally >= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
+                        IsAttackStart = true;
+                    else if (face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam || face_ally >= 2  && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
+                        IsAttackStart = true;
                     else
                     {
-                        Items.UseItem(i);
-                        Items.UseItem(i, target);
-                    }
-                }
-            }
-        }
-
-        private static bool CanKillAA(Obj_AI_Base target)
-        {
-            var damage = 0d;
-
-            if (target.IsValidTarget(Me.AttackRange + 30))
-                damage = Me.GetAutoAttackDamage(target);
-
-            return target.Health <= (float)damage * 5;
-        }
-
-        private static float CougarDamage(Obj_AI_Base target)
-        {
-            var damage = 0d;
-
-            if (CQ == 0)
-                damage += Me.GetSpellDamage(target, SpellSlot.Q, 1);
-            if ((CW == 0 || Pounce.IsReady()))
-                damage += Me.GetSpellDamage(target, SpellSlot.W, 1);
-            if (CE == 0)
-                damage += Me.GetSpellDamage(target, SpellSlot.E, 1);
-
-            return (float) damage;
-        }
-
-        #endregion
-
-        #region Nidalee : Flee
-        // Walljumper credits to Hellsing
-        private static void UseFlee()
-        {
-            if (!_cougarForm && Aspectofcougar.IsReady() && (CW == 0 || Pounce.IsReady()))
-                Aspectofcougar.Cast();
-
-            // We need to define a new move position since jumping over walls
-            // requires you to be close to the specified wall. Therefore we set the move
-            // point to be that specific piont. People will need to get used to it,
-            // but this is how it works.
-            var wallCheck = GetFirstWallPoint(Me.Position, Game.CursorPos);
-
-            // Be more precise
-            if (wallCheck != null)
-                wallCheck = GetFirstWallPoint((Vector3)wallCheck, Game.CursorPos, 5);
-
-            // Define more position point
-            var movePosition = wallCheck != null ? (Vector3)wallCheck : Game.CursorPos;
-
-            // Update fleeTargetPosition
-            var tempGrid = NavMesh.WorldToGrid(movePosition.X, movePosition.Y);
-            var fleeTargetPosition = NavMesh.GridToWorld((short)tempGrid.X, (short)tempGrid.Y);
-
-            // Also check if we want to AA aswell
-            Obj_AI_Base target = null;
-
-            // Reset walljump indicators
-            var wallJumpPossible = false;
-
-            // Only calculate stuff when our Q is up and there is a wall inbetween
-            if (_cougarForm && (CW == 0 || Pounce.IsReady()) && wallCheck != null)
-            {
-                // Get our wall position to calculate from
-                var wallPosition = movePosition;
-
-                // Check 300 units to the cursor position in a 160 degree cone for a valid non-wall spot
-                Vector2 direction = (Game.CursorPos.To2D() - wallPosition.To2D()).Normalized();
-                float maxAngle = 80;
-                float step = maxAngle/20;
-                float currentAngle = 0;
-                float currentStep = 0;
-                bool jumpTriggered = false;
-                while (true)
-                {
-                    // Validate the counter, break if no valid spot was found in previous loops
-                    if (currentStep > maxAngle && currentAngle < 0)
-                        break;
-
-                    // Check next angle
-                    if ((currentAngle == 0 || currentAngle < 0) && currentStep != 0)
-                    {
-                        currentAngle = (currentStep)*(float) Math.PI/180;
-                        currentStep += step;
-                    }
-
-                    else if (currentAngle > 0)
-                        currentAngle = -currentAngle;
-
-                    Vector3 checkPoint;
-
-                    // One time only check for direct line of sight without rotating
-                    if (currentStep == 0)
-                    {
-                        currentStep = step;
-                        checkPoint = wallPosition + Pounce.Range*direction.To3D();
-                    }
-                    // Rotated check
-                    else
-                        checkPoint = wallPosition + Pounce.Range*direction.Rotated(currentAngle).To3D();
-
-                    // Check if the point is not a wall
-                    if (!checkPoint.IsWall())
-                    {
-                        // Check if there is a wall between the checkPoint and wallPosition
-                        wallCheck = GetFirstWallPoint(checkPoint, wallPosition);
-                        if (wallCheck != null)
+                        if (IsBlueTeam)
                         {
-                            // There is a wall inbetween, get the closes point to the wall, as precise as possible
-                            Vector3 wallPositionOpposite =
-                                (Vector3) GetFirstWallPoint((Vector3) wallCheck, wallPosition, 5);
-
-                            // Check if it's worth to jump considering the path length
-                            if (Me.GetPath(wallPositionOpposite).ToList().To2D().PathLength() -
-                                Me.Distance(wallPositionOpposite) > 200)
-                            {
-                                // Check the distance to the opposite side of the wall
-                                if (Me.Distance(wallPositionOpposite, true) <
-                                    Math.Pow(Pounce.Range - Me.BoundingRadius/2, 2))
-                                {
-                                    // Make the jump happen
-                                    Pounce.Cast(wallPositionOpposite);
-
-                                    // Update jumpTriggered value to not orbwalk now since we want to jump
-                                    jumpTriggered = true;
-
-                                    break;
-                                }
-                                // If we are not able to jump due to the distance, draw the spot to
-                                // make the user notice the possibliy
-                                else
-                                {
-                                    // Update indicator values
-                                    wallJumpPossible = true;
-                                }
-                            }
-
-                            else
-                            {
-                                Render.Circle.DrawCircle(Game.CursorPos, 35, Color.Red, 2);
-                            }
+                            Player.IssueOrder(GameObjectOrder.MoveTo, BLUE_MID.Position);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(!_cougarForm && Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(BLUE_MID.Position);
+									}
+								}
+                            if (Player.Distance(BLUE_MID.Position) <= 100)
+                                IsAttackStart = true;
                         }
-                    }
-                }
-
-                // Check if the loop triggered the jump, if not just orbwalk
-                if (!jumpTriggered)
-                    Orbwalking.Orbwalk(target, Game.CursorPos, 90f, 0f, false, false);
-            }
-
-            // Either no wall or W on cooldown, just move towards to wall then
-            else
-            {
-                Orbwalking.Orbwalk(target, Game.CursorPos, 90f, 0f, false, false);
-                if (_cougarForm && (CW == 0 || Pounce.IsReady()))
-                    Pounce.Cast(Game.CursorPos);
-            }
-        }
-
-        #endregion
-
-        #region Nidalee: SBTW
-        private static void UseCombo(Obj_AI_Base target)
-        {
-            // Cougar combo
-            if (_cougarForm && target.IsValidTarget(Javelin.Range))
-            {
-                UseInventoryItems(NidaItems, target);
-
-                // Check if takedown is ready (on unit)
-                if (CQ == 0 && _mainMenu.Item("usecougarq").GetValue<bool>()
-                    && target.Distance(Me.ServerPosition, true) <= Takedown.RangeSqr * 2)
-                {
-                    Takedown.CastOnUnit(Me);
-                }
-
-                // Check is pounce is ready 
-                if ((CW == 0 || Pounce.IsReady()) && _mainMenu.Item("usecougarw").GetValue<bool>()
-                    && (target.Distance(Me.ServerPosition, true) > 250*250 || CougarDamage(target) >= target.Health))
-                {
-                    if (TargetHunted(target) & target.Distance(Me.ServerPosition, true) <= 750*750)
-                        Pounce.Cast(target.ServerPosition);
-                    else if (target.Distance(Me.ServerPosition, true) <= 400*400)
-                        Pounce.Cast(target.ServerPosition);
-
-                }
-
-                // Check if swipe is ready (no prediction)
-                if ((CE == 0 || Swipe.IsReady()) && _mainMenu.Item("usecougare").GetValue<bool>())
-                {
-                    if (target.Distance(Me.ServerPosition, true) <= Swipe.RangeSqr)
-                    {
-                        if (!Pounce.IsReady() || NotLearned(Pounce))
-                            Swipe.Cast(target.ServerPosition);
-                    }
-                }
-
-                // force transform if q ready and no collision 
-                if (HQ == 0 && _mainMenu.Item("usecougarr").GetValue<bool>())
-                {
-                    if (!Aspectofcougar.IsReady())
-                    {
-                        return;
-                    }
-
-                    // or return -- stay cougar if we can kill with available spells
-                    if (target.Health <= CougarDamage(target) &&
-                        target.Distance(Me.ServerPosition, true) <= Pounce.RangeSqr)
-                    {
-                        return;
-                    }
-
-                    var prediction = Javelin.GetPrediction(target);
-                    if (prediction.Hitchance >= HitChance.Medium)
-                        Aspectofcougar.Cast();
-                }
-
-                // Switch to human form if can kill in aa and cougar skill not available      
-                if ((CW != 0 || !Pounce.IsReady()) && (CE != 0  || !Swipe.IsReady()) && (CQ != 0 || !Takedown.IsReady()))
-                {
-                    if (target.Distance(Me.ServerPosition, true) > Takedown.RangeSqr && CanKillAA(target))
-                    {
-                        if (_mainMenu.Item("usecougarr").GetValue<bool>() &&
-                            target.Distance(Me.ServerPosition, true) <= Math.Pow(Me.AttackRange + 50, 2))
+                        else
                         {
-                            if (Aspectofcougar.IsReady())
-                                Aspectofcougar.Cast();
-                        }
-                    }
-                }
+                            Player.IssueOrder(GameObjectOrder.MoveTo, PURPLE_MID.Position);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(!_cougarForm && Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(PURPLE_MID.Position);
+									}
+								}
 
-            }
-
-            // human Q 
-            if (!_cougarForm && target.IsValidTarget(Javelin.Range))
-            {
-                var qtarget = TargetSelector.GetTargetNoCollision(Javelin);
-                if ((HQ == 0 || Javelin.IsReady()) && _mainMenu.Item("usehumanq").GetValue<bool>())
-                {
-                    var prediction = Javelin.GetPrediction(qtarget);
-                    if (prediction.Hitchance >= (HitChance)_mainMenu.Item("seth").GetValue<Slider>().Value + 2)
-                    {
-                        Javelin.Cast(prediction.CastPosition);
-                    }
-                }
-            }
-
-            // Human combo
-            if (!_cougarForm && target.IsValidTarget(Javelin.Range))
-            {
-                // Switch to cougar if target hunted or can kill target 
-                if (Aspectofcougar.IsReady() && _mainMenu.Item("usecougarr").GetValue<bool>()
-                    && (TargetHunted(target) || target.Health <= CougarDamage(target) && (HQ != 0 || !Javelin.IsReady())))
-                {
-                    // e/q dont reset CQ/CE timer is safe
-                    if ((CW == 0 || Pounce.IsReady() && (CQ == 0 || CE == 0)))
-                    {
-                        if (TargetHunted(target) && target.Distance(Me.ServerPosition, true) <= 750*750)
-                            Aspectofcougar.Cast();
-                        if (target.Health <= CougarDamage(target) && target.Distance(Me.ServerPosition, true) <= 350*350)
-                            Aspectofcougar.Cast();
-                    }
-                }
-
-                // Check bushwack and cast underneath targets feet.
-                if ((HW == 0 || Bushwack.IsReady()) && _mainMenu.Item("usehumanw").GetValue<bool>() &&
-                         target.Distance(Me.ServerPosition, true) <= Bushwack.RangeSqr)
-                {
-                    var prediction = Bushwack.GetPrediction(target);
-                    if (prediction.Hitchance >= HitChance.Medium)
-                    {
-                        Bushwack.Cast(prediction.CastPosition);
-                    }
-                }
-            }
-        }
-        #endregion
-
-        #region Nidalee: Harass
-        private static void UseHarass()
-        {
-            var qtarget = TargetSelector.GetTargetNoCollision(Javelin);
-            if (!qtarget.IsValidTarget(Javelin.Range))
-                return;
-
-            var actualHeroManaPercent = (int)((Me.Mana / Me.MaxMana) * 100);
-            var minPercent = _mainMenu.Item("humanqpct").GetValue<Slider>().Value;
-            if (!_cougarForm && HQ == 0 && _mainMenu.Item("usehumanq2").GetValue<bool>())
-            {
-                var prediction = Javelin.GetPrediction(qtarget);
-                if (qtarget.Distance(Me.ServerPosition, true) <= Javelin.RangeSqr && actualHeroManaPercent > minPercent)
-                {
-                    if (prediction.Hitchance >= (HitChance) _mainMenu.Item("seth").GetValue<Slider>().Value + 2)
-                    {
-                        Javelin.Cast(prediction.CastPosition);
-                    }
-                }
-            }
-        }
-
-        #endregion
-
-        #region Nidalee: Heal
-        private static void PrimalSurge()
-        {
-            if ((HE != 0 || !Primalsurge.IsReady()) || !_mainMenu.Item("usedemheals").GetValue<bool>() ||
-                Me.IsRecalling() || Me.InFountain())
-            {
-                return;
-            }
-
-            var actualHeroManaPercent = (int) ((Me.Mana/Me.MaxMana)*100);
-            var selfManaPercent = _mainMenu.Item("healmanapct").GetValue<Slider>().Value;
-
-            Obj_AI_Hero target;
-            if (_mainMenu.Item("sezz").GetValue<StringList>().SelectedIndex == 0)
-            {
-                target =
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(hero => hero.IsValidTarget(Primalsurge.Range + 100, false) && hero.IsAlly)
-                        .OrderBy(xe => xe.Health/xe.MaxHealth*100).First();
-            }
-            else
-            {
-                target =
-                    ObjectManager.Get<Obj_AI_Hero>()
-                        .Where(hero => hero.IsValidTarget(Primalsurge.Range + 100, false) && hero.IsAlly)
-                        .OrderByDescending(xe => xe.FlatPhysicalDamageMod).First();
-            }
-
-            if (!_cougarForm && _mainMenu.Item("heal" + target.ChampionName).GetValue<bool>())
-            {
-                var needed = _mainMenu.Item("healpct" + target.ChampionName).GetValue<Slider>().Value;
-                var hp = (int)((target.Health / target.MaxHealth) * 100);
-
-                if (actualHeroManaPercent > selfManaPercent && hp <= needed || _hasBlue && hp <= needed)
-                    Primalsurge.CastOnUnit(target);
-            }
-        }
-
-
-
-        #endregion
-
-        #region Nidalee: Farming
-        private static void UseLaneFarm()
-        {
-            var actualHeroManaPercent = (int)((Me.Mana / Me.MaxMana) * 100);
-            var minPercent = _mainMenu.Item("lcpct").GetValue<Slider>().Value;
-
-            foreach (
-                var m in
-                    ObjectManager.Get<Obj_AI_Minion>()
-                        .Where(
-                            m =>
-                                m.IsValidTarget(1500) && Jungleminions.Any(name => !m.Name.StartsWith(name)) &&
-                                m.Name.StartsWith("Minion")))
-            {
-                if (_cougarForm)
-                {
-                    if (m.Distance(Me.ServerPosition, true) <= Swipe.RangeSqr && CE == 0)
-                    {
-                        if (_mainMenu.Item("lccougare").GetValue<bool>() &&
-                           (!Pounce.IsReady() || NotLearned(Pounce)))
-                        {
-                            Swipe.Cast(m.ServerPosition);
-                        }
-                    }
-
-                    if (m.Distance(Me.ServerPosition, true) <= Pounce.RangeSqr && (CW == 0 || Pounce.IsReady()))
-                    {
-                        if (_mainMenu.Item("lccougarw").GetValue<bool>() &&
-                            !Me.ServerPosition.Extend(m.ServerPosition, Pounce.Range).UnderTurret(true))
-                        {
-                            Pounce.Cast(m.ServerPosition);
-                        }
-                    }
-
-                    if (m.Distance(Me.ServerPosition) <= Takedown.RangeSqr && CQ == 0)
-                    {
-                        if (_mainMenu.Item("lccougarq").GetValue<bool>())
-                            Takedown.CastOnUnit(Me);
-                    }
-
-                    if ((HQ == 0 && _mainMenu.Item("lchumanq").GetValue<bool>() ||
-                        (CW != 0 || !Pounce.IsReady()) && CQ != 0 && CE != 0))
-                    {
-                        if (Aspectofcougar.IsReady() && 
-                            _mainMenu.Item("lccougarr").GetValue<bool>())
-                        {
-                            Aspectofcougar.Cast();
+                            if (Player.Distance(PURPLE_MID.Position) <= 100)
+                                IsAttackStart = true;
                         }
                     }
                 }
                 else
                 {
-                    if (actualHeroManaPercent > minPercent && HQ == 0)
+                    var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+    //                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+                    if (IsOVER && !IsAttackedByTurret && Player.HealthPercentage() >= 35)
                     {
-                        if (_mainMenu.Item("lchumanq").GetValue<bool>())
-                            Javelin.Cast(m.ServerPosition);
-                    }
-
-                    if (m.Distance(Me.ServerPosition, true) <= Bushwack.RangeSqr && 
-                        actualHeroManaPercent > minPercent && HW == 0)
-                    {
-                        if (_mainMenu.Item("lchumanw").GetValue<bool>())
-                            Bushwack.Cast(m.ServerPosition);
-                    }
-
-                    if (_mainMenu.Item("lccougarr").GetValue<bool>() &&
-                        m.Distance(Me.ServerPosition, true) <= Pounce.RangeSqr && Aspectofcougar.IsReady())
-                    {
-                        Aspectofcougar.Cast();
-                    }
-                }
-
-            }
-        }
-
-
-        private static void UseJungleFarm()
-        {
-            var actualHeroManaPercent = (int)((Me.Mana / Me.MaxMana) * 100);
-            var minPercent = _mainMenu.Item("jgpct").GetValue<Slider>().Value;
-
-            var small = ObjectManager.Get<Obj_AI_Minion>()
-                .FirstOrDefault(x => x.Name.Contains("Mini") && !x.Name.StartsWith("Minion") && x.IsValidTarget(700));
-
-            var big = ObjectManager.Get<Obj_AI_Minion>()
-                .FirstOrDefault(x => !x.Name.Contains("Mini") && !x.Name.StartsWith("Minion") &&
-                        Jungleminions.Any(name => x.Name.StartsWith(name)) && x.IsValidTarget(900));
-
-            var m = big ?? small;
-            if (m == null)
-                return;
-
-            if (_cougarForm)
-            {
-                if (m.Distance(Me.ServerPosition, true) <= Swipe.RangeSqr && CE == 0)
-                {
-                    if (_mainMenu.Item("jgcougare").GetValue<bool>() &&
-                       (!Pounce.IsReady() || NotLearned(Pounce)))
-                    {
-                        Swipe.Cast(m.ServerPosition);
-                    }
-                }
-
-                if (TargetHunted(m) & m.Distance(Me.ServerPosition, true) <= 750*750 && (CW == 0 || Pounce.IsReady()))
-                {
-                    if (_mainMenu.Item("jgcougarw").GetValue<bool>())
-                        Pounce.Cast(m.ServerPosition);
-                }
-
-                else if (m.Distance(Me.ServerPosition, true) <= 400*400 && (CW == 0 || Pounce.IsReady()))
-                {
-                    if (_mainMenu.Item("jgcougarw").GetValue<bool>())
-                        Pounce.Cast(m.ServerPosition);
-                }
-
-                if (m.Distance(Me.ServerPosition, true) <= Takedown.RangeSqr && CQ == 0)
-                {
-                    if (_mainMenu.Item("jgcougarq").GetValue<bool>())
-                        Takedown.CastOnUnit(Me);
-                }
-
-                if ((CW != 0 || !Pounce.IsReady() || NotLearned(Pounce)) &&       
-                    (CQ != 0 || NotLearned(Takedown)) && 
-                    (CE != 0 || NotLearned(Primalsurge)))
-                {
-                    if ((HQ == 0 || HE == 0 && Me.Health/Me.MaxHealth*100 <= 
-                        _mainMenu.Item("healpct" + Me.ChampionName).GetValue<Slider>().Value &&
-                        _mainMenu.Item("jgheal").GetValue<bool>()) && Aspectofcougar.IsReady() && 
-                        _mainMenu.Item("jgcougarr").GetValue<bool>())
-                    {
-                        if (actualHeroManaPercent > minPercent)
-                            Aspectofcougar.Cast();
-                    }
-                }
-            }
-
-            else
-            {
-                if (actualHeroManaPercent > minPercent && HQ == 0 || _hasBlue && HQ == 0)
-                {
-                    if (_mainMenu.Item("jghumanq").GetValue<bool>())
-                    {
-                        var prediction = Javelin.GetPrediction(m);
-                        if (prediction.Hitchance >= HitChance.Low)
-                            Javelin.Cast(m.ServerPosition);
-                    }
-                }
-
-                if (m.Distance(Me.ServerPosition, true) <= Bushwack.RangeSqr)
-                {
-                    if ( actualHeroManaPercent > minPercent &&
-                         HW == 0 || _hasBlue && HQ == 0)
-                    {
-                        if (_mainMenu.Item("jghumanw").GetValue<bool>())
-                            Bushwack.Cast(m.ServerPosition);
-                    }
-                }
-
-                if (_mainMenu.Item("jgcougarr").GetValue<bool>() && Aspectofcougar.IsReady())
-                {
-                    var poutput = Javelin.GetPrediction(m);
-                    if ((HQ != 0 || poutput.Hitchance == HitChance.Collision) || _hasBlue && HQ == 0 ||
-                        actualHeroManaPercent >= minPercent)
-                    {
-                        if (CQ == 0 && CE == 0 && (CW == 0 || Pounce.IsReady()))
+                        if (turret.Distance(Player.Position) > TRRange && face_ehro <= JeonAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= JeonAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > TRRange && face_ally >= 2 && Player.HealthPercentage() >= 30)
                         {
-                            if (TargetHunted(m) & m.Distance(Me.ServerPosition, true) <= 750*750)
-                                Aspectofcougar.Cast();
-                            else if (m.Distance(Me.ServerPosition, true) <= 450*450)
-                                Aspectofcougar.Cast();
+                            Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+							DoCast_Hero();
+							DoLaneClear();
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
+									{
+										if(!_cougarForm && Aspectofcougar.IsReady())
+										{
+										Aspectofcougar.Cast();
+										}
+										if(Pounce.IsReady())
+										{
+										Pounce.Cast(enemy_spawn);
+										}
+									}
+								}
+                        }
+                            
+                        else if (GetMinions(turret) > 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && face_ally >= 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35)
+                        {
+                            Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+//							DoCast_Hero();
+//							DoLaneClear();
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
+									{
+										if(!_cougarForm && Aspectofcougar.IsReady())
+										{
+										Aspectofcougar.Cast();
+										}
+										if(Pounce.IsReady())
+										{
+										Pounce.Cast(enemy_spawn);
+										}
+									}
+								}
+                        }
+
+                        else
+                        {
+                            Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(!_cougarForm && Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(spawn);
+									}
+								}
+							}
+                            
+                        afktime = 0;
+                    }
+					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1)
+					DoLaneClear();
+                    if (turret.Distance(Player.Position) > TRRange)
+                        IsAttackedByTurret = false;
+                    if (Player.IsDead)
+                        IsAttackedByTurret = false;
+                }
+//도망가기용
+				if (Player.HealthPercentage() < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1400//hpper
+				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
+				turrett.Distance(Player.Position) <= TRRange && Player.HealthPercentage() < 33
+				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
+				{
+					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
+					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+					if (Player.ChampionName == "Nidalee")
+					{
+						if(!_cougarForm && Aspectofcougar.IsReady())
+						{
+						Aspectofcougar.Cast();
+						}
+						if(Pounce.IsReady())
+						{
+						Pounce.Cast(spawn);
+						}
+					}
+				}
+				if (Player.HealthPercentage() < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
+				&& turrett.Distance(Player.Position) > 2250
+				&& JeonAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
+				{
+					Game.PrintChat("Time To Recall Yeah!");
+					Player.Spellbook.CastSpell(SpellSlot.Recall);
+					recall = true;
+					recallhp = Player.Health;
+				}
+            }
+			else
+			{
+			var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+				if(!IsOVER && turret.Distance(Player.Position) < TRRange)
+				{
+					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+						if (Player.ChampionName == "Nidalee")
+						{
+							if(!_cougarForm && Aspectofcougar.IsReady())
+							{
+							Aspectofcougar.Cast();
+							}
+							if(Pounce.IsReady())
+							{
+							Pounce.Cast(spawn);
+							}
+						}
+				}
+			}
+			
+            #endregion
+            #region 상점이용가능할때 // when you are in shop range or dead
+            #region 시작아이템 사기 // startup
+            if (Utility.InShop(Player) || Player.IsDead)
+            {
+                if (!(Items.HasItem(Convert.ToInt32(ItemId.Hunters_Machete)) ||
+                Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer)) ||
+                Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) ||
+				Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) ||
+				Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade)) ||
+				Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus)) ||
+				Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Devourer))
+				))
+                {
+                    if (smiteSlot != SpellSlot.Unknown)
+                    {
+                        Player.BuyItem(ItemId.Hunters_Machete);
+                        Player.BuyItem(ItemId.Scrying_Orb_Trinket);
+                    }
+                }
+            #endregion
+                //Game.PrintChat("Gold:" + Player.Gold);
+                //Game.PrintChat("NeedItem:" + buyThings.First().needItem.ToString());
+                //Game.PrintChat("BuyItem:" + buyThings.First().item.ToString());
+                #region 아이템트리 올리기 // item build up
+                if (buyThings.Any(t => t.item != ItemId.Unknown))
+                {
+                    if (Items.HasItem(Convert.ToInt32(buyThings.First().needItem)))
+                    {
+                        if (Player.Gold > buyThings.First().Price)
+                        {
+                            Player.BuyItem(buyThings.First().item);
+                            buyThings.Remove(buyThings.First());
                         }
                     }
                 }
-            }
-            
-        }
-
-        #endregion
-
-        #region Nidalee: LastHit
-        private static void UseLastHit()
-        {
-            var actualHeroManaPercent = (int)((Me.Mana / Me.MaxMana) * 100);
-            var minPercent = _mainMenu.Item("lhpct").GetValue<Slider>().Value;
-
-            foreach (
-                var m in
-                    ObjectManager.Get<Obj_AI_Minion>()
-                        .Where(m => m.IsValidTarget(Javelin.Range) && Jungleminions.Any(name => !m.Name.StartsWith(name))))
-            {
-                var cqdmg = Me.GetSpellDamage(m, SpellSlot.Q, 1);
-                var cwdmg = Me.GetSpellDamage(m, SpellSlot.W, 1);
-                var cedmg = Me.GetSpellDamage(m, SpellSlot.E, 1);
-                var hqdmg = Me.GetSpellDamage(m, SpellSlot.Q);
-
-                if (_cougarForm)
+                #endregion
+                #region 포션 구매 - buy potions
+                if (Player.Gold > 35f && !IsOVER && !Player.InventoryItems.Any(t => t.Id == ItemId.Health_Potion) && Player.Level <= 6)
+                    Player.BuyItem(ItemId.Health_Potion);
+                if (Player.InventoryItems.Any(t => t.Id == ItemId.Health_Potion))
                 {
-                    if (m.Distance(Me.ServerPosition, true) < Swipe.RangeSqr && CE == 0)
-                    {
-                        if (m.Health <= cedmg && _mainMenu.Item("lhcougare").GetValue<bool>())
-                            Swipe.Cast(m.ServerPosition);
-                    }
-
-
-                    if (m.Distance(Me.ServerPosition, true) < Pounce.RangeSqr && (CW == 0 || Pounce.IsReady()))
-                    {
-                        if (m.Health <= cwdmg && _mainMenu.Item("lhcougarw").GetValue<bool>())
-                            Pounce.Cast(m.ServerPosition);
-                    }
-
-                    if (m.Distance(Me.ServerPosition, true) < Takedown.RangeSqr && CQ == 0)
-                    {
-                        if (m.Health <= cqdmg && _mainMenu.Item("lhcougarq").GetValue<bool>())
-                            Takedown.CastOnUnit(Me);
-                    }
+                    if (Player.InventoryItems.First(t => t.Id == ItemId.Health_Potion).Stacks <= 2 && Player.Level <= 6)
+                        Player.BuyItem(ItemId.Health_Potion);
+                    if (Player.Level > 6)
+                        Player.SellItem(Player.InventoryItems.First(t => t.Id == ItemId.Health_Potion).Slot);
                 }
-                else
+                if (Player.Level > 6 && Items.HasItem(2010))
+                    Player.SellItem(Player.InventoryItems.First(t => Convert.ToInt32(t.Id) == 2010).Slot);
+                #endregion
+            }
+            #endregion
+            #region 자동포션사용 - auto use potions
+            if (Player.HealthPercentage() <= 60 && !Player.InShop())
+            {
+                ItemId item = ItemId.Health_Potion;
+                if (Player.InventoryItems.Any(t => Convert.ToInt32(t.Id) == 2010))
+                    item = ItemId.Unknown;
+                if (Player.InventoryItems.Any(t => (t.Id == ItemId.Health_Potion || Convert.ToInt32(t.Id) == 2010)))
                 {
-                    if (actualHeroManaPercent > minPercent && HQ == 0)
-                    {
-                        if (m.Health <= hqdmg && _mainMenu.Item("lhhumanq").GetValue<bool>())
-                            Javelin.Cast(m.ServerPosition);
-                    }
-
-                    if (m.Distance(Me.ServerPosition, true) <= Bushwack.RangeSqr && actualHeroManaPercent > minPercent && HW == 0)
-                    {
-                        if (_mainMenu.Item("lhhumanw").GetValue<bool>())
-                            Bushwack.Cast(m.ServerPosition);
-                    }
-
-                    if (_mainMenu.Item("lhcougarr").GetValue<bool>() && m.Distance(Me.ServerPosition, true) <= Pounce.RangeSqr &&
-                        actualHeroManaPercent > minPercent && Aspectofcougar.IsReady())
-                    {
-                        Aspectofcougar.Cast();
-                    }
+                    if (!Player.HasBuff("ItemMiniRegenPotion") && item == ItemId.Unknown)
+                        Player.Spellbook.CastSpell(Player.InventoryItems.First(t => Convert.ToInt32(t.Id) == 2010).SpellSlot);
+                    if (!Player.HasBuff("Health Potion") && item == ItemId.Health_Potion)
+                        Player.Spellbook.CastSpell(Player.InventoryItems.First(t => t.Id == ItemId.Health_Potion).SpellSlot);
+                }
+            }
+            #endregion
+            AutoLevel.Enabled(true);
+        }
+        private static void OnCreate(GameObject sender, EventArgs args)
+        {
+            if (sender.IsValid<Obj_SpellMissile>())
+            {
+                var m = (Obj_SpellMissile)sender;
+                if (m.SpellCaster.IsValid<Obj_AI_Turret>() && m.SpellCaster.IsEnemy &&
+                m.Target.IsValid<Obj_AI_Hero>() && m.Target.IsMe && JeonAutoJungleMenu.Item("evading").GetValue<Boolean>())
+                {
+                    Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(!_cougarForm && Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(spawn);
+									}
+								}
+                    Game.PrintChat("OOPS YOU ARE ATTACKED BY TURRET!");
+                    Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+                    IsAttackedByTurret = true;
                 }
             }
         }
-
-        #endregion
-
-        #region Nidalee: Tracker
-        private static void NidaleeTracker(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        private static void OnSpell(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs spell)
         {
-            if (sender.IsMe)
-                GetCooldowns(args);
-        }
-
-        private static readonly float[] HumanQcd = { 6, 6, 6, 6, 6 };
-        private static readonly float[] HumanWcd = { 13, 12, 11, 10, 9 };
-        private static readonly float[] HumanEcd = { 12, 12, 12, 12, 12 };
-
-        private static float CQRem, CWRem, CERem;
-        private static float HQRem, HWRem, HERem;
-        private static float CQ, CW, CE;
-        private static float HQ, HW, HE;
-
-        private static void ProcessCooldowns()
-        {
-            if (Me.IsDead)
-                return;
-
-            CQ = ((CQRem - Game.Time) > 0) ? (CQRem - Game.Time) : 0;
-            CW = ((CWRem - Game.Time) > 0) ? (CWRem - Game.Time) : 0;
-            CE = ((CERem - Game.Time) > 0) ? (CERem - Game.Time) : 0;
-            HQ = ((HQRem - Game.Time) > 0) ? (HQRem - Game.Time) : 0;
-            HW = ((HWRem - Game.Time) > 0) ? (HWRem - Game.Time) : 0;
-            HE = ((HERem - Game.Time) > 0) ? (HERem - Game.Time) : 0;
-        }
-
-        private static float CalculateCd(float time)
-        {
-            return time + (time * Me.PercentCooldownMod);
-        }
-
-        private static void GetCooldowns(GameObjectProcessSpellCastEventArgs spell)
-        {
-            if (_cougarForm)
+            if (spell.Target.IsValid<Obj_AI_Hero>())
             {
-                if (spell.SData.Name == "Takedown")
-                    CQRem = Game.Time + CalculateCd(5);
-                if (spell.SData.Name == "Pounce")
-                    CWRem = Game.Time + CalculateCd(5);
-                if (spell.SData.Name == "Swipe")
-                    CERem = Game.Time + CalculateCd(5);
+                if (spell.Target.IsMe && sender.IsEnemy)
+                {
+                    string[] turrest =
+{
+"Turret_T2_C_01_A",
+"Turret_T2_C_02_A",
+"Turret_T2_L_01_A",
+"Turret_T2_C_03_A",
+"Turret_T2_R_01_A",
+"Turret_T1_C_01_A",
+"Turret_T1_C_02_A",
+"Turret_T1_C_06_A",
+"Turret_T1_C_03_A",
+"Turret_T1_C_07_A"
+};
+                    if (turrest.Contains(sender.Name) && JeonAutoJungleMenu.Item("evading").GetValue<Boolean>())
+                    {
+                        Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(!_cougarForm && Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(spawn);
+									}
+								}
+                        Game.PrintChat("OOPS YOU ARE ATTACKED BY INHIBIT TURRET!");
+                        Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+                        IsAttackedByTurret = true;
+                    }
+                }
+            }
+        }
+        #region getminions around turret
+        public static int GetMinions(Obj_AI_Turret Turret)
+        {
+            int i = 0;
+            foreach (var minion in ObjectManager.Get<Obj_AI_Minion>().Where(t => t.Name.Contains("Minion") && t.Distance(Turret.Position) <= 855 && !t.IsEnemy))
+            {
+                i++;
+            }
+            return i;
+        }
+        #endregion
+        #region spell methods
+        public static void DoSmite()
+        {
+            var mob1 = GetNearest_big(Player.Position);
+            if (mob1.IsValid)
+                smite.CastOnUnit(mob1);
+        }
+        public static void DoLaneClear()
+        {
+            var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
+            if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
+				Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
+            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange))
+                castspell_laneclear(mob1);
+        }
+        public static void DoCast()
+        {
+            var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
+            if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
+				Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
+            if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && !t.IsInvulnerable && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => !t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange))
+                castspell(mob1);
+        }
+        public static void DoCast_Hero()
+        {
+            if (IsOVER && ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && !t.IsInvulnerable && Player.Distance(t.Position) <= 1000))
+            {
+                var tarrr = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
+                Where(x => x.IsEnemy && !x.IsMe && !x.IsDead && !x.IsInvulnerable).First(); // 플레이어와 가장 가까운타겟
+                var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
+                Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
+                if (turrr.Distance(Target.Position) > TRRange) // 터렛 사정거리 밖에있어야만 공격함.
+				{
+					castspell_hero(Target);
+				Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, 50));
+					Player.IssueOrder(GameObjectOrder.AttackUnit, Target);
+				}
+/*				else if (turrr.Distance(tarrr.Position) <= 850)
+				{
+					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+					if (Player.ChampionName == "Nidalee")
+					{
+						if(!_cougarForm && Aspectofcougar.IsReady())
+						{
+						Aspectofcougar.Cast();
+						}
+						if(Pounce.IsReady())
+						{
+						Pounce.Cast(spawn);
+						}
+					}
+				}
+*/				else
+				{
+				IsAttackStart = true;
+				IsOVER = true;
+				}
+            }
+        }
+        public static void castspell(Obj_AI_Base mob1)
+        {
+            if (Player.ChampionName.ToUpper() == "NUNU")
+            {
+                if (Q.IsReady())
+                    Q.CastOnUnit(mob1);
+                if (E.IsReady())
+                    E.CastOnUnit(mob1);
+                if (W.IsReady())
+                    W.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 600)
+            {
+				if (Javelin.IsReady())
+					Javelin.Cast(mob1.Position);
+				if (Bushwack.IsReady())
+					Bushwack.Cast(mob1.Position);
+                if (Takedown.IsReady())
+                    Takedown.CastOnUnit(mob1);
+                if (Pounce.IsReady())
+                    Pounce.Cast(mob1.Position);
+                if (Swipe.IsReady())
+                    Swipe.Cast(mob1.Position);
+                if (R.IsReady())
+                    R.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "CHOGATH")
+            {
+                if (Q.IsReady())
+                    Q.Cast(mob1.Position);
+                if (W.IsReady())
+                    W.Cast(mob1.Position);
+                if (R.IsReady() && R.GetDamage(mob1) >= mob1.Health)
+                    R.CastOnUnit(mob1);
+            }
+            else if (Player.ChampionName.ToUpper() == "WARWICK")
+            {
+                if (Q.IsReady())
+                    Q.CastOnUnit(mob1);
+                if (W.IsReady())
+                    W.Cast();
+                if (R.IsReady())
+                    R.CastOnUnit(mob1);
+            }
+            else if (Player.ChampionName.ToUpper() == "MASTERYI")
+            {
+                if (Q.IsReady())
+                    Q.CastOnUnit(mob1);
+                if (W.IsReady() && Player.HealthPercentage() < JeonAutoJungleMenu.Item("yi_W").GetValue<Slider>().Value)
+                    W.Cast();
+                if (E.IsReady())
+                    E.Cast();
+                if (R.IsReady())
+                    R.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "MAOKAI")
+            {
+                if (Q.IsReady())
+                    Q.Cast(mob1.Position);
+                if (E.IsReady())
+                    E.Cast(mob1.Position);
+                if (W.IsReady())
+                    W.CastOnUnit(mob1);
+            }
+            else if (Player.ChampionName.ToUpper() == "NASUS")
+            {
+                if (Q.IsReady() && CheckNasusQDamage(mob1))
+                    Q.Cast();
+                if (W.IsReady() && mob1.IsValid<Obj_AI_Hero>())
+                    W.CastOnUnit(mob1);
+                if (E.IsReady())
+                    E.Cast(mob1.Position);
             }
             else
             {
-                if (spell.SData.Name == "JavelinToss")
-                    HQRem = Game.Time + CalculateCd(HumanQcd[Javelin.Level - 1]);
-                if (spell.SData.Name == "Bushwhack")
-                    HWRem = Game.Time + CalculateCd(HumanWcd[Bushwack.Level - 1]);
-                if (spell.SData.Name == "PrimalSurge")
-                    HERem = Game.Time + CalculateCd(HumanEcd[Primalsurge.Level - 1]);
+                foreach (var spell in cast2mob)
+                {
+                    if (spell.IsReady())
+                        spell.CastOnUnit(mob1);
+                    if (spell.IsReady())
+                        spell.Cast();
+                    if (spell.IsReady())
+                        spell.Cast(mob1.Position);
+                }
             }
         }
-
-        #endregion
-
-        #region Nidalee: On Draw
-        private static void NidaleeOnDraw(EventArgs args)
+        public static void castspell_hero(Obj_AI_Base mob1)
         {
-            if (_target != null && _mainMenu.Item("drawline").GetValue<bool>())
+            if (Player.ChampionName.ToUpper() == "NUNU")
             {
-                if (Me.IsDead)
-                {
-                    return;
-                }
-
-                Render.Circle.DrawCircle(_target.Position, _target.BoundingRadius - 50, Color.Yellow);
+                if (Q.IsReady())
+                    Q.CastOnUnit(mob1);
+                if (E.IsReady())
+                    E.CastOnUnit(mob1);
+                if (W.IsReady())
+                    W.Cast();
             }
-
-            foreach (var spell in CougarSpellList)
+            else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 1000)
             {
-                var circle = _mainMenu.Item("draw" + spell.Slot).GetValue<Circle>();
-                if (circle.Active && _cougarForm && !Me.IsDead)
-                    Render.Circle.DrawCircle(Me.Position, spell.Range, circle.Color, 2);
+				if (Javelin.IsReady())
+					Javelin.Cast(mob1.Position);
+				if (Bushwack.IsReady())
+					Bushwack.Cast(mob1.Position);
+                if (Takedown.IsReady())
+                    Takedown.CastOnUnit(mob1);
+                if (Pounce.IsReady())
+                    Pounce.Cast(mob1.Position);
+                if (Swipe.IsReady())
+                    Swipe.Cast(mob1.Position);
+                if (R.IsReady())
+                    R.Cast();
             }
-
-            foreach (var spell in HumanSpellList)
+            else if (Player.ChampionName.ToUpper() == "CHOGATH")
             {
-                var circle = _mainMenu.Item("draw" + spell.Slot).GetValue<Circle>();
-                if (circle.Active && !_cougarForm && !Me.IsDead)
-                    Render.Circle.DrawCircle(Me.Position, spell.Range, circle.Color, 2);
+                if (Q.IsReady())
+                    Q.Cast(mob1.Position);
+                if (W.IsReady())
+                    W.Cast(mob1.Position);
+                if (R.IsReady() && R.GetDamage(mob1) >= mob1.Health)
+                    R.CastOnUnit(mob1);
             }
-
-            if (!_mainMenu.Item("drawcds").GetValue<bool>()) return;
-
-            var wts = Drawing.WorldToScreen(Me.Position);
-
-            if (!_cougarForm) // lets show cooldown timers for the opposite form :)
+            else if (Player.ChampionName.ToUpper() == "WARWICK")
             {
-                if (NotLearned(Javelin))
-                    Drawing.DrawText(wts[0] - 80, wts[1], Color.White, "Q: Null");
-                else if (CQ == 0)
-                    Drawing.DrawText(wts[0] - 80, wts[1], Color.White, "Q: Ready");
-                else
-                    Drawing.DrawText(wts[0] - 80, wts[1], Color.Orange, "Q: " + CQ.ToString("0.0"));
-                if (NotLearned(Bushwack))
-                    Drawing.DrawText(wts[0] - 30, wts[1] + 30, Color.White, "W: Null");
-                else if ((CW == 0 || Pounce.IsReady()))
-                    Drawing.DrawText(wts[0] - 30, wts[1] + 30, Color.White, "W: Ready");
-                else
-                    Drawing.DrawText(wts[0] - 30, wts[1] + 30, Color.Orange, "W: " + CW.ToString("0.0"));
-                if (NotLearned(Primalsurge))
-                    Drawing.DrawText(wts[0], wts[1], Color.White, "E: Null");
-                else if (CE == 0)
-                    Drawing.DrawText(wts[0], wts[1], Color.White, "E: Ready");
-                else
-                    Drawing.DrawText(wts[0], wts[1], Color.Orange, "E: " + CE.ToString("0.0"));
-
+                if (Q.IsReady())
+                    Q.CastOnUnit(mob1);
+                if (W.IsReady())
+                    W.Cast();
+                if (R.IsReady())
+                    R.CastOnUnit(mob1);
+            }
+            else if (Player.ChampionName.ToUpper() == "MASTERYI")
+            {
+                if (Q.IsReady())
+                    Q.CastOnUnit(mob1);
+//                if (W.IsReady() && Player.HealthPercentage() < 35
+//                    W.Cast();
+                if (E.IsReady())
+                    E.Cast();
+                if (R.IsReady())
+                    R.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "MAOKAI")
+            {
+                if (Q.IsReady())
+                    Q.Cast(mob1.Position);
+                if (E.IsReady())
+                    E.Cast(mob1.Position);
+                if (W.IsReady())
+                    W.CastOnUnit(mob1);
+            }
+            else if (Player.ChampionName.ToUpper() == "NASUS")
+            {
+                if (Q.IsReady())
+                    Q.Cast();
+                if (W.IsReady() && mob1.IsValid<Obj_AI_Hero>())
+                    W.CastOnUnit(mob1);
+                if (E.IsReady())
+                    E.Cast(mob1.Position);
+                if (R.IsReady())
+                    R.Cast();
             }
             else
             {
-                if (NotLearned(Takedown))
-                    Drawing.DrawText(wts[0] - 80, wts[1], Color.White, "Q: Null");
-                else if (HQ == 0)
-                    Drawing.DrawText(wts[0] - 80, wts[1], Color.White, "Q: Ready");
-                else
-                    Drawing.DrawText(wts[0] - 80, wts[1], Color.Orange, "Q: " + HQ.ToString("0.0"));
-                if (NotLearned(Pounce))
-                    Drawing.DrawText(wts[0] - 30, wts[1] + 30, Color.White, "W: Null");
-                else if (HW == 0)
-                    Drawing.DrawText(wts[0] - 30, wts[1] + 30, Color.White, "W: Ready");
-                else
-                    Drawing.DrawText(wts[0] - 30, wts[1] + 30, Color.Orange, "W: " + HW.ToString("0.0"));
-                if (NotLearned(Swipe))
-                    Drawing.DrawText(wts[0], wts[1], Color.White, "E: Null");
-                else if (HE == 0)
-                    Drawing.DrawText(wts[0], wts[1], Color.White, "E: Ready");
-                else
-                    Drawing.DrawText(wts[0], wts[1], Color.Orange, "E: " + HE.ToString("0.0"));
-
+                foreach (var spell in cast2hero)
+                {
+                    if (spell.IsReady())
+                        spell.CastOnUnit(mob1);
+                    if (spell.IsReady())
+                        spell.Cast();
+                    if (spell.IsReady())
+                        spell.Cast(mob1.Position);
+                }
             }
         }
-
-        #endregion
-
-        #region Nidalee: Vector Helper
-        // VectorHelper.cs by Hellsing
-        public static bool IsLyingInCone(Vector2 position, Vector2 apexPoint, Vector2 circleCenter, double aperture)
+        public static void castspell_laneclear(Obj_AI_Base mob1)
         {
-            // This is for our convenience
-            double halfAperture = aperture / 2;
-
-            // Vector pointing to X point from apex
-            Vector2 apexToXVect = apexPoint - position;
-
-            // Vector pointing from apex to circle-center point.
-            Vector2 axisVect = apexPoint - circleCenter;
-
-            // X is lying in cone only if it's lying in 
-            // infinite version of its cone -- that is, 
-            // not limited by "round basement".
-            // We'll use dotProd() to 
-            // determine angle between apexToXVect and axis.
-            bool isInInfiniteCone = DotProd(apexToXVect, axisVect) / Magn(apexToXVect) / Magn(axisVect) >
-                // We can safely compare cos() of angles 
-                // between vectors instead of bare angles.
-            Math.Cos(halfAperture);
-
-            if (!isInInfiniteCone)
+            if (Player.ChampionName.ToUpper() == "NUNU")
+            {
+                if (Q.IsReady())
+                    Q.CastOnUnit(mob1);
+                if (E.IsReady())
+                    E.CastOnUnit(mob1);
+                if (W.IsReady())
+                    W.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 400)
+            {
+                if (Takedown.IsReady())
+                    Takedown.CastOnUnit(mob1);
+        //        if (Pounce.IsReady())
+        //            Pounce.Cast(mob1.Position);
+                if (Swipe.IsReady())
+                    Swipe.Cast(mob1.Position);
+                if (R.IsReady())
+                    R.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "CHOGATH")
+            {
+                if (Q.IsReady())
+                    Q.Cast(mob1.Position);
+                if (W.IsReady())
+                    W.Cast(mob1.Position);
+                if (R.IsReady() && R.GetDamage(mob1) >= mob1.Health)
+                    R.CastOnUnit(mob1);
+            }
+            else if (Player.ChampionName.ToUpper() == "WARWICK")
+            {
+                if (W.IsReady())
+                    W.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "MASTERYI")
+            {
+                if (Q.IsReady())
+                    Q.CastOnUnit(mob1);
+//                if (E.IsReady())
+//                    E.Cast();
+            }
+            else if (Player.ChampionName.ToUpper() == "MAOKAI")
+            {
+                if (Q.IsReady())
+                    Q.Cast(mob1.Position);
+                if (E.IsReady())
+                    E.Cast(mob1.Position);
+            }
+            else if (Player.ChampionName.ToUpper() == "NASUS")
+            {
+                if (Q.IsReady() && CheckNasusQDamage(mob1))
+                    Q.Cast();
+                if (W.IsReady() && mob1.IsValid<Obj_AI_Hero>())
+                    W.CastOnUnit(mob1);
+                if (E.IsReady())
+                    E.Cast(mob1.Position);
+            }
+            else
+            {
+                foreach (var spell in cast4laneclear)
+                {
+                    if (spell.IsReady())
+                        spell.CastOnUnit(mob1);
+                    if (spell.IsReady())
+                        spell.Cast();
+                    if (spell.IsReady())
+                        spell.Cast(mob1.Position);
+                }
+            }
+        }
+        public static bool CheckNasusQDamage(Obj_AI_Base target)
+        {
+            float QDmg = Convert.ToSingle(Q.GetDamage(target) + Player.CalcDamage(target, Damage.DamageType.Physical, Player.BaseAttackDamage + Player.FlatPhysicalDamageMod));
+            if (QDmg >= target.Health)
+                return true;
+            else
                 return false;
-
-            // X is contained in cone only if projection of apexToXVect to axis
-            // is shorter than axis. 
-            // We'll use dotProd() to figure projection length.
-            bool isUnderRoundCap = DotProd(apexToXVect, axisVect) / Magn(axisVect) < Magn(axisVect);
-
-            return isUnderRoundCap;
         }
-
-        private static float DotProd(Vector2 a, Vector2 b)
+        public static float GetSpellRange(SpellDataInst targetSpell, bool IsChargedSkill = false)
         {
-            return a.X * b.X + a.Y * b.Y;
-        }
-
-        private static float Magn(Vector2 a)
-        {
-            return (float)(Math.Sqrt(a.X * a.X + a.Y * a.Y));
-        }
-
-        public static Vector2? GetFirstWallPoint(Vector3 from, Vector3 to, float step = 25)
-        {
-            return GetFirstWallPoint(from.To2D(), to.To2D(), step);
-        }
-
-        public static Vector2? GetFirstWallPoint(Vector2 from, Vector2 to, float step = 25)
-        {
-            var direction = (to - from).Normalized();
-
-            for (float d = 0; d < from.Distance(to); d = d + step)
+            if (targetSpell.SData.CastRangeDisplayOverride <= 0)
             {
-                var testPoint = from + d * direction;
-                var flags = NavMesh.GetCollisionFlags(testPoint.X, testPoint.Y);
-                if (flags.HasFlag(CollisionFlags.Wall) || flags.HasFlag(CollisionFlags.Building))
+                if (targetSpell.SData.CastRange <= 0)
                 {
-                    return from + (d - step) * direction;
+                    return
+                    targetSpell.SData.CastRadius;
+                }
+                else
+                {
+                    if (!IsChargedSkill)
+                        return
+                        targetSpell.SData.CastRange;
+                    else
+                        return
+                        targetSpell.SData.CastRadius;
                 }
             }
-
-            return null;
+            else
+                return
+                targetSpell.SData.CastRangeDisplayOverride;
         }
-
-        public static List<Obj_AI_Base> GetDashObjects(IEnumerable<Obj_AI_Base> predefinedObjectList = null)
+        #endregion spell methods
+        #region 스마이트함수 - Smite Function
+        public static readonly int[] SmitePurple = { 3713, 3726, 3725, 3726, 3723 };
+        public static readonly int[] SmiteGrey = { 3711, 3722, 3721, 3720, 3719 };
+        public static readonly int[] SmiteRed = { 3715, 3718, 3717, 3716, 3714 };
+        public static readonly int[] SmiteBlue = { 3706, 3710, 3709, 3708, 3707 };
+        private static readonly string[] MinionNames =
+{
+"SRU_Blue", "SRU_Gromp", "SRU_Murkwolf", "SRU_Razorbeak", "SRU_Red", "SRU_Krug", "SRU_Dragon", "SRU_BaronSpawn"
+};
+        public static void setSmiteSlot()
         {
-            var objects = predefinedObjectList != null
-                ? predefinedObjectList.ToList()
-                : ObjectManager.Get<Obj_AI_Base>().Where(o => o.IsValidTarget(Orbwalking.GetRealAutoAttackRange(o)));
-
-            var apexPoint = Me.ServerPosition.To2D() +
-                            (Me.ServerPosition.To2D() - Game.CursorPos.To2D()).Normalized()*
-                            Orbwalking.GetRealAutoAttackRange(Me);
-
-            return
-                objects.Where(
-                    o => IsLyingInCone(o.ServerPosition.To2D(), apexPoint, Me.ServerPosition.To2D(), Math.PI))
-                    .OrderBy(o => o.Distance(apexPoint, true))
-                    .ToList();
+            foreach (var spell in Player.Spellbook.Spells.Where(spell => String.Equals(spell.Name, smitetype(), StringComparison.CurrentCultureIgnoreCase)))
+            {
+                smiteSlot = spell.Slot;
+                smite = new Spell(smiteSlot, 700);
+                return;
+            }
         }
-
+        public static string smitetype()
+        {
+            if (Player.InventoryItems.Any(item => SmiteBlue.Any(t => t == Convert.ToInt32(item.Id))))
+            {
+                return "s5_summonersmiteplayerganker";
+            }
+            if (Player.InventoryItems.Any(item => SmiteRed.Any(t => t == Convert.ToInt32(item.Id))))
+            {
+                return "s5_summonersmiteduel";
+            }
+            if (Player.InventoryItems.Any(item => SmiteGrey.Any(t => t == Convert.ToInt32(item.Id))))
+            {
+                return "s5_summonersmitequick";
+            }
+            if (Player.InventoryItems.Any(item => SmitePurple.Any(t => t == Convert.ToInt32(item.Id))))
+            {
+                return "itemsmiteaoe";
+            }
+            return "summonersmite";
+        }
+        public static double setSmiteDamage()
+        {
+            int level = Player.Level;
+            int[] damage =
+{
+20*level + 370,
+30*level + 330,
+40*level + 240,
+50*level + 100
+};
+            return damage.Max();
+        }
+        public static Obj_AI_Base GetNearest(Vector3 pos)
+        {
+            var minions =
+            ObjectManager.Get<Obj_AI_Minion>()
+            .Where(minion => minion.IsValid && minion.IsEnemy && !minion.IsDead && MinionNames.Any(name => minion.Name.StartsWith(name)
+            && Player.Distance(minion.Position) <= 1000));
+            var objAiMinions = minions as Obj_AI_Minion[] ?? minions.ToArray();
+            Obj_AI_Minion sMinion = objAiMinions.FirstOrDefault();
+            double? nearest = null;
+            foreach (Obj_AI_Minion minion in objAiMinions)
+            {
+                double distance = Vector3.Distance(pos, minion.Position);
+                if (nearest == null || nearest > distance)
+                {
+                    nearest = distance;
+                    sMinion = minion;
+                }
+            }
+            return sMinion;
+        }
+        public static Obj_AI_Minion GetNearest_big(Vector3 pos)
+        {
+            var minions =
+            ObjectManager.Get<Obj_AI_Minion>()
+            .Where(minion => minion.IsValid && minion.IsEnemy && !minion.IsDead && MinionNames.Any(name => minion.Name.StartsWith(name)) && !MinionNames.Any(name => minion.Name.Contains("Mini")
+            && Player.Distance(minion.Position) <= 1000));
+            var objAiMinions = minions as Obj_AI_Minion[] ?? minions.ToArray();
+            Obj_AI_Minion sMinion = objAiMinions.FirstOrDefault();
+            double? nearest = null;
+            foreach (Obj_AI_Minion minion in objAiMinions)
+            {
+                double distance = Vector3.Distance(pos, minion.Position);
+                if (nearest == null || nearest > distance)
+                {
+                    nearest = distance;
+                    sMinion = minion;
+                }
+            }
+            return sMinion;
+        }
+        public static bool CheckMonster(String TargetName, Vector3 BasePosition, int Range = 300)
+        {
+            var minions = ObjectManager.Get<Obj_AI_Minion>()
+            .Where(minion => minion.IsValid && !minion.IsDead && minion.Name.StartsWith(TargetName));
+            var objAiMinions = minions as Obj_AI_Minion[] ?? minions.ToArray();
+            if (!objAiMinions.Any(m => m.Distance(BasePosition) < Range))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
         #endregion
-
+        #region GetItemTree
+        public static void GetItemTree(FileInfo setFile)
+        {
+            if (Readini.GetItemTreetype(setFile.FullName) == "AP")
+            {
+                buyThings.Clear();
+                buyThings = buyThings_AP;
+                Game.PrintChat("Set ItemTree for AP - Finished");
+            }
+            else if (Readini.GetItemTreetype(setFile.FullName) == "BAP")
+            {
+                buyThings.Clear();
+                buyThings = buyThings_BAP;
+                Game.PrintChat("Set ItemTree for BAP with Blue Smite Fin.");
+            }
+            else if (Readini.GetItemTreetype(setFile.FullName) == "AS")
+            {
+                buyThings.Clear();
+                buyThings = buyThings_AS;
+                Game.PrintChat("Set ItemTree for AS - Finished");
+            }
+            else if (Readini.GetItemTreetype(setFile.FullName) == "TANK")
+            {
+                buyThings.Clear();
+                buyThings = buyThings_TANK;
+                Game.PrintChat("Set ItemTree for TANK - Finished");
+            }
+            else if (Readini.GetItemTreetype(setFile.FullName) == "X")
+            {
+                Game.PrintChat("PLZ TYPE VALID VALUE, SET AD ITEMTREE - ERROR");
+            }
+            else
+            {
+                Game.PrintChat("Set ItemTree for AD - Finished");
+            }
+        }
+        #endregion
     }
 }

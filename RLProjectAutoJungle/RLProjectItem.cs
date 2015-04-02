@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using LeagueSharp;
 
-namespace JeonJunglePlay
+namespace RLProjectJunglePlay
 {
-    class JeonItem:Program
+    class RLProjectItem:Program
     {
         public static ItemId GetItemIdbyInt(int num)
         {
