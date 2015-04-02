@@ -1452,7 +1452,7 @@ index = 14
 							/*else
 							{
                             Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
-							}/*
+							}*/
 //							DoCast_Hero();
 //							DoLaneClear();
                         }
