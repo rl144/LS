@@ -1497,13 +1497,11 @@ index = 14
 					{
 						if(W.IsReady())
 						W.Cast(Player.Position);
-						}
 					}
 					if (Player.ChampionName == "MASTERYI")
 					{
 						if(R.IsReady())
 						R.Cast();
-						}
 					}
 					if (Player.ChampionName == "Nidalee")
 					{
