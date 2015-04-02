@@ -24,6 +24,10 @@ namespace RLProjectJunglePlay
 		{
 			return ObjectManager.Get<Obj_AI_Turret>().Where(x => x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
 		}
+		public static List<Obj_AI_Minion> GetTMinionList()//터렛 탐지 추가(just for test)
+		{
+			return ObjectManager.Get<Obj_AI_Minion>().Where(x => x.IsAlly && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
+		}
 		public static List<Obj_AI_Hero> GetAllyList()//회피용 영웅탐지 추가
 		{
 			return ObjectManager.Get<Obj_AI_Hero>().Where(x => !x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
@@ -63,7 +67,7 @@ namespace RLProjectJunglePlay
         private static readonly Spell Aspectofcougar = new Spell(SpellSlot.R);
         private static readonly List<Spell> HumanSpellList = new List<Spell>();
         private static readonly List<Spell> CougarSpellList = new List<Spell>();
-		public static int TRRange = 950;
+		public static int TRRange = 800;
         public class MonsterINFO
         {
             public Vector3 Position;
@@ -532,15 +536,15 @@ index = 17
         #endregion
         #region ad = default
         public static List<ItemToShop> buyThings = new List<ItemToShop>
-{
-new ItemToShop()
+
+/*new ItemToShop()
 {
 Price = 1850,
 needItem = ItemId.Hunters_Machete,
 item = ItemId.Stalkers_Blade_Enchantment_Devourer,
 index = 1
-},
-/*{ //우르프 모드를 위해 제거했음 임시로
+},*/
+{ //우르프 모드를 위해 제거했음 임시로
 new ItemToShop()
 {
 Price = 450,
@@ -561,85 +565,78 @@ Price = 950,
 needItem = ItemId.Dagger,
 item = ItemId.Stalkers_Blade_Enchantment_Devourer,
 index = 3
-},*/
+},
 new ItemToShop()
 {
 Price = 1475,
 needItem = ItemId.Stalkers_Blade_Enchantment_Devourer,
 item = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
-index = 2
+index = 4
 },
 new ItemToShop()
 {
 Price = 1400,
 needItem = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
 item = ItemId.Bilgewater_Cutlass,
-index = 3
+index = 5
 },
 new ItemToShop()
 {
 Price = 1800,
 needItem = ItemId.Bilgewater_Cutlass,
 item = ItemId.Blade_of_the_Ruined_King,
-index = 4
+index = 6
 },
 new ItemToShop()
 {
 Price = 875,
 needItem = ItemId.Blade_of_the_Ruined_King,
 item = ItemId.Pickaxe,
-index = 5
+index = 7
 },
 new ItemToShop()
 {
 Price = 1025,
 needItem = ItemId.Pickaxe,
 item = ItemId.Tiamat_Melee_Only,
-index = 6
+index = 8
 },
 new ItemToShop()
 {
 Price = 1100,
 needItem = ItemId.Tiamat_Melee_Only,
 item = ItemId.Zeal,
-index = 7
+index = 9
 },
 new ItemToShop()
 {
 Price = 1700,
 needItem = ItemId.Zeal,
 item = ItemId.Phantom_Dancer,
-index = 8
+index = 10
 },
 new ItemToShop()
 {
 Price = 1400,
 needItem = ItemId.Phantom_Dancer,
 item = ItemId.Ravenous_Hydra_Melee_Only,
-index = 9
+index = 11
 },
 new ItemToShop()
 {
 Price = 1550,
 needItem = ItemId.Ravenous_Hydra_Melee_Only,
 item = ItemId.B_F_Sword,
-index = 10
+index = 12
 },
 new ItemToShop()
 {
 Price = 2250,
 needItem = ItemId.B_F_Sword,
 item = ItemId.Infinity_Edge,
-index = 11
+index = 13
 }
-/*new ItemToShop()
-{
-Price = 2900,
-needItem = ItemId.Infinity_Edge,
-item = ItemId.Last_Whisper,
-index = 14
-}
-*/};
+};
         #endregion
         #region as
         public static List<ItemToShop> buyThings_AS = new List<ItemToShop>
@@ -863,7 +860,7 @@ index = 14
             RLProjectAutoJungleMenu.AddItem(new MenuItem("maxlv", "Max level").SetValue(new Slider(9, 1, 18)));
             RLProjectAutoJungleMenu.AddItem(new MenuItem("autorecallheal", "Recall[for heal]")).SetValue(true);
             RLProjectAutoJungleMenu.AddItem(new MenuItem("hpper", "Recall on HP(%)").SetValue(new Slider(50, 0, 100)));
-			RLProjectAutoJungleMenu.AddItem(new MenuItem("ehhro", "Enemy in Range").SetValue(new Slider(1, 1, 5)));
+			RLProjectAutoJungleMenu.AddItem(new MenuItem("ehhro", "Enemy in Range").SetValue(new Slider(2, 1, 5)));
 			RLProjectAutoJungleMenu.AddItem(new MenuItem("ehhro2", "Enemy in Far Range").SetValue(new Slider(3, 1, 5)));
             RLProjectAutoJungleMenu.AddItem(new MenuItem("autorecallitem", "Recall[for item]")).SetValue(true);
             RLProjectAutoJungleMenu.AddItem(new MenuItem("evading", "Detect TurretAttack")).SetValue(true);
@@ -1025,7 +1022,7 @@ index = 14
             Obj_AI_Hero Target = null;
             /*if (ChoosedTarget == null)
             {*/
-                Target = TargetSelector.GetTarget(1400, TargetSelector.DamageType.Physical);
+                Target = TargetSelector.GetTarget((Player.AttackRange / 3) + 900 , TargetSelector.DamageType.Physical);
 /*            }
             else
             {
@@ -1346,15 +1343,16 @@ index = 14
 //				var eheros = GetEnemyList().Where(x => x.IsValid && x.IsEnemy && !x.IsDead && Player.Distance(x.Position) <= 2000);					
 //				Obj_AI_Hero ehro = eheros.FirstOrDefault();
 				var turrett = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
-				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2400).Count();
-				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 900).Count();				
+				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2000).Count();
+				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1000).Count();				
 				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 1000).Count();
-				int turretcount = GetEnemyList().Where(x => x.Distance(Player.Position) <= 20000).Count();				
+				int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 800).Count();
+				int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();				
                 if (!IsAttackStart)
                 {
-					if (face_ehro <= RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || face_ally >= 2 && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
+					if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
                         IsAttackStart = true;
-                    else if (face_ehro <= RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam || face_ally >= 2  && !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
+                    else if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam || !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
                         IsAttackStart = true;
                     else
                     {
@@ -1398,10 +1396,11 @@ index = 14
                 else
                 {
                     var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+                    var amini = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => t.Distance(turret.Position)).First(t => !t.IsEnemy && t.IsAlly);
 					//                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
                     if (IsOVER && !IsAttackedByTurret && Player.HealthPercentage() >= 35)
                     {
-                        if (turret.Distance(Player.Position) > TRRange && face_ehro <= RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 30 || turret.Distance(Player.Position) > TRRange && face_ally >= 2 && Player.HealthPercentage() >= 30)
+                        if (turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= 1 && Player.HealthPercentage() >= 35)
                         {
 							//if(turretcount <= 1)
 							//{
@@ -1443,7 +1442,7 @@ index = 14
 							DoLaneClear();
                         }
                             
-                        else if (GetMinions(turret) > 1 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && !IsAttackedByTurret && face_ally >= 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35)
+                        else if (tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= 800 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= 800 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 - face_ally <= 1 && Player.HealthPercentage() >= 35)
                         {
 							//if(turretcount <= 1)
 							//{
@@ -1471,16 +1470,18 @@ index = 14
 									Pounce.Cast(spawn);
 									}
 								}
-							}
+						}
                             
                         afktime = 0;
                     }
-					if (GetMinions(turret) == 0 && turret.Distance(Player.Position) <= TRRange + 200)
+					if (turret.Distance(amini.Position) > 800 && turret.Distance(Player.Position) <= TRRange + 250 && turret.Distance(Player.Position) > TRRange - 200)
 						Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
-						
-					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1)
+					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1 && face_ehro == 0)
+					{
+					if(turret.Distance(amini.Position) > 800 && turret.Distance(Player.Position) <= TRRange)
 					DoLaneClear();
-                    if (turret.Distance(Player.Position) > TRRange + 150)
+					}
+                    if (turret.Distance(Player.Position) > TRRange + 200)
                         IsAttackedByTurret = false;
                     if (Player.IsDead)
                         IsAttackedByTurret = false;
@@ -1493,12 +1494,12 @@ index = 14
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
-					if (Player.ChampionName == "AKALI")
+					if (Player.ChampionName == "Akali")
 					{
 						if(W.IsReady())
 						W.Cast(Player.Position);
 					}
-					if (Player.ChampionName == "MASTERYI")
+					if (Player.ChampionName == "MasterYi")
 					{
 						if(R.IsReady())
 						R.Cast();
@@ -1722,10 +1723,16 @@ index = 14
                 Where(x => x.IsEnemy && !x.IsMe && !x.IsDead && !x.IsInvulnerable).First(); // 플레이어와 가장 가까운타겟
                 var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
                 Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
-                if (turrr.Distance(Target.Position) > TRRange) // 터렛 사정거리 밖에있어야만 공격함.
+                if (Player.AttackRange < 200 && turrr.Distance(Target.Position) > 800 && !IsAttackedByTurret) // 터렛 사정거리 밖에있어야만 공격함.
 				{
 					castspell_hero(Target);
 				Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, 50));
+					Player.IssueOrder(GameObjectOrder.AttackUnit, Target);
+				}
+				else if (Player.AttackRange >= 200 && turrr.Distance(Player.Position) > TRRange && !IsAttackedByTurret)
+				{
+					castspell_hero(Target);
+				Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, Player.AttackRange - 100));
 					Player.IssueOrder(GameObjectOrder.AttackUnit, Target);
 				}
 /*				else if (turrr.Distance(tarrr.Position) <= 850)
@@ -1767,8 +1774,8 @@ index = 14
                     Q.CastOnUnit(mob1);
                 if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
                     E.CastOnUnit(mob1);
-                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 150)
-                    R.Cast(mob1);
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 0)
+                    R.CastOnUnit(mob1);
             }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 600)
             {
@@ -1862,8 +1869,8 @@ index = 14
                     Q.CastOnUnit(mob1);
                 if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
                     E.CastOnUnit(mob1);
-                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 50)
-                    R.Cast(mob1);
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 1)
+                    R.CastOnUnit(mob1);
             }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 1000)
             {
@@ -1959,8 +1966,8 @@ index = 14
                     Q.CastOnUnit(mob1);
                 if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
                     E.CastOnUnit(mob1);
-                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 150 && Player.HealthPercentage() < 40)
-                    R.Cast(mob1);
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 0 && Player.HealthPercentage() < 40)
+                    R.CastOnUnit(mob1);
             }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 400)
             {

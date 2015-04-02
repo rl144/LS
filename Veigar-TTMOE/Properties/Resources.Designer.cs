@@ -63,11 +63,6 @@ namespace Veigar__TTMOE.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Sprite {
-            get {
-                object obj = ResourceManager.GetObject("Sprite", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
+
     }
 }
