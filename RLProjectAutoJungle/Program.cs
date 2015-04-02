@@ -1025,7 +1025,7 @@ index = 14
             Obj_AI_Hero Target = null;
             /*if (ChoosedTarget == null)
             {*/
-                Target = TargetSelector.GetTarget(700, TargetSelector.DamageType.Physical);
+                Target = TargetSelector.GetTarget(1400, TargetSelector.DamageType.Physical);
 /*            }
             else
             {
@@ -1442,9 +1442,6 @@ index = 14
 							DoCast_Hero();
 							DoLaneClear();
                         }
-						
-						else if (GetMinions(turret) == 0 && turret.Distance(Player.Position) <= TRRange + 350)
-						Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
                             
                         else if (GetMinions(turret) > 1 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || GetMinions(turret) > 1 && !IsAttackedByTurret && face_ally >= 2 && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35)
                         {
@@ -1478,6 +1475,9 @@ index = 14
                             
                         afktime = 0;
                     }
+					if (GetMinions(turret) == 0 && turret.Distance(Player.Position) <= TRRange + 350)
+						Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+						
 					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1)
 					DoLaneClear();
                     if (turret.Distance(Player.Position) > TRRange + 150)
@@ -1862,7 +1862,7 @@ index = 14
                     Q.CastOnUnit(mob1);
                 if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
                     E.CastOnUnit(mob1);
-                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 150)
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 50)
                     R.Cast(mob1);
             }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 1000)
