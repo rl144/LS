@@ -430,12 +430,14 @@ needItem = ItemId.Fiendish_Codex,
 item = ItemId.Stalkers_Blade_Enchantment_Magus,
 index = 3
 },
+new ItemToShop()
 {
 Price = 360,
 needItem = ItemId.Stalkers_Blade_Enchantment_Magus,
 item = ItemId.Long_Sword,
 index = 4
 },
+new ItemToShop()
 {
 Price = 360,
 needItem = ItemId.Long_Sword,
@@ -538,6 +540,28 @@ needItem = ItemId.Hunters_Machete,
 item = ItemId.Stalkers_Blade_Enchantment_Devourer,
 index = 1
 },
+/*{ //우르프 모드를 위해 제거했음 임시로
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Hunters_Machete,
+item = ItemId.Stalkers_Blade,
+index = 1
+},
+new ItemToShop()
+{
+Price = 450,
+needItem = ItemId.Stalkers_Blade,
+item = ItemId.Dagger,
+index = 2
+},
+new ItemToShop()
+{
+Price = 950,
+needItem = ItemId.Dagger,
+item = ItemId.Stalkers_Blade_Enchantment_Devourer,
+index = 3
+},*/
 new ItemToShop()
 {
 Price = 1475,
@@ -1399,7 +1423,7 @@ index = 14
 							}
 							else
 							{
-                            Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10);
+                            Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10));
 								if (Player.ChampionName == "Nidalee")
 								{
 									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
@@ -1430,7 +1454,7 @@ index = 14
 							}
 							else
 							{
-                            Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10);
+                            Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10));
 							}
 //							DoCast_Hero();
 //							DoLaneClear();
@@ -1469,6 +1493,18 @@ index = 14
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+					if (Player.ChampionName == "AKALI")
+					{
+						if(W.IsReady())
+						W.Cast(Player.Position);
+						}
+					}
+					if (Player.ChampionName == "MASTERYI")
+					{
+						if(R.IsReady())
+						R.Cast();
+						}
+					}
 					if (Player.ChampionName == "Nidalee")
 					{
 						if(!_cougarForm && Aspectofcougar.IsReady())
