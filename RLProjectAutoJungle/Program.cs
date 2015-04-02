@@ -1056,7 +1056,7 @@ index = 14
                     if (Player.InShop() && Player.HealthPercentage() > 80)
 					{
 					if(turretcount >= 1)
-						Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10));
+						Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
 					else
 						Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                     }
@@ -1423,7 +1423,7 @@ index = 14
 							}
 							else
 							{
-                            Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10));
+                            Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
 								if (Player.ChampionName == "Nidalee")
 								{
 									if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
@@ -1454,7 +1454,7 @@ index = 14
 							}
 							else
 							{
-                            Player.IssueOrder(GameObjectOrder.AttackTo, Player.Position.Extend(turret.Position, 10));
+                            Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
 							}
 //							DoCast_Hero();
 //							DoLaneClear();
