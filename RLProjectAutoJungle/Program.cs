@@ -1493,6 +1493,18 @@ index = 14
 				{
 					Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
+					if (Player.ChampionName == "AKALI")
+					{
+						if(W.IsReady())
+						W.Cast(Player.Position);
+						}
+					}
+					if (Player.ChampionName == "MASTERYI")
+					{
+						if(R.IsReady())
+						R.Cast();
+						}
+					}
 					if (Player.ChampionName == "Nidalee")
 					{
 						if(!_cougarForm && Aspectofcougar.IsReady())
