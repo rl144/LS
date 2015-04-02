@@ -1767,8 +1767,8 @@ index = 14
                     Q.CastOnUnit(mob1);
                 if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
                     E.CastOnUnit(mob1);
-                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 200)
-                    R.Cast();
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 150)
+                    R.Cast(mob1);
             }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 600)
             {
@@ -1862,8 +1862,8 @@ index = 14
                     Q.CastOnUnit(mob1);
                 if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
                     E.CastOnUnit(mob1);
-                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 200)
-                    R.Cast();
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 150)
+                    R.Cast(mob1);
             }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 1000)
             {
@@ -1959,8 +1959,8 @@ index = 14
                     Q.CastOnUnit(mob1);
                 if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
                     E.CastOnUnit(mob1);
-                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 200 && Player.HealthPercentage() < 40)
-                    R.Cast();
+                if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 150 && Player.HealthPercentage() < 40)
+                    R.Cast(mob1);
             }
             else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 400)
             {
