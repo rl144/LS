@@ -1343,10 +1343,11 @@ index = 14
 //				var eheros = GetEnemyList().Where(x => x.IsValid && x.IsEnemy && !x.IsDead && Player.Distance(x.Position) <= 2000);					
 //				Obj_AI_Hero ehro = eheros.FirstOrDefault();
 				var turrett = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+				var emini = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => t.Distance(turrett.Position)).First(t => t.IsEnemy);
 				int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2000).Count();
 				int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1000).Count();				
 				int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 1000).Count();
-				int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 800).Count();
+				int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 900).Count();
 				int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();				
                 if (!IsAttackStart)
                 {
@@ -1438,7 +1439,9 @@ index = 14
 									}
 								}
 							}*/
-							DoCast_Hero();
+							if(ehero.Distance(turret.Position) > 800)
+							{DoCast_Hero();
+							}
 							DoLaneClear();
                         }
                             
@@ -1474,20 +1477,24 @@ index = 14
                             
                         afktime = 0;
                     }
-					if (turret.Distance(amini.Position) > 800 && turret.Distance(Player.Position) <= TRRange + 250 && turret.Distance(Player.Position) > TRRange - 200)
+					if (turret.Distance(amini.Position) > 900 && turret.Distance(Player.Position) <= TRRange + 250 && turret.Distance(Player.Position) > TRRange - 200)
 						Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 					else if(IsOVER && !IsAttackedByTurret && face_ehro2 <= 1 && face_ehro == 0)
 					{
-					if(turret.Distance(amini.Position) > 800 && turret.Distance(Player.Position) <= TRRange)
+					if(tminic > 2 && turret.Distance(Player.Position) <= TRRange)
 					DoLaneClear();
 					}
                     if (turret.Distance(Player.Position) > TRRange + 200)
                         IsAttackedByTurret = false;
                     if (Player.IsDead)
                         IsAttackedByTurret = false;
+					if(turret.Distance(ehero.Position) <= TRRange - 100 && Player.Distance(ehero.Position) <= ehero.AttackRange + 150 && ehero.AttackRange > 300)
+					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
                 }
 //도망가기용
 				if (Player.HealthPercentage() < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1400//hpper
+				&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
+				Player.HealthPercentage() < 33 && !Player.IsDead && emini.Distance(Player.Position) <= 900//hpper
 				&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
 				turrett.Distance(Player.Position) <= TRRange && Player.HealthPercentage() < 33
 				&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
@@ -1517,7 +1524,7 @@ index = 14
 					}
 				}
 				if (Player.HealthPercentage() < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
-				&& turrett.Distance(Player.Position) > 2250
+				&& turrett.Distance(Player.Position) > 2250 && emini.Distance(Player.Position) > 1500
 				&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 				{
 					Game.PrintChat("Time To Recall Yeah!");
