@@ -44,7 +44,7 @@ public class Program
 	public static Menu RLProjectAutoJungleMenu;
 	public static Orbwalking.Orbwalker Orbwalker; //테스트추가 오브워
 	public static Orbwalking.OrbwalkingMode ActiveMode { get; set; }
-	public static float gamestart = 0, pastTime = 0, pastTimeAFK, afktime = 0;
+	public static float gamestart = 0, pastTime = 0, kiTime = 0, pastTimeAFK, afktime = 0;
 	public static List<MonsterINFO> MonsterList = new List<MonsterINFO>();
 	public static int now = 1, max = 20, num = 0;
 	public static float recallhp = 0;
@@ -1228,28 +1228,36 @@ index = 14
 		if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling())
 		{
 			afktime += 1;
-			if (afktime > 6) // 잠수 5초 경과
+			if (afktime > 5) // 잠수 5초 경과
 			{
 				var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
 			int turretcount = GetEnemyList().Where(x => x.Distance(Player.Position) <= 20000).Count();
-				if (Player.InShop() && Player.HealthPercentage() > 95)
+				if (Player.InFountain() && Player.HealthPercentage() > 80)
 				{
 				//if(turretcount >= 1)
 				//	Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
 				//else
 					Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 				}
-				else if(!Player.InShop())
+				else if(!Player.InFountain())
+					{
+					if(IsOVER && IsAttackStart && Player.HealthPercentage() > 35)
+					Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+					else
 					Player.Spellbook.CastSpell(SpellSlot.Recall);
+					}
 				afktime = 0;
 			}
 			pastTimeAFK = Game.Time;
 		}
 		#endregion
-		#region 0.05초마다 발동 // 오류 없애줌
-		if (Environment.TickCount - pastTime < 50) return;
-		else
+		#region 0.5초마다 발동 // 오류 없애줌
+		if (Environment.TickCount - pastTime <= 500) return;
 		pastTime = Environment.TickCount;
+		#endregion
+		#region 카이팅 타임
+		if (Environment.TickCount - kiTime < 60) return;
+		kiTime = Environment.TickCount;
 		#endregion
 		#region InvadeEnemyJungle
 		if (!IsBlueTeam)
@@ -1403,7 +1411,7 @@ index = 14
 					if (!recall)
 					{
 						//DoCast_Hero();
-						if (!Player.InShop() && Player.HealthPercentage() < RLProjectAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
+						if (!Player.InFountain() && Player.HealthPercentage() < RLProjectAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
 						&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 						{
 							Game.PrintChat("YOUR HP IS SO LOW. RECALL!");
@@ -1411,7 +1419,7 @@ index = 14
 							recall = true;
 							recallhp = Player.Health;
 						}
-						else if (!Player.InShop() && Player.Gold > buyThings.First().Price
+						else if (!Player.InFountain() && Player.Gold > buyThings.First().Price
 						&& RLProjectAutoJungleMenu.Item("autorecallitem").GetValue<Boolean>()
 						&& Player.InventoryItems.Length < 9) // HP LESS THAN 25%
 						{
@@ -1422,7 +1430,7 @@ index = 14
 						}
 						else if (Player.Position.Distance(target.Position) > Player.AttackRange)
 						{
-							if(Player.InShop() && Player.HealthPercentage() > 90 || !Player.InShop())
+							if(Player.InFountain() && Player.HealthPercentage() > 80 || !Player.InFountain())
 							{
 							Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
 
@@ -1478,7 +1486,7 @@ index = 14
 					}}
 				}
 			}
-			if (Player.InShop())
+			if (Player.InFountain())
 				if(RLProjectAutoJungleMenu.Item("Invade").GetValue<Boolean>())
 				{
 					if(!IsBlueTeam && now == 7 || !IsBlueTeam && now == 15 ||
@@ -1536,6 +1544,7 @@ index = 14
 			var emini = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
 			var s_ehro = RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value;
 			var s_ehro2 = RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value;
+			var aturret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => !t.IsEnemy);
 			int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2000).Count();
 			int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1000).Count();				
 			int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 1000 || x.Distance(ehero.Position) <= 1400).Count();
@@ -1549,16 +1558,18 @@ index = 14
 					IsAttackStart = true;
 				else
 				{*/
-				if(!Player.InShop())
+				if(!Player.InFountain())
 				{
-					if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
-					{
+//					if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
+//					{
 						if(Player.Distance(emini.Position) > 550)
 						recall = true;
 						else
 						Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
-					}
-					else
+						if(Player.Distance(aturret.Position) <= TRRange + 100)
+				IsAttackStart = true;
+//					}
+/*					else
 					{
 						if (IsBlueTeam)
 						{
@@ -1594,8 +1605,8 @@ index = 14
 
 							if (Player.Distance(PURPLE_MID.Position) <= 400)
 								IsAttackStart = true;
-						}
-					}
+						}*
+					}*/
 				}
 				else
 				IsAttackStart = true;
@@ -1608,13 +1619,13 @@ index = 14
 				//                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
 				if (IsOVER && !IsAttackedByTurret && Player.HealthPercentage() >= 35)
 				{
-					if(Player.InShop() && Player.HealthPercentage() >= 95 || !Player.InShop())
+					if(Player.InFountain() && Player.HealthPercentage() >= 80 || !Player.InFountain())
 					{
 						if (turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value && face_ehro2 <= RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value && Player.HealthPercentage() >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= s_ehro2 && Player.HealthPercentage() >= 35)
 						{
 							//if(turretcount <= 1)
 							//{
-
+							
 							Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 								if (Player.ChampionName == "Nidalee")
 							{
@@ -1630,7 +1641,7 @@ index = 14
 									}
 								}
 							}
-						}
+						
 						//}
 						/*else
 						{
@@ -1650,43 +1661,45 @@ index = 14
 								}
 							}
 						}*/
-						if(ehero.Distance(turret.Position) > 800)
-						{DoCast_Hero();
-						}
-						DoLaneClear();
-					}
-						
-					else if (tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= TRRange + 50 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= TRRange && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 - face_ally <= s_ehro2 && Player.HealthPercentage() >= 35)
-					{
-						//if(turretcount <= 1)
-						//{
-						Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-						//}
-						/*else
-						{
-						Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
-						}*/
-//							DoCast_Hero();
-//							DoLaneClear();
-					}
-
-					else
-					{
-						Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
-							if (Player.ChampionName == "Nidalee")
-							{
-								if(!_cougarForm && Aspectofcougar.IsReady())
-								{
-								Aspectofcougar.Cast();
-								}
-								if(Pounce.IsReady())
-								{
-								Pounce.Cast(spawn);
-								}
+							if(ehero.Distance(turret.Position) > TRRange)
+							{DoCast_Hero();
 							}
-					}
+							DoLaneClear();
+							
+						}
+						
+						else if (tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= TRRange + 50 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= TRRange && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 - face_ally <= s_ehro2 && Player.HealthPercentage() >= 35)
+						{
+							//if(turretcount <= 1)
+							//{
+							Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+							//}
+							/*else
+							{
+							Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
+							}*/
+	//							DoCast_Hero();
+	//							DoLaneClear();
+						}
+
+						else
+						{
+							Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+								if (Player.ChampionName == "Nidalee")
+								{
+									if(!_cougarForm && Aspectofcougar.IsReady())
+									{
+									Aspectofcougar.Cast();
+									}
+									if(Pounce.IsReady())
+									{
+									Pounce.Cast(spawn);
+									}
+								}
+						}
 						
 					afktime = 0;
+					}
 				}
 				if (turret.Distance(amini.Position) > TRRange + 50 && turret.Distance(Player.Position) <= TRRange + 250 && turret.Distance(Player.Position) > TRRange - 200)
 					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
@@ -1694,6 +1707,7 @@ index = 14
 				{
 				if(tminic > 2 && turret.Distance(Player.Position) <= TRRange)
 				DoLaneClear();
+				Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 				}
 				if (turret.Distance(Player.Position) > TRRange + 200)
 					IsAttackedByTurret = false;
@@ -1750,7 +1764,7 @@ index = 14
 					W.Cast(wpred.CastPosition);
 				}
 			}
-			if (!Player.InShop() && Player.HealthPercentage() < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
+			if (!Player.InFountain() && Player.HealthPercentage() < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
 			&& turrett.Distance(Player.Position) > 2250 && emini.Distance(Player.Position) > 1500
 			&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 			{
@@ -1783,7 +1797,7 @@ index = 14
 		#endregion
 		#region 상점이용가능할때 // when you are in shop range or dead
 		#region 시작아이템 사기 // startup
-		if (Utility.InShop(Player) || Player.IsDead)
+		if (Player.InFountain() || Player.IsDead)
 		{
 			if (!(Items.HasItem(Convert.ToInt32(ItemId.Hunters_Machete)) ||
 			Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer)) ||
@@ -1833,7 +1847,7 @@ index = 14
 		}
 		#endregion
 		#region 자동포션사용 - auto use potions
-		if (Player.HealthPercentage() <= 60 && !Player.InShop())
+		if (Player.HealthPercentage() <= 60 && !Player.InFountain())
 		{
 			ItemId item = ItemId.Health_Potion;
 			if (Player.InventoryItems.Any(t => Convert.ToInt32(t.Id) == 2010))
@@ -1966,23 +1980,20 @@ index = 14
 			Where(x => x.IsEnemy && !x.IsMe && !x.IsDead && !x.IsInvulnerable).First(); // 플레이어와 가장 가까운타겟
 			var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
 			Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
-			if (Player.AttackRange < 200 && turrr.Distance(Target.Position) > 800 && !IsAttackedByTurret) // 터렛 사정거리 밖에있어야만 공격함.
+			if (Player.AttackRange < 200 && !IsAttackedByTurret && turrr.Distance(Player.Position) > TRRange && Target.Distance(turrr.Position) > TRRange) // 터렛 사정거리 밖에있어야만 공격함.
 			{
 				castspell_hero(Target);
-				if(Environment.TickCount - pastTime < 25)
+				if(Environment.TickCount - kiTime > 50)
 				Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, 50));
-				else if(Environment.TickCount - pastTime > 25)
 				Player.IssueOrder(GameObjectOrder.AttackUnit, Target);
 			}
 			else if (Player.AttackRange >= 200 && turrr.Distance(Player.Position) > TRRange && !IsAttackedByTurret)
 			{
 				castspell_hero(Target);
-				if(Environment.TickCount - pastTime < 25)
-				Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, (Player.AttackRange + 450) / 2 - 200));
-				else if(Environment.TickCount - pastTime > 25)
+				if(Environment.TickCount - kiTime > 50)
+				Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, (Player.AttackRange + 450) / 2 - 100));			
 				Player.IssueOrder(GameObjectOrder.AttackUnit, Target);
-			
-			}
+				}
 /*				else if (turrr.Distance(tarrr.Position) <= 850)
 			{
 				Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
@@ -2090,7 +2101,7 @@ index = 14
 		}
 		else if (Player.ChampionName.ToUpper() == "JINX")
 		{
-			if (Q.IsReady() && ((Player.AttackRange > 550 && eminic <= 2|| eminic > 2 && Player.AttackRange <= 550)))
+			if (Q.IsReady() && Player.Level >= 3 && ((Player.AttackRange > 550 && eminic <= 2|| eminic > 2 && Player.AttackRange <= 550)))
 				Q.Cast();
 		}
 		else
