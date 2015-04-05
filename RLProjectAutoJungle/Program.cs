@@ -1605,7 +1605,7 @@ index = 14
 
 							if (Player.Distance(PURPLE_MID.Position) <= 400)
 								IsAttackStart = true;
-						}*
+						}
 					}*/
 				}
 				else
