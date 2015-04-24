@@ -2216,7 +2216,7 @@ index = 14
 		E.Cast(epred.CastPosition);
 			if (W.IsReady() && wpred.Hitchance >= HitChance.High && mob1.Distance(Player.Position) > 900)
 		W.Cast(wpred.CastPosition);
-			if (R.IsReady() && Player.Distance(mob1.Position) > 800 && rpred.Hitchance >= HitChance.High && mob1.HealthPercentage() < 20/*R.GetDamage(mob1) > mob1.Health*/)
+			if (R.IsReady() && Player.Distance(mob1.Position) > 800 && rpred.Hitchance >= HitChance.High && getHealthPercent(mob1) < 20/*R.GetDamage(mob1) > mob1.Health*/)
 			R.Cast(rpred.CastPosition);
 		}
 		else
