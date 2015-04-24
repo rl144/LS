@@ -1532,7 +1532,7 @@ index = 14
 				IsOVER = true;
 				Game.PrintChat("Your Stack Is  " + buff.Count + ". Now Going to be offense.");
 			}
-			if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //-- I don't speak korean :D
+			if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) // MaGUS
 			{
 				Game.PrintChat("Stacks under " + maxstacks + ". Going back to farm.");
 				IsOVER = false;
@@ -1554,8 +1554,10 @@ index = 14
 			var s_ehro2 = RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value;
 			var aturret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => !t.IsEnemy);
 			int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2500 && getHealthPercent(x) > 40).Count();
+			int face_ehro2LH = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2500 && getHealthPercent(x) < 70).Count();
 			int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1000 && getHealthPercent(x) > 40).Count();				
 			int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 700 || x.Distance(ehero.Position) <= 600).Count();
+			int face_allye = GetAllyList().Where(x => x.Distance(ehero.Position) <= 600).Count();
 			int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 900).Count();
 			int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();				
 			if (!IsAttackStart)
@@ -1629,7 +1631,7 @@ index = 14
 				{
 					if(Player.InFountain() && getHealthPercent(Player) >= 85 || !Player.InFountain())
 					{
-						if (turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= s_ehro && face_ehro2 <= s_ehro2 && getHealthPercent(Player) >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= s_ehro2 && getHealthPercent(Player) >= 35)
+						if (turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= s_ehro && face_ehro2 <= s_ehro2 && getHealthPercent(Player) >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= s_ehro2 && (face_ehro2LH > 0 || face_allye > 0) && getHealthPercent(Player) >= 35)
 						{
 							//if(turretcount <= 1)
 							//{
@@ -1670,8 +1672,8 @@ index = 14
 							}
 						}*/
 							if(ehero.Distance(turret.Position) > TRRange)
-							{DoCast_Hero();
-							}
+							DoCast_Hero();
+							
 							DoLaneClear();
 							
 						}
@@ -1962,7 +1964,7 @@ index = 14
 		var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
 		if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
 			Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
-		if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 2000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange) && getManaPercent(Player) > 60)
+		if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1500) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange) && getManaPercent(Player) > 60)
 			castspell_laneclear(mob1);
 	}
 	public static void DoCast()
