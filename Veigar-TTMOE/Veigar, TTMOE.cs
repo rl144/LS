@@ -2007,12 +2007,19 @@ namespace Veigar__TTMOE
         //E CAST(COORDINATES)
         public static void castE(Vector3 pos)
         {
-            Vector2 castVec = pos.To2D() -
+            Vector2 castVec = pos.To2D() +
+                              Vector2.Normalize(pos.To2D() - Player.Position.To2D()) * E.Width;
+							  
+            Vector2 castVec2 = pos.To2D() -
                               Vector2.Normalize(pos.To2D() - Player.Position.To2D()) * E.Width;
 
-            if (E.IsReady())
+            if (E.IsReady() && Vector3.Distance(Player.Position, pos) <= 700 - E.Width)
             {
-                E.Cast(castVec, Packets());
+                E.Cast(castVec, false);
+            }
+            if (E.IsReady() && Vector3.Distance(Player.Position, pos) > 700 - E.Width)
+            {
+                E.Cast(castVec2, false);
             }
         }
 
