@@ -14,15 +14,18 @@ namespace IgSm
 {
     internal class Program
     {
+        private static Orbwalking.Orbwalker Orbwalker;
         private static Obj_AI_Hero Player;
         private static Spell SmiteSlot;
+        private static Spell RSmite;
 		private static Spell IgniteSlot;
         private static List<Items.Item> itemsList = new List<Items.Item>();
         private static string WelcMsg = ("<font color = '#ff3366'>IgSm</font><font color='#FFFFFF'> by RL244.</font> <font color = '#66ff33'> ~~ LOADED ~~</font> ");
         public static SpellSlot smiteSlot = SpellSlot.Unknown;
+        public static SpellSlot rsmiteSlot = SpellSlot.Unknown;
 		public static SpellSlot igniteSlot = SpellSlot.Unknown;
         private static Menu Menu;
-        private static Items.Item s0, s1, s2, s3, s4;
+        private static Items.Item s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
         private static float range = 700f;
 		private static float irange = 600f;
 
@@ -59,6 +62,13 @@ namespace IgSm
 
         private static void Game_OnUpdate(EventArgs args)
         {
+            if (Menu.Item("dbbuff", true).GetValue<bool>())
+			{
+				foreach (var buff in ObjectManager.Player.Buffs)
+				{
+					Console.WriteLine("Name:{0}", buff.Name);
+				}
+			}
             if (!Menu.Item("enable").GetValue<bool>())
                 return;
             if (Player.IsDead)
@@ -89,8 +99,27 @@ namespace IgSm
                     Player.Spellbook.CastSpell(igniteSlot, enemy);
 				}
             }
+			
+
 
         }
+		
+		static void Orbwalking_OnAttack(AttackableUnit unit, AttackableUnit target)
+		{
+            var Target = (Obj_AI_Base)target;
+            
+			if (!unit.IsMe || Target == null)
+                return;
+				
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
+				{
+					if (!CheckInv())
+					return;
+                    RSmite.Slot = rsmiteSlot;
+					if(rsmiteSlot.IsReady())
+                    Player.Spellbook.CastSpell(rsmiteSlot, Target);
+				}
+		}
 
         public static void setSmiteSlot()
         {
@@ -99,7 +128,13 @@ namespace IgSm
                 smiteSlot = spell.Slot;
                 SmiteSlot = new Spell(smiteSlot, range);
                 return;
-            }
+            } //BS
+            foreach (var spell in ObjectManager.Player.Spellbook.Spells.Where(spell => String.Equals(spell.Name, "s5_summonersmiteduel", StringComparison.CurrentCultureIgnoreCase)))
+            {
+                rsmiteSlot = spell.Slot;
+                RSmite = new Spell(rsmiteSlot, range);
+                return;
+            } //RS
         }
 		
         public static void setIgniteSlot()
@@ -117,6 +152,7 @@ namespace IgSm
             Menu = new Menu("IgSm", "menu", true);
             Menu.AddItem(new MenuItem("enable", "Enable").SetValue(true));
             Menu.AddItem(new MenuItem("draw", "Draw Smite Range").SetValue(new Circle(true, Color.Blue)));
+            Menu.AddItem(new MenuItem("dbbuff", "dbbuff", true).SetValue(true));
             Menu.AddToMainMenu();
         }
 
@@ -144,6 +180,16 @@ namespace IgSm
             itemsList.Add(s3);
             s4 = new Items.Item(3706, range);
             itemsList.Add(s4);
+            s0 = new Items.Item(3714, range);
+            itemsList.Add(s5);
+            s1 = new Items.Item(3715, range);
+            itemsList.Add(s6);
+            s2 = new Items.Item(3716, range);
+            itemsList.Add(s7);
+            s3 = new Items.Item(3717, range);
+            itemsList.Add(s8);
+            s4 = new Items.Item(3718, range);
+            itemsList.Add(s9);
         }
         private static float Damage()
         {
