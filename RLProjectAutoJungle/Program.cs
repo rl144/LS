@@ -36,14 +36,6 @@ public class Program
 	{
 		return ObjectManager.Get<Obj_AI_Hero>().Where(x => !x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
 	}
-	public static float getHealthPercent(Obj_AI_Base unit)
-	{
-		return unit.Health / unit.MaxHealth * 100;
-	}
-	public static float getManaPercent(Obj_AI_Base unit)
-	{
-		return unit.Mana / unit.MaxMana * 100;
-	}
 	public static Obj_AI_Hero Player = ObjectManager.Player;
 	private static Obj_AI_Hero Target = null; // 타겟 추
 	public static Spell Q, W, E, R;
@@ -1240,7 +1232,7 @@ index = 14
 			{
 				var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
 			int turretcount = GetEnemyList().Where(x => x.Distance(Player.Position) <= 20000).Count();
-				if (Player.InFountain() && getHealthPercent(Player) > 85)
+				if (Player.InFountain() && Player.HealthPercentage() > 85)
 				{
 				//if(turretcount >= 1)
 				//	Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
@@ -1249,7 +1241,7 @@ index = 14
 				}
 				else if(!Player.InFountain())
 					{
-					if(IsOVER && IsAttackStart && getHealthPercent(Player) > 50)
+					if(IsOVER && IsAttackStart && Player.HealthPercentage() > 50)
 					Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
 					else
 					Player.Spellbook.CastSpell(SpellSlot.Recall);
@@ -1419,7 +1411,7 @@ index = 14
 					if (!recall)
 					{
 						//DoCast_Hero();
-						if (!Player.InFountain() && getHealthPercent(Player) < RLProjectAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
+						if (!Player.InFountain() && Player.HealthPercentage() < RLProjectAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
 						&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 						{
 							Game.PrintChat("YOUR HP IS SO LOW. RECALL!");
@@ -1438,7 +1430,7 @@ index = 14
 						}
 						else if (Player.Position.Distance(target.Position) > Player.AttackRange)
 						{
-							if(Player.InFountain() && getHealthPercent(Player) > 85 || !Player.InFountain())
+							if(Player.InFountain() && Player.HealthPercentage() > 85 || !Player.InFountain())
 							{
 							Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
 
@@ -1553,9 +1545,9 @@ index = 14
 			var s_ehro = RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value;
 			var s_ehro2 = RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value;
 			var aturret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => !t.IsEnemy);
-			int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2500 && getHealthPercent(x) > 40).Count();
-			int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1000 && getHealthPercent(x) > 40).Count();				
-			int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 700 || x.Distance(ehero.Position) <= 600).Count();
+			int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2000).Count();
+			int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1000).Count();				
+			int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 700 || x.Distance(ehero.Position) <= 1400).Count();
 			int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 900).Count();
 			int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();				
 			if (!IsAttackStart)
@@ -1573,7 +1565,7 @@ index = 14
 						if(Player.Distance(emini.Position) < 650)
 						{Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));}
 						else
-						recall = true;
+						{recall = true;}
 						if(Player.Distance(aturret.Position) <= TRRange + 100)
 				IsAttackStart = true;
 //					}
@@ -1625,11 +1617,11 @@ index = 14
 				var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
 				var amini = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => t.Distance(turret.Position)).First(t => !t.IsEnemy && t.IsAlly);
 				//                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
-				if (IsOVER && !IsAttackedByTurret && getHealthPercent(Player) >= 35)
+				if (IsOVER && !IsAttackedByTurret && Player.HealthPercentage() >= 35)
 				{
-					if(Player.InFountain() && getHealthPercent(Player) >= 85 || !Player.InFountain())
+					if(Player.InFountain() && Player.HealthPercentage() >= 85 || !Player.InFountain())
 					{
-						if (turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= s_ehro && face_ehro2 <= s_ehro2 && getHealthPercent(Player) >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= s_ehro2 && getHealthPercent(Player) >= 35)
+						if (turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= s_ehro && face_ehro2 <= s_ehro2 && Player.HealthPercentage() >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= s_ehro2 && Player.HealthPercentage() >= 35)
 						{
 							//if(turretcount <= 1)
 							//{
@@ -1676,7 +1668,7 @@ index = 14
 							
 						}
 						
-						else if (tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= TRRange + 50 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 <= 1 && getHealthPercent(Player) >= 35 || tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= TRRange && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 - face_ally <= s_ehro2 && getHealthPercent(Player) >= 35)
+						else if (tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= TRRange + 50 && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 <= 1 && Player.HealthPercentage() >= 35 || tminic > 1 && turret.Distance(Player.Position) <= TRRange && turret.Distance(amini.Position) <= TRRange && !IsAttackedByTurret && face_ehro == 0 && face_ehro2 - face_ally <= s_ehro2 && Player.HealthPercentage() >= 35)
 						{
 							//if(turretcount <= 1)
 							//{
@@ -1718,11 +1710,11 @@ index = 14
 				Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 			}
 //도망가기용
-			if ((getHealthPercent(Player) < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1400//hpper
+			if ((Player.HealthPercentage() < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1400//hpper
 			&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
-			getHealthPercent(Player) < 33 && !Player.IsDead && emini.Distance(Player.Position) <= 900//hpper
+			Player.HealthPercentage() < 33 && !Player.IsDead && emini.Distance(Player.Position) <= 900//hpper
 			&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
-			turrett.Distance(Player.Position) <= TRRange && getHealthPercent(Player) < 33
+			turrett.Distance(Player.Position) <= TRRange && Player.HealthPercentage() < 33
 			&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>())) // HP LESS THAN 25%  //도망가!!!!!
 			{
 				Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
@@ -1765,7 +1757,7 @@ index = 14
 					W.Cast(wpred.CastPosition);
 				}
 			}
-			if (!Player.InFountain() && getHealthPercent(Player) < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
+			if (!Player.InFountain() && Player.HealthPercentage() < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
 			&& turrett.Distance(Player.Position) > 2250 && emini.Distance(Player.Position) > 1500
 			&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 			{
@@ -1848,7 +1840,7 @@ index = 14
 		}
 		#endregion
 		#region 자동포션사용 - auto use potions
-		if (getHealthPercent(Player) <= 60 && !Player.InFountain())
+		if (Player.HealthPercentage() <= 60 && !Player.InFountain())
 		{
 			ItemId item = ItemId.Health_Potion;
 			if (Player.InventoryItems.Any(t => Convert.ToInt32(t.Id) == 2010))
@@ -1962,7 +1954,7 @@ index = 14
 		var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
 		if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
 			Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
-		if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 2000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange) && getManaPercent(Player) > 60)
+		if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1000) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange))
 			castspell_laneclear(mob1);
 	}
 	public static void DoCast()
@@ -2076,7 +2068,7 @@ index = 14
 		{
 			if (Q.IsReady())
 				Q.CastOnUnit(mob1);
-			if (W.IsReady() && getHealthPercent(Player) < RLProjectAutoJungleMenu.Item("yi_W").GetValue<Slider>().Value)
+			if (W.IsReady() && Player.HealthPercentage() < RLProjectAutoJungleMenu.Item("yi_W").GetValue<Slider>().Value)
 				W.Cast();
 			if (E.IsReady())
 				E.Cast();
@@ -2176,7 +2168,7 @@ index = 14
 		{
 			if (Q.IsReady())
 				Q.CastOnUnit(mob1);
-//                if (W.IsReady() && getHealthPercent(Player) < 35
+//                if (W.IsReady() && Player.HealthPercentage() < 35
 //                    W.Cast();
 			if (E.IsReady())
 				E.Cast();
@@ -2248,7 +2240,7 @@ index = 14
 				Q.CastOnUnit(mob1);
 			if (E.IsReady() && Player.Position.Distance(mob1.Position) <= 325)
 				E.CastOnUnit(mob1);
-			if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 0 && getHealthPercent(Player) < 40)
+			if (R.IsReady() && Player.Position.Distance(mob1.Position) <= 700 && Player.Position.Distance(mob1.Position) > 0 && Player.HealthPercentage() < 40)
 				R.CastOnUnit(mob1);
 		}
 		else if (Player.ChampionName.ToUpper() == "NIDALEE" && Player.Position.Distance(mob1.Position) <= 400)
@@ -2401,9 +2393,6 @@ index = 14
 	}
 	public static Obj_AI_Base GetNearest(Vector3 pos)
 	{
-	var Mobs = MinionManager.GetMinions(700, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
-	return Mobs[0];
-		/*
 		var minions =
 		ObjectManager.Get<Obj_AI_Minion>()
 		.Where(minion => minion.IsValid && minion.IsEnemy && !minion.IsDead && MinionNames.Any(name => minion.Name.StartsWith(name)
@@ -2421,7 +2410,6 @@ index = 14
 			}
 		}
 		return sMinion;
-		*/
 	}
 	public static Obj_AI_Minion GetNearest_big(Vector3 pos)
 	{
