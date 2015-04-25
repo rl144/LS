@@ -24,11 +24,15 @@ public class Program
 	{
 		return ObjectManager.Get<Obj_AI_Turret>().Where(x => x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
 	}
-	public static List<Obj_AI_Minion> GetTMinionList()//터렛 탐지 추가(just for test)
+	public static List<Obj_AI_Turret> GetAllyTurretList()//터렛 탐지 추가(just for test)
+	{
+		return ObjectManager.Get<Obj_AI_Turret>().Where(x => !x.IsEnemy && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
+	}
+	public static List<Obj_AI_Minion> GetTMinionList()//근처아군미니언
 	{
 		return ObjectManager.Get<Obj_AI_Minion>().Where(x => x.IsAlly && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
 	}
-	public static List<Obj_AI_Minion> GetEMinionList()//내근처미니온 수
+	public static List<Obj_AI_Minion> GetEMinionList()//내근처적미니온 수
 	{
 		return ObjectManager.Get<Obj_AI_Minion>().Where(x => !x.IsAlly && x.IsValid && !x.IsDead && !x.IsInvulnerable).ToList();
 	}
@@ -977,8 +981,8 @@ index = 14
 		RLProjectAutoJungleMenu.AddItem(new MenuItem("maxlv", "Max level").SetValue(new Slider(9, 1, 18)));
 		RLProjectAutoJungleMenu.AddItem(new MenuItem("autorecallheal", "Recall[for heal]")).SetValue(true);
 		RLProjectAutoJungleMenu.AddItem(new MenuItem("hpper", "Recall on HP(%)").SetValue(new Slider(50, 0, 100)));
-		RLProjectAutoJungleMenu.AddItem(new MenuItem("ehhro", "Enemy in Range").SetValue(new Slider(2, 1, 5)));
-		RLProjectAutoJungleMenu.AddItem(new MenuItem("ehhro2", "Enemy in Far Range").SetValue(new Slider(3, 1, 5)));
+		RLProjectAutoJungleMenu.AddItem(new MenuItem("ehhro", "Enemy in Range").SetValue(new Slider(1, 1, 5)));
+		RLProjectAutoJungleMenu.AddItem(new MenuItem("ehhro2", "Enemy in Far Range").SetValue(new Slider(2, 1, 5)));
 		RLProjectAutoJungleMenu.AddItem(new MenuItem("autorecallitem", "Recall[for item]")).SetValue(true);
 		RLProjectAutoJungleMenu.AddItem(new MenuItem("evading", "Detect TurretAttack")).SetValue(true);
 		RLProjectAutoJungleMenu.AddItem(new MenuItem("Invade", "InvadeEnemyJungle?")).SetValue(true);
@@ -1553,12 +1557,14 @@ index = 14
 			var s_ehro = RLProjectAutoJungleMenu.Item("ehhro").GetValue<Slider>().Value;
 			var s_ehro2 = RLProjectAutoJungleMenu.Item("ehhro2").GetValue<Slider>().Value;
 			var aturret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => !t.IsEnemy);
-			int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2500 && getHealthPercent(x) > 40).Count();
-			int face_ehro2LH = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2500 && getHealthPercent(x) < 70).Count();
-			int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1000 && getHealthPercent(x) > 40).Count();				
-			int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 700 || x.Distance(ehero.Position) <= 600).Count();
-			int face_allye = GetAllyList().Where(x => x.Distance(ehero.Position) <= 600).Count();
+			int faceat = GetAllyTurretList().Where(x => x.Distance(ehero.Position) <= TRRange).Count();
+			int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1900 && getHealthPercent(x) > 40).Count();
+			int face_ehro2LH = GetEnemyList().Where(x => x.Distance(Player.Position) <= 1900 && getHealthPercent(x) < 45).Count();
+			int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 900 && getHealthPercent(x) > 40).Count();				
+			int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 700 || x.Distance(ehero.Position) <= 700).Count() + faceat;
+			int face_allye = GetAllyList().Where(x => x.Distance(ehero.Position) <= 700).Count();
 			int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 900).Count();
+			int CM = GetTMinionList().Where(x => x.Distance(Player.Position) <= 600).Count();
 			int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();				
 			if (!IsAttackStart)
 			{
@@ -1625,19 +1631,21 @@ index = 14
 			else
 			{
 				var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
-				var amini = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => t.Distance(turret.Position)).First(t => !t.IsEnemy && t.IsAlly);
+				var amini = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => t.Distance(turret.Position)).First(t => t.IsAlly);
+
 				//                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
 				if (IsOVER && !IsAttackedByTurret && getHealthPercent(Player) >= 35)
 				{
 					if(Player.InFountain() && getHealthPercent(Player) >= 85 || !Player.InFountain())
 					{
-						if (turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= s_ehro && face_ehro2 <= s_ehro2 && getHealthPercent(Player) >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= s_ehro2 && (face_ehro2LH > 0 || face_allye > 0) && getHealthPercent(Player) >= 35)
+						if ((turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= s_ehro && face_ehro2 <= s_ehro2 && getHealthPercent(Player) >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= s_ehro2 && (face_ehro2LH > 1 || face_allye > 0) && getHealthPercent(Player) >= 35) 
+						&& (CM > 1 || ehero.Distance(turret.Position) > TRRange && ehero.Distance(Player.Position) <= TRRange * 3 / 2 || face_ally > 0))
 						{
 							//if(turretcount <= 1)
 							//{
 							
 							Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-								if (Player.ChampionName == "Nidalee")
+							if (Player.ChampionName == "Nidalee")
 							{
 								if(face_ehro2 < 1 && turret.Distance(Player.Position) > TRRange + 150)
 								{
@@ -1673,7 +1681,6 @@ index = 14
 						}*/
 							if(ehero.Distance(turret.Position) > TRRange)
 							DoCast_Hero();
-							
 							DoLaneClear();
 							
 						}
@@ -1947,8 +1954,9 @@ index = 14
 	public static void DoSmite()//스마이트
 	{
 		var mob1 = GetNearest_big(Player.Position);
+		int badally = GetAllyList().Where(x => x.Distance(Player.Position) <= 500).Count(); //나쁜아군
 		double smdmg = setSmiteDamage();
-		if (!IsStart && Player.Level > 1 && mob1.Health < smdmg)
+		if (!IsStart && Player.Level > 1 && mob1.Health < smdmg && (mob1.Health > 200 || badally > 0))
 		{
 		if (mob1.IsValid)
 			smite.CastOnUnit(mob1);
