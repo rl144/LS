@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.IO;
+using SharpDX;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
+using LSConsole = LeagueSharp.Console.Console;
+
 
 namespace RLProjectJunglePlay
 {
@@ -968,7 +963,7 @@ index = 14
 			if (!setFile.Exists)
 			{
 				Readini.Setini(setFile.FullName);
-				Game.PrintChat("Something Wrong. Try Again");
+				GamePrintChat("Something Wrong. Try Again");
 			}
 		}
 		catch
@@ -1017,7 +1012,7 @@ index = 14
 		{
 			spawn = new Vector3(14318f, 14354, 171.97f);
 			enemy_spawn = new Vector3(415.33f, 453.38f, 182.66f);
-			Game.PrintChat("Set PurpleTeam Spawn");
+			GamePrintChat("Set PurpleTeam Spawn");
 			IsBlueTeam = false;
 			MonsterList.First(temp => temp.ID == pteam_Krug.ID).order = 1;
 			MonsterList.First(temp => temp.ID == pteam_Red.ID).order = 2;
@@ -1039,7 +1034,7 @@ index = 14
 		{
 			spawn = new Vector3(415.33f, 453.38f, 182.66f);
 			enemy_spawn = new Vector3(14318f, 14354, 171.97f);
-			Game.PrintChat("Set BlueTeam Spawn");
+			GamePrintChat("Set BlueTeam Spawn");
 			IsBlueTeam = true;
 			MonsterList.First(temp => temp.ID == bteam_Gromp.ID).order = 1;
 			MonsterList.First(temp => temp.ID == bteam_Blue.ID).order = 2;
@@ -1063,61 +1058,61 @@ index = 14
 		if (Player.ChampionName.ToUpper() == "NUNU")
 		{
 			GetItemTree(setFile);
-			Game.PrintChat("NUNU BOT ACTIVE");
+			GamePrintChat("NUNU BOT ACTIVE");
 			Readini.GetSpelltree(setFile.FullName);
 		}
 		else if (Player.ChampionName.ToUpper() == "WARWICK")
 		{
 			GetItemTree(setFile);
-			Game.PrintChat("WARWICK BOT ACTIVE");
+			GamePrintChat("WARWICK BOT ACTIVE");
 			Readini.GetSpelltree(setFile.FullName);
 		}
 		else if (Player.ChampionName.ToUpper() == "MASTERYI")
 		{
 			GetItemTree(setFile);
-			Game.PrintChat("MASTER YI BOT ACTIVE");
+			GamePrintChat("MASTER YI BOT ACTIVE");
 			Readini.GetSpelltree(setFile.FullName);
 		}
 		else if (Player.ChampionName.ToUpper() == "CHOGATH")
 		{
 			GetItemTree(setFile);
-			Game.PrintChat("CHOGATH BOT ACTIVE");
+			GamePrintChat("CHOGATH BOT ACTIVE");
 			Readini.GetSpelltree(setFile.FullName);
 		}
 		else if (Player.ChampionName.ToUpper() == "MAOKAI")
 		{
 			GetItemTree(setFile);
-			Game.PrintChat("MAOKAI BOT ACTIVE");
+			GamePrintChat("MAOKAI BOT ACTIVE");
 			Readini.GetSpelltree(setFile.FullName);
 		}
 		else if (Player.ChampionName.ToUpper() == "NASUS")
 		{
 			GetItemTree(setFile);
-			Game.PrintChat("NASUS BOT ACTIVE");
+			GamePrintChat("NASUS BOT ACTIVE");
 			Readini.GetSpelltree(setFile.FullName);
 		}
 		else if (Player.ChampionName.ToUpper() == "XINZHAO")
 		{
 			GetItemTree(setFile);
-			Game.PrintChat("XINZHAO is now going to Chawchaw");
+			GamePrintChat("XINZHAO is now going to Chawchaw");
 			Readini.GetSpelltree(setFile.FullName);
 		}
 		else if (Player.ChampionName.ToUpper() == "NIDALEE")
 		{
 			GetItemTree(setFile);
-			Game.PrintChat("NIDALEE CARRY IP");
+			GamePrintChat("NIDALEE CARRY IP");
 			Readini.GetSpelltree(setFile.FullName);
 		}
 		else if (Player.ChampionName.ToUpper() == "JINX")
 		{
 			GetItemTree(setFile);
-			Game.PrintChat("Get Jinxed!!");
+			GamePrintChat("Get Jinxed!!");
 			Readini.GetSpelltree(setFile.FullName);
 		}
 		else
 		{
 			#region Read ini
-			Game.PrintChat("Read ini file");
+			GamePrintChat("Read ini file");
 			Readini.GetSpelltree(setFile.FullName);
 			GetItemTree(setFile);
 			Readini.GetSpells(setFile.FullName, ref cast2mob, ref cast2hero, ref cast4laneclear);
@@ -1129,61 +1124,61 @@ index = 14
 		if (Player.ChampionName.ToUpper() == "NUNU")
 		{
 			GetItemTree("TANK");
-			Game.PrintChat("NUNU BOT ACTIVE");
+			GamePrintChat("NUNU BOT ACTIVE");
 			Readini.GetSpelltree(new int[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3 });
 		}
 		else if (Player.ChampionName.ToUpper() == "WARWICK")
 		{
 			GetItemTree("AS");
-			Game.PrintChat("WARWICK BOT ACTIVE");
+			GamePrintChat("WARWICK BOT ACTIVE");
 			Readini.GetSpelltree(new int[] { 1, 2, 3, 1, 1, 4, 1, 2, 1, 2, 4, 3, 2, 3, 2, 4, 3, 3 });
 		}
 		else if (Player.ChampionName.ToUpper() == "MASTERYI")
 		{
 			GetItemTree("AD");
-			Game.PrintChat("MASTER YI BOT ACTIVE");
+			GamePrintChat("MASTER YI BOT ACTIVE");
 			Readini.GetSpelltree(new int[] { 1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 3, 2, 3, 4, 2, 2 });
 		}
 		else if (Player.ChampionName.ToUpper() == "CHOGATH")
 		{
 			GetItemTree("TANK");
-			Game.PrintChat("CHOGATH BOT ACTIVE");
+			GamePrintChat("CHOGATH BOT ACTIVE");
 			Readini.GetSpelltree(new[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3 });
 		}
 		else if (Player.ChampionName.ToUpper() == "MAOKAI")
 		{
 			GetItemTree("TANK");
-			Game.PrintChat("MAOKAI BOT ACTIVE");
+			GamePrintChat("MAOKAI BOT ACTIVE");
 			Readini.GetSpelltree(new[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3 });
 		}
 		else if (Player.ChampionName.ToUpper() == "NASUS")
 		{
 			GetItemTree("TANK");
-			Game.PrintChat("NASUS BOT ACTIVE");
+			GamePrintChat("NASUS BOT ACTIVE");
 			Readini.GetSpelltree(new[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 2, 2, 2, 2, 4, 3, 3 });
 		}
 		else if (Player.ChampionName.ToUpper() == "XINZHAO")
 		{
 			GetItemTree("AD");
-			Game.PrintChat("XINZHAO is now going to Chawchaw");
+			GamePrintChat("XINZHAO is now going to Chawchaw");
 			Readini.GetSpelltree(new int[] { 1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 3, 2, 3, 4, 2, 2 });
 		}
 		else if (Player.ChampionName.ToUpper() == "NIDALEE")
 		{
 			GetItemTree("BAP");
-			Game.PrintChat("NIDALEE CARRY IP");
+			GamePrintChat("NIDALEE CARRY IP");
 			Readini.GetSpelltree(new int[] { 2, 2, 1, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 3, 2, 3, 4, 2, 2 });
 		}
 		else if (Player.ChampionName.ToUpper() == "JINX")
 		{
 			GetItemTree("ADC");
-			Game.PrintChat("Get Jinxed!!");
+			GamePrintChat("Get Jinxed!!");
 			Readini.GetSpelltree(new int[] { 1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 3, 2, 3, 4, 2, 2 });
 		}
 		else
 		{
 			#region Read ini
-			Game.PrintChat("Read ini file");
+			GamePrintChat("Read ini file");
 			Readini.GetSpelltree(new int[] { 1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 3, 2, 3, 4, 2, 2 });
 			GetItemTree("AD");
 			//Readini.GetSpells(setFile.FullName, ref cast2mob, ref cast2hero, ref cast4laneclear);
@@ -1197,7 +1192,7 @@ index = 14
 			if (buyThings.First().needItem != buyThings.Last(h => Items.HasItem(Convert.ToInt32(h.needItem))).needItem)
 			{
 				var lastitem = buyThings.Last(h => Items.HasItem(Convert.ToInt32(h.needItem)));
-				Game.PrintChat("Find new ItemList");
+				GamePrintChat("Find new ItemList");
 				List<ItemToShop> newlist = buyThings.Where(t => t.index >= lastitem.index).ToList();
 				buyThings.Clear();
 				buyThings = newlist;
@@ -1209,7 +1204,7 @@ index = 14
 		GameObject.OnCreate += OnCreate;
 		Obj_AI_Base.OnProcessSpellCast += OnSpell;
 		if (smiteSlot == SpellSlot.Unknown)
-			Game.PrintChat("YOU ARE NOT JUNGLER(NO SMITE)");
+			GamePrintChat("YOU ARE NOT JUNGLER(NO SMITE)");
 	}
 	private static Obj_AI_Hero GetTarget()
 	{
@@ -1355,7 +1350,7 @@ index = 14
 		#region detect reload
 		if (IsStart && Player.Level > 1)
 		{
-			Game.PrintChat("You did reload");
+			GamePrintChat("You did reload");
 			IsStart = false;
 		}
 		#endregion
@@ -1408,7 +1403,7 @@ index = 14
 					{
 						IsStart = false;
 						now = 1;
-						Game.PrintChat("START!");
+						GamePrintChat("START!");
 					}
 				}
 			}
@@ -1427,7 +1422,7 @@ index = 14
 						if (!Player.InFountain() && !Player.InShop() && getHealthPercent(Player) < RLProjectAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
 						&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 						{
-							Game.PrintChat("YOUR HP IS SO LOW. RECALL!");
+							GamePrintChat("YOUR HP IS SO LOW. RECALL!");
 							Player.Spellbook.CastSpell(SpellSlot.Recall);
 							recall = true;
 							recallhp = Player.Health;
@@ -1436,7 +1431,7 @@ index = 14
 						&& RLProjectAutoJungleMenu.Item("autorecallitem").GetValue<Boolean>()
 						&& Player.InventoryItems.Length < 9) // HP LESS THAN 25%
 						{
-							Game.PrintChat("CAN BUY " + buyThings.First().item.ToString() + ". RECALL!");
+							GamePrintChat("CAN BUY " + buyThings.First().item.ToString() + ". RECALL!");
 							Player.Spellbook.CastSpell(SpellSlot.Recall);
 							recall = true;
 							recallhp = Player.Health;
@@ -1516,14 +1511,14 @@ index = 14
 			if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
 			{
 				IsOVER = true;
-				Game.PrintChat("You're level is" + level + ". Now Going to be offense.");
+				GamePrintChat("You're level is" + level + ". Now Going to be offense.");
 			}
 		}
 		else
 		{
 			if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
 			{
-				Game.PrintChat("You're under " + maxlv + "lv. Going back to farm.");
+				GamePrintChat("You're under " + maxlv + "lv. Going back to farm.");
 				IsOVER = false;
 				IsAttackStart = false;
 			}
@@ -1536,11 +1531,11 @@ index = 14
 			if (buff.Count >= maxstacks && !IsOVER || level >= maxlv)// || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //--테스트
 			{
 				IsOVER = true;
-				Game.PrintChat("Your Stack Is  " + buff.Count + ". Now Going to be offense.");
+				GamePrintChat("Your Stack Is  " + buff.Count + ". Now Going to be offense.");
 			}
 			if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) // MaGUS
 			{
-				Game.PrintChat("Stacks under " + maxstacks + ". Going back to farm.");
+				GamePrintChat("Stacks under " + maxstacks + ". Going back to farm.");
 				IsOVER = false;
 				IsAttackStart = false;
 			}
@@ -1741,7 +1736,7 @@ index = 14
 			turrett.Distance(Player.Position) <= TRRange && getHealthPercent(Player) < 33
 			&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>())) // HP LESS THAN 25%  //도망가!!!!!
 			{
-				Game.PrintChat("YOUR HP IS SO LOW. Back to RECALL!");
+				GamePrintChat("YOUR HP IS SO LOW. Back to RECALL!");
 				Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
 				if (Player.Distance(ehero.Position) <= 700 &&
 					(Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade)) ||
@@ -1786,7 +1781,7 @@ index = 14
 			&& turrett.Distance(Player.Position) > 2250 && emini.Distance(Player.Position) > 1500
 			&& RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
 			{
-				Game.PrintChat("Time To Recall Yeah!");
+				GamePrintChat("Time To Recall Yeah!");
 				Player.Spellbook.CastSpell(SpellSlot.Recall);
 				recall = true;
 				recallhp = Player.Health;
@@ -1835,9 +1830,9 @@ index = 14
 				}
 			}
 		#endregion
-			//Game.PrintChat("Gold:" + Player.Gold);
-			//Game.PrintChat("NeedItem:" + buyThings.First().needItem.ToString());
-			//Game.PrintChat("BuyItem:" + buyThings.First().item.ToString());
+			//GamePrintChat("Gold:" + Player.Gold);
+			//GamePrintChat("NeedItem:" + buyThings.First().needItem.ToString());
+			//GamePrintChat("BuyItem:" + buyThings.First().item.ToString());
 			#region 아이템트리 올리기 // item build up
 			if (buyThings.Any(t => t.item != ItemId.Unknown))
 			{
@@ -1883,6 +1878,11 @@ index = 14
 		#endregion
 		AutoLevel.Enabled(true);
 	}
+	public static void GamePrintChat(string message)//신
+	{ //아 미친랙때문에 지웁니다.
+		Console.WriteLine(message);
+		//LSConsole.WriteLine(message);
+	}
 	private static void OnCreate(GameObject sender, EventArgs args)
 	{
 		if (sender.IsValid<Obj_SpellMissile>())
@@ -1903,7 +1903,7 @@ index = 14
 								Pounce.Cast(spawn);
 								}
 							}
-				Game.PrintChat("OOPS YOU ARE ATTACKED BY TURRET!");
+				GamePrintChat("OOPS YOU ARE ATTACKED BY TURRET!");
 				Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 				IsAttackedByTurret = true;
 			}
@@ -1942,7 +1942,7 @@ index = 14
 								Pounce.Cast(spawn);
 								}
 							}
-					Game.PrintChat("OOPS YOU ARE ATTACKED BY INHIBIT TURRET!");
+					GamePrintChat("OOPS YOU ARE ATTACKED BY INHIBIT TURRET!");
 					Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 					IsAttackedByTurret = true;
 				}
@@ -2383,7 +2383,7 @@ index = 14
 		foreach (var spell in Player.Spellbook.Spells.Where(spell => String.Equals(spell.Name, smitetype(), StringComparison.CurrentCultureIgnoreCase)))
 		{
 			smiteSlot = spell.Slot;
-			smite = new Spell(smiteSlot, 500);
+			smite = new Spell(smiteSlot, 550);
 			return;
 		}
 	}
@@ -2490,45 +2490,45 @@ index = 14
 		{
 			buyThings.Clear();
 			buyThings = buyThings_AP;
-			Game.PrintChat("Set ItemTree for AP - Finished");
+			GamePrintChat("Set ItemTree for AP - Finished");
 		}
 		else if (Readini.GetItemTreetype(setFile.FullName) == "BAP")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_BAP;
-			Game.PrintChat("Set ItemTree for BAP with Blue Smite Fin.");
+			GamePrintChat("Set ItemTree for BAP with Blue Smite Fin.");
 		}
 		else if (Readini.GetItemTreetype(setFile.FullName) == "AS")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_AS;
-			Game.PrintChat("Set ItemTree for AS - Finished");
+			GamePrintChat("Set ItemTree for AS - Finished");
 		}
 		else if (Readini.GetItemTreetype(setFile.FullName) == "TANK")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_TANK;
-			Game.PrintChat("Set ItemTree for TANK - Finished");
+			GamePrintChat("Set ItemTree for TANK - Finished");
 		}
 		else if (Readini.GetItemTreetype(setFile.FullName) == "HI")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_HI;
-			Game.PrintChat("Set ItemTree for AP+AD - Finished");
+			GamePrintChat("Set ItemTree for AP+AD - Finished");
 		}
 		else if (Readini.GetItemTreetype(setFile.FullName) == "ADC")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_ADC;
-			Game.PrintChat("ADC Itemtree Loaded. Time to carry.");
+			GamePrintChat("ADC Itemtree Loaded. Time to carry.");
 		}
 		else if (Readini.GetItemTreetype(setFile.FullName) == "X")
 		{
-			Game.PrintChat("PLZ TYPE VALID VALUE, SET AD ITEMTREE - ERROR");
+			GamePrintChat("PLZ TYPE VALID VALUE, SET AD ITEMTREE - ERROR");
 		}
 		else
 		{
-			Game.PrintChat("Set ItemTree for AD - Finished");
+			GamePrintChat("Set ItemTree for AD - Finished");
 		}
 	}
 	#endregion
@@ -2540,45 +2540,45 @@ index = 14
 		{
 			buyThings.Clear();
 			buyThings = buyThings_AP;
-			Game.PrintChat("Set ItemTree for AP - Finished");
+			GamePrintChat("Set ItemTree for AP - Finished");
 		}
 		else if (type == "BAP")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_BAP;
-			Game.PrintChat("Set ItemTree for BAP with Blue Smite Fin.");
+			GamePrintChat("Set ItemTree for BAP with Blue Smite Fin.");
 		}
 		else if (type == "AS")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_AS;
-			Game.PrintChat("Set ItemTree for AS - Finished");
+			GamePrintChat("Set ItemTree for AS - Finished");
 		}
 		else if (type == "TANK")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_TANK;
-			Game.PrintChat("Set ItemTree for TANK - Finished");
+			GamePrintChat("Set ItemTree for TANK - Finished");
 		}
 		else if (type == "HI")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_HI;
-			Game.PrintChat("Set ItemTree for AP+AD - Finished");
+			GamePrintChat("Set ItemTree for AP+AD - Finished");
 		}
 		else if (type == "ADC")
 		{
 			buyThings.Clear();
 			buyThings = buyThings_ADC;
-			Game.PrintChat("ADC Itemtree Loaded. Time to carry.");
+			GamePrintChat("ADC Itemtree Loaded. Time to carry.");
 		}
 		else if (type == "AD")
 		{
-			Game.PrintChat("AAADDDDD");
+			GamePrintChat("AAADDDDD");
 		}
 		else
 		{
-			Game.PrintChat("Set ItemTree for AD - Finished");
+			GamePrintChat("Set ItemTree for AD - Finished");
 		}
 	}
 	#endregion

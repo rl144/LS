@@ -1,20 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.IO;
+
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
 
 namespace RLProjectJunglePlay
 {
-	public class Addon
+	class AddOn
 	{
         static Orbwalking.Orbwalker Orbwalker;
         static Obj_AI_Hero Player { get { return ObjectManager.Player; } }

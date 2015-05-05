@@ -26,8 +26,8 @@ namespace IgSm
 		public static SpellSlot igniteSlot = SpellSlot.Unknown;
         private static Menu Menu;
         private static Items.Item s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
-        private static float range = 700f;
-		private static float irange = 600f;
+        private static float range = 550f;
+		private static float irange = 550f;
 
         private static void Main(string[] args)
         {
