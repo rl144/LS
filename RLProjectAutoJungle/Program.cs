@@ -1203,6 +1203,7 @@ index = 14
         Game.OnUpdate += Game_OnUpdate;
         GameObject.OnCreate += OnCreate;
         Obj_AI_Base.OnProcessSpellCast += OnSpell;
+		AddOn.Load();
         if (smiteSlot == SpellSlot.Unknown)
             GamePrintChat("YOU ARE NOT JUNGLER(NO SMITE)");
     }
