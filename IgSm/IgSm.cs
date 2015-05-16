@@ -18,16 +18,17 @@ namespace IgSm
         private static Obj_AI_Hero Player;
         private static Spell SmiteSlot;
         private static Spell RSmite;
-		private static Spell IgniteSlot;
+        private static Spell IgniteSlot;
         private static List<Items.Item> itemsList = new List<Items.Item>();
         private static string WelcMsg = ("<font color = '#ff3366'>IgSm</font><font color='#FFFFFF'> by RL244.</font> <font color = '#66ff33'> ~~ LOADED ~~</font> ");
         public static SpellSlot smiteSlot = SpellSlot.Unknown;
         public static SpellSlot rsmiteSlot = SpellSlot.Unknown;
-		public static SpellSlot igniteSlot = SpellSlot.Unknown;
+        public static SpellSlot igniteSlot = SpellSlot.Unknown;
         private static Menu Menu;
         private static Items.Item s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
         private static float range = 550f;
-		private static float irange = 550f;
+        private static float irange = 550f;
+        public static float pastTime = 0; //버프 체크시 랙 덜걸리도록..
 
         private static void Main(string[] args)
         {
@@ -54,7 +55,7 @@ namespace IgSm
 
             if (Menu.Item("draw").GetValue<Circle>().Active)
             {
-                Utility.DrawCircle(Player.ServerPosition, range, Menu.Item("draw").GetValue<Circle>().Color);
+                Render.Circle.DrawCircle(Player.ServerPosition, range, Menu.Item("draw").GetValue<Circle>().Color);
             }
             else
                 return;
@@ -62,21 +63,21 @@ namespace IgSm
 
         private static void Game_OnUpdate(EventArgs args)
         {
-            if (Menu.Item("dbbuff", true).GetValue<bool>())
-			{
-				foreach (var buff in ObjectManager.Player.Buffs)
-				{
-					Console.WriteLine("Name:{0}", buff.Name);
-				}
-			}
+            /*if (Menu.Item("dbbuff", true).GetValue<bool>())
+            {
+                foreach (var buff in ObjectManager.Player.Buffs)
+                {
+                    Console.WriteLine("Name:{0}", buff.Name);
+                }
+            }*/
             if (!Menu.Item("enable").GetValue<bool>())
                 return;
             if (Player.IsDead)
                 return;
             if (!CheckInv())
                 return;
-				
-			setIgniteSlot();
+                
+            setIgniteSlot();
             setSmiteSlot();
 
             var enemys = ObjectManager.Get<Obj_AI_Hero>().Where(f => !f.IsAlly && !f.IsDead && Player.Distance(f, false) <= range);
@@ -84,7 +85,7 @@ namespace IgSm
                 return;
 
             float dmg = Damage();
-			float idmg = Idamage();
+            float idmg = Idamage();
             foreach (var enemy in enemys)
             {
                 if (enemy.Health <= dmg)
@@ -93,33 +94,59 @@ namespace IgSm
                     SmiteSlot.Slot = smiteSlot;
                     Player.Spellbook.CastSpell(smiteSlot, enemy);
                 }
-				else if (enemy.Health <= idmg)
-				{
+                else if (enemy.Health <= idmg)
+                {
                     IgniteSlot.Slot = igniteSlot;
                     Player.Spellbook.CastSpell(igniteSlot, enemy);
-				}
+                }
             }
-			
-
+            
+            if(Menu.Item("dbbuff", true).GetValue<bool>() && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
+            {
+                if(Environment.TickCount - pastTime > 700) //랙 줄이려고 추가함
+                pastTime = Environment.TickCount;
+                if(Environment.TickCount - pastTime > 699)
+                {
+                    var Target = TargetSelector.GetTarget(1200, TargetSelector.DamageType.Physical);
+                    if(Target == null)
+                    {
+                        foreach (var buff in Player.Buffs)
+                        {
+                            Console.WriteLine("PLAYER : "+buff.Name);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var buff in Player.Buffs)
+                        {
+                            Console.WriteLine("PLAYER : "+buff.Name);
+                        }
+                        foreach (var buff in Target.Buffs)
+                        {
+                            Console.WriteLine("TARGET : "+buff.Name);
+                        }
+                    }
+                }
+            }
 
         }
-		
-		static void Orbwalking_OnAttack(AttackableUnit unit, AttackableUnit target)
-		{
+        
+        static void Orbwalking_OnAttack(AttackableUnit unit, AttackableUnit target)
+        {
             var Target = (Obj_AI_Base)target;
             
-			if (!unit.IsMe || Target == null)
+            if (!unit.IsMe || Target == null)
                 return;
-				
+                
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
-				{
-					if (!CheckInv())
-					return;
+                {
+                    if (!CheckInv())
+                    return;
                     RSmite.Slot = rsmiteSlot;
-					if(rsmiteSlot.IsReady())
+                    if(rsmiteSlot.IsReady())
                     Player.Spellbook.CastSpell(rsmiteSlot, Target);
-				}
-		}
+                }
+        }
 
         public static void setSmiteSlot()
         {
@@ -136,13 +163,13 @@ namespace IgSm
                 return;
             } //RS
         }
-		
+        
         public static void setIgniteSlot()
         {
             foreach (var spell in ObjectManager.Player.Spellbook.Spells.Where(spell => String.Equals(spell.Name, "SummonerDot", StringComparison.CurrentCultureIgnoreCase)))
             {
                 igniteSlot = spell.Slot;
-				igniteSlot = Player.GetSpellSlot("SummonerDot");
+                igniteSlot = Player.GetSpellSlot("SummonerDot");
                 return;
             }
         }
@@ -198,11 +225,11 @@ namespace IgSm
 
             return damage;
         }
-		private static float Idamage()
-		{
-			int lvl = Player.Level;
-			int idamage = (30 + 20 * lvl); // 원랜 50+20*lvl이지만 이렇게함!!)
-			return idamage;
-		}
-	}
+        private static float Idamage()
+        {
+            int lvl = Player.Level;
+            int idamage = (30 + 20 * lvl); // 원랜 50+20*lvl이지만 이렇게함!!)
+            return idamage;
+        }
+    }
 }
