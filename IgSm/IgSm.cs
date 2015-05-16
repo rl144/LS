@@ -66,29 +66,32 @@ namespace IgSm
             if (Player.IsDead)
                 return;
 
-            if(Menu.Item("enable").GetValue<bool>() && CheckInv())
+            if(Menu.Item("enable").GetValue<bool>())
             {
-                setIgniteSlot();
-                setSmiteSlot();
-
-                var enemys = ObjectManager.Get<Obj_AI_Hero>().Where(f => !f.IsAlly && !f.IsDead && Player.Distance(f, false) <= range);
-                if (enemys == null)
-                    return;
-
-                float dmg = Damage();
-                float idmg = Idamage();
-                foreach (var enemy in enemys)
+                if(CheckInv())
                 {
-                    if (enemy.Health <= dmg)
+                    setIgniteSlot();
+                    setSmiteSlot();
+
+                    var enemys = ObjectManager.Get<Obj_AI_Hero>().Where(f => !f.IsAlly && !f.IsDead && Player.Distance(f, false) <= range);
+                    if (enemys == null)
+                        return;
+
+                    float dmg = Damage();
+                    float idmg = Idamage();
+                    foreach (var enemy in enemys)
                     {
-                        //Game.PrintChat("KAPPA");
-                        SmiteSlot.Slot = smiteSlot;
-                        Player.Spellbook.CastSpell(smiteSlot, enemy);
-                    }
-                    else if (enemy.Health <= idmg)
-                    {
-                        IgniteSlot.Slot = igniteSlot;
-                        Player.Spellbook.CastSpell(igniteSlot, enemy);
+                        if (enemy.Health <= dmg)
+                        {
+                            //Game.PrintChat("KAPPA");
+                            SmiteSlot.Slot = smiteSlot;
+                            Player.Spellbook.CastSpell(smiteSlot, enemy);
+                        }
+                        else if (enemy.Health <= idmg)
+                        {
+                            IgniteSlot.Slot = igniteSlot;
+                            Player.Spellbook.CastSpell(igniteSlot, enemy);
+                        }
                     }
                 }
             }
