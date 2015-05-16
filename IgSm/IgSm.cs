@@ -63,41 +63,33 @@ namespace IgSm
 
         private static void Game_OnUpdate(EventArgs args)
         {
-            /*if (Menu.Item("dbbuff", true).GetValue<bool>())
-            {
-                foreach (var buff in ObjectManager.Player.Buffs)
-                {
-                    Console.WriteLine("Name:{0}", buff.Name);
-                }
-            }*/
-            if (!Menu.Item("enable").GetValue<bool>())
-                return;
             if (Player.IsDead)
                 return;
-            if (!CheckInv())
-                return;
-                
-            setIgniteSlot();
-            setSmiteSlot();
 
-            var enemys = ObjectManager.Get<Obj_AI_Hero>().Where(f => !f.IsAlly && !f.IsDead && Player.Distance(f, false) <= range);
-            if (enemys == null)
-                return;
-
-            float dmg = Damage();
-            float idmg = Idamage();
-            foreach (var enemy in enemys)
+            if(Menu.Item("enable").GetValue<bool>() && CheckInv())
             {
-                if (enemy.Health <= dmg)
+                setIgniteSlot();
+                setSmiteSlot();
+
+                var enemys = ObjectManager.Get<Obj_AI_Hero>().Where(f => !f.IsAlly && !f.IsDead && Player.Distance(f, false) <= range);
+                if (enemys == null)
+                    return;
+
+                float dmg = Damage();
+                float idmg = Idamage();
+                foreach (var enemy in enemys)
                 {
-                    //Game.PrintChat("KAPPA");
-                    SmiteSlot.Slot = smiteSlot;
-                    Player.Spellbook.CastSpell(smiteSlot, enemy);
-                }
-                else if (enemy.Health <= idmg)
-                {
-                    IgniteSlot.Slot = igniteSlot;
-                    Player.Spellbook.CastSpell(igniteSlot, enemy);
+                    if (enemy.Health <= dmg)
+                    {
+                        //Game.PrintChat("KAPPA");
+                        SmiteSlot.Slot = smiteSlot;
+                        Player.Spellbook.CastSpell(smiteSlot, enemy);
+                    }
+                    else if (enemy.Health <= idmg)
+                    {
+                        IgniteSlot.Slot = igniteSlot;
+                        Player.Spellbook.CastSpell(igniteSlot, enemy);
+                    }
                 }
             }
             
@@ -228,7 +220,7 @@ namespace IgSm
         private static float Idamage()
         {
             int lvl = Player.Level;
-            int idamage = (30 + 20 * lvl); // 원랜 50+20*lvl이지만 이렇게함!!)
+            int idamage = (50 + 20 * lvl); // 원랜 50+20*lvl이지만 이렇게함!!)
             return idamage;
         }
     }
