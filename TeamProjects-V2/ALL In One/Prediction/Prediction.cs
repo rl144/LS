@@ -13,22 +13,12 @@ namespace ALL_In_One
         static Obj_AI_Hero Player { get { return ObjectManager.Player; } } 
         static Orbwalking.Orbwalker Orbwalker { get { return AIO_Menu.Orbwalker; } } 
         
-        internal static float getHealthPercent(Obj_AI_Base unit)
-        {
-            return AIO_Func.getHealthPercent(unit);
-        }
-
-        internal static float getManaPercent(Obj_AI_Base unit)
-        {
-            return AIO_Func.getManaPercent(unit);
-        }
-        
         internal static float PredHealth(Obj_AI_Base Target, Spell spell)
         {
             return HealthPrediction.GetHealthPrediction(Target, (int)(Player.Distance(Target, false) / spell.Speed), (int)(spell.Delay * 1000 + Game.Ping / 2));
         }
         
-        internal static void CCast(Spell spell, Obj_AI_Base target) //for Circular spells
+        internal static void CCast(this Spell spell, Obj_AI_Base target) //for Circular spells
         {
             if(spell.Type == SkillshotType.SkillshotCircle || spell.Type == SkillshotType.SkillshotCone) // Cone 스킬은 임시로
             {
@@ -77,7 +67,7 @@ namespace ALL_In_One
             }
         }
         
-        internal static void LCast(Spell spell, Obj_AI_Base target, float alpha = 0f, float colmini = float.MaxValue, bool HeroOnly = false) //for Linar spells  사용예시 AIO_Func.LCast(Q,Qtarget,50,0)  
+        internal static void LCast(this Spell spell, Obj_AI_Base target, float alpha = 0f, float colmini = float.MaxValue, bool HeroOnly = false) //for Linar spells  사용예시 AIO_Func.LCast(Q,Qtarget,50,0)  
         {                            //        AIO_Func.LCast(E,Etarget,Menu.Item("Misc.Etg").GetValue<Slider>().Value,float.MaxValue); <- 이런식으로 사용.
             if(spell.Type == SkillshotType.SkillshotLine)
             {
@@ -96,7 +86,36 @@ namespace ALL_In_One
             }
         }
         
-        internal static void AtoB(Spell spell, Obj_AI_Base T, float Drag = 700f) //Coded By RL244 AtoB Drag 기본값 700f는 빅토르를 위한 것임.
+        internal static void ConeCast(this Spell spell, Obj_AI_Base target, float alpha = 0f, float colmini = float.MaxValue, bool HeroOnly = false)
+        {
+            if(spell.Type == SkillshotType.SkillshotCone)
+            {
+                if(spell != null && target !=null)
+                {
+                    var pred = Prediction.GetPrediction(target, spell.Delay, spell.Width/2, spell.Speed); //spell.Width/2
+                    var collision = spell.GetCollision(Player.ServerPosition.To2D(), new List<SharpDX.Vector2> { pred.CastPosition.To2D() });
+                    var minioncol = collision.Count(x => (HeroOnly == false ? x.IsMinion : (x is Obj_AI_Hero)));
+                    if (target.IsValidTarget(spell.Range - target.MoveSpeed * (spell.Delay + Player.Distance(target.ServerPosition) / spell.Speed) + alpha) && minioncol <= colmini && pred.Hitchance >= AIO_Menu.Champion.Misc.SelectedHitchance)
+                    {
+                        spell.Cast(pred.CastPosition);
+                    }
+                }
+            }
+        }
+        
+        internal static void AOECast(this Spell spell, Obj_AI_Base target)
+        {
+            if(spell != null && target !=null)
+            {
+                var pred = Prediction.GetPrediction(target, spell.Delay, spell.Range, spell.Speed);
+                if (pred.Hitchance >= HitChance.High && pred.UnitPosition.Distance(Player.ServerPosition) <= spell.Range)
+                {
+                    spell.Cast();
+                }
+            }
+        }
+        
+        internal static void AtoB(this Spell spell, Obj_AI_Base T, float Drag = 700f) //Coded By RL244 AtoB Drag 기본값 700f는 빅토르를 위한 것임.
         {
             if(T != null)
             {
@@ -133,8 +152,8 @@ namespace ALL_In_One
                 }
             }
         }
-		
-        internal static void RMouse(Spell spell)
+        
+        internal static void RMouse(this Spell spell)
         {
             SharpDX.Vector2 ReverseVec = Player.ServerPosition.To2D() -
                                        SharpDX.Vector2.Normalize(Game.CursorPos.To2D() - Player.Position.To2D()) * (spell.Range);
@@ -142,12 +161,12 @@ namespace ALL_In_One
             spell.Cast(ReverseVec);
         }
         
-        internal static void FleeToPosition(Spell spell, string W = "N") // N 정방향, R 역방향.
+        internal static void FleeToPosition(this Spell spell, string W = "N") // N 정방향, R 역방향.
         {
             bool FM = true;
             if (Menu.Item("Flee.If Mana >" + spell.Slot.ToString(), true) != null)
             {
-                FM = getManaPercent(Player) > AIO_Menu.Champion.Flee.IfMana;
+                FM = Player.ManaPercent > AIO_Menu.Champion.Flee.IfMana;
             }
             else
             {

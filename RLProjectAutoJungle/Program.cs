@@ -4,7 +4,7 @@ using System.Linq;
 using SharpDX;
 using LeagueSharp;
 using LeagueSharp.Common;
-using LSConsole = LeagueSharp.Console.Console;
+//using LSConsole = LeagueSharp.Console.Console;
 
 
 namespace RLProjectJunglePlay
@@ -2353,7 +2353,7 @@ index = 14
             if (targetSpell.SData.CastRange <= 0)
             {
                 return
-                targetSpell.SData.CastRadius;
+                Player.AttackRange;//targetSpell.SData.CastRadius;
             }
             else
             {

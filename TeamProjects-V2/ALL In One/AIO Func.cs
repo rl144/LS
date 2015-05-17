@@ -299,8 +299,10 @@ namespace ALL_In_One
                             else if(spell.Type == SkillshotType.SkillshotCone)
                             spell.Cast(target);
                         }
-                        else
+                        else if(!spell.IsSkillshot)
                         spell.Cast(target);
+                        else
+                        spell.AOECast(target);
                     }
                 }
                 else if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed && Menu.Item("Harass.Use " + spell.Slot.ToString(), true) != null)
@@ -320,8 +322,10 @@ namespace ALL_In_One
                             else if(spell.Type == SkillshotType.SkillshotCone)
                             spell.Cast(target);
                         }
-                        else
+                        else if(!spell.IsSkillshot)
                         spell.Cast(target);
+                        else
+                        spell.AOECast(target);
                     }
                 }
             }
@@ -344,8 +348,10 @@ namespace ALL_In_One
                             else if(spell.Type == SkillshotType.SkillshotCone)
                             spell.Cast(Mobs[0]);
                         }
-                        else
+                        else if(!spell.IsSkillshot)
                         spell.Cast(Mobs[0]);
+                        else
+                        spell.AOECast(Mobs[0]);
                     }
                 }
                 if (Minions.Count > 0 && Menu.Item("Laneclear.Use " + spell.Slot.ToString(), true) != null)
@@ -367,8 +373,10 @@ namespace ALL_In_One
                             else if(spell.Type == SkillshotType.SkillshotCone)
                             spell.Cast(Minions[0]);
                         }
+                        else if(!spell.IsSkillshot)
+                        spell.Cast(Minions[0]);
                         else
-                        LH(spell);
+                        spell.AOECast(Minions[0]);
                     }
                 }
             }
