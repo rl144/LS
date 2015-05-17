@@ -19,6 +19,7 @@ namespace BuffChecker
         private static Menu Menu;
         static float pastTime = 0; //버프 체크시 랙 덜걸리도록..
         static bool RM {get{return Menu.Item("dbbuff").GetValue<KeyBind>().Active; }}
+        static float TM {get{return Menu.Item("timer").GetValue<Slider>().Value; }}
 
         private static void Main(string[] args)
         {
@@ -36,9 +37,9 @@ namespace BuffChecker
         {
             if(RM)
             {
-                if(Environment.TickCount - pastTime > 700) //랙 줄이려고 추가함
+                if(Environment.TickCount - pastTime > TM) //랙 줄이려고 추가함
                 pastTime = Environment.TickCount;
-                if(Environment.TickCount - pastTime > 699)
+                if(Environment.TickCount - pastTime > TM - 10f)
                 {
                     var Target = TargetSelector.GetTarget(1200, TargetSelector.DamageType.Physical);
                     if(Target == null)
@@ -52,11 +53,11 @@ namespace BuffChecker
                     {
                         foreach (var buff in Player.Buffs)
                         {
-                            Console.WriteLine("PLAYER : "+buff.Name);
+                            Console.WriteLine("PLAYER : "+ buff.Name);
                         }
                         foreach (var buff in Target.Buffs)
                         {
-                            Console.WriteLine("TARGET : "+buff.Name);
+                            Console.WriteLine("TARGET : "+ buff.Name);
                         }
                     }
                 }
@@ -66,6 +67,7 @@ namespace BuffChecker
         private static void CreateMenu()
         {
             Menu = new Menu("BuffChecker", "menu", true);
+            Menu.AddItem(new MenuItem("timer", "timer")).SetValue(new Slider(500, 200, 5000));
             Menu.AddItem(new MenuItem("dbbuff", "dbbuff")).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press, false));
             Menu.AddToMainMenu();
         }
