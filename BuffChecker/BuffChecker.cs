@@ -68,7 +68,7 @@ namespace BuffChecker
         {
             Menu = new Menu("BuffChecker", "menu", true);
             Menu.AddItem(new MenuItem("timer", "timer")).SetValue(new Slider(500, 200, 5000));
-            Menu.AddItem(new MenuItem("dbbuff", "dbbuff")).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press, false));
+            Menu.AddItem(new MenuItem("dbbuff", "Simple Buff Checker")).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press, false));
             Menu.AddToMainMenu();
         }
     }
