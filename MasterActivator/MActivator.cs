@@ -113,7 +113,7 @@ namespace MasterActivator
         MItem nidaE = new MItem("PrimalSurge", "Primal Surge", "nidaE", 0, ItemTypeId.TeamAbility, 600, SpellSlot.E);
         MItem fizzE = new MItem("FizzJump", "Fizz Jump", "fizzE", 0, ItemTypeId.Ability, 400, SpellSlot.E);
         MItem sionW = new MItem("DeathScaress", "Soul Furnace", "sionW", 0, ItemTypeId.Ability, int.MaxValue, SpellSlot.W);
-        MItem sonaW = new MItem("SonaAriaOfPerseverance", "Aria of Perseverance	", "sonaW", 0, ItemTypeId.TeamAbility, 1000, SpellSlot.W, SpellType.Self);
+        MItem sonaW = new MItem("SonaAriaOfPerseverance", "Aria of Perseverance    ", "sonaW", 0, ItemTypeId.TeamAbility, 1000, SpellSlot.W, SpellType.Self);
         MItem lissR = new MItem("LissandraR", "Liss R(Self)", "lissR", 0, ItemTypeId.Ability, 550, SpellSlot.R);
         //  sona W range 1000
         // lee W, blindmonkwone(targ), blindmonkwtwo(self-l-steal/mv) 700 range?
