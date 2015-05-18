@@ -106,18 +106,59 @@ namespace RLProjectJunglePlay
         internal class AfterAttack
         {
 			internal static Items.Item H, T;
+            internal static Spell Q, W, E, R;
 			internal static List<Items.Item> itemsList = new List<Items.Item>();
+            internal static void Wcancel() { Player.IssueOrder(GameObjectOrder.MoveTo, Player.ServerPosition); }
+            internal static SpellDataInst Qdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.Q);
+            internal static SpellDataInst Wdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W);
+            internal static SpellDataInst Edata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E);
+            internal static SpellDataInst Rdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R);
 			internal static void Game_OnGameLoad(EventArgs args)
 			{
             H = new Items.Item(3074, 250f);
             T = new Items.Item(3077, 250f);
+			#region 스펠설정
+			Q = new Spell(SpellSlot.Q, GetSpellRange(Qdata));
+			W = new Spell(SpellSlot.W, GetSpellRange(Wdata));
+			E = new Spell(SpellSlot.E, GetSpellRange(Edata));
+			R = new Spell(SpellSlot.R, GetSpellRange(Rdata));
+			#endregion
 			}
+            internal static float GetSpellRange(SpellDataInst targetSpell, bool IsChargedSkill = false)
+            {
+                if (targetSpell.SData.CastRangeDisplayOverride <= 0)
+                {
+                    if (targetSpell.SData.CastRange <= 0)
+                    {
+                        return
+                        targetSpell.SData.CastRadius;
+                    }
+                    else
+                    {
+                        if (!IsChargedSkill)
+                            return
+                            targetSpell.SData.CastRange;
+                        else
+                            return
+                            targetSpell.SData.CastRadius;
+                    }
+                }
+                else
+                    return
+                    targetSpell.SData.CastRangeDisplayOverride;
+            }
 			internal static void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target)
 			{
-			if (!unit.IsMe || target == null || target.IsDead || unit.IsDead || target.Type != GameObjectType.obj_AI_Hero) //target.Type != GameObjectType.obj_AI_Minion
-				return;
-			S(H);
-			S(T);
+                if (!unit.IsMe || target == null || target.IsDead || unit.IsDead || target.Type != GameObjectType.obj_AI_Hero) //target.Type != GameObjectType.obj_AI_Minion
+                    return;
+                S(H);
+                S(T);
+                if(Player.ChampionName == "MasterYi" && W.IsReady() && !H.IsReady() && !T.IsReady())
+                {
+                    W.Cast();
+                    Utility.DelayAction.Add(80, Orbwalking.ResetAutoAttackTimer);
+                    Utility.DelayAction.Add(80, Wcancel);
+                }
 			}
 		}
 		
