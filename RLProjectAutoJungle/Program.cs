@@ -1380,6 +1380,8 @@ index = 14
             {
                 if (Game.Time - gamestart >= 0)
                 {
+                    if(Items.HasItem(Convert.ToInt32(ItemId.Scrying_Orb_Trinket)))
+                    {
                     Player.IssueOrder(GameObjectOrder.MoveTo, MonsterList.First(t => t.order == 1).Position);
                             if (Player.ChampionName == "Nidalee")
                             {
@@ -1395,7 +1397,8 @@ index = 14
                                     }
                                 }
                             }
-                            
+                    afktime = 0;
+                    }
                     afktime = 0;
                 }
                 if (Player.Distance(MonsterList.First(t => t.order == 1).Position) <= 100)
