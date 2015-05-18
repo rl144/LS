@@ -1427,8 +1427,8 @@ index = 14
                         && RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
                         {
                             GamePrintChat("YOUR HP IS SO LOW. RECALL!");
-                            Player.Spellbook.CastSpell(SpellSlot.Recall);
                             recall = true;
+                            Player.Spellbook.CastSpell(SpellSlot.Recall);
                             recallhp = Player.Health;
                         }
                         else if (!Player.InShop() && Player.Gold > buyThings.First().Price
@@ -1436,8 +1436,8 @@ index = 14
                         && Player.InventoryItems.Length < 9) // HP LESS THAN 25%
                         {
                             GamePrintChat("CAN BUY " + buyThings.First().item.ToString() + ". RECALL!");
-                            Player.Spellbook.CastSpell(SpellSlot.Recall);
                             recall = true;
+                            Player.Spellbook.CastSpell(SpellSlot.Recall);
                             recallhp = Player.Health;
                         }
                         else if (Player.Position.Distance(target.Position) > Player.AttackRange)
@@ -1781,7 +1781,7 @@ index = 14
                 }
                 afktime = 0;
             }
-            if (!Player.InShop() && getHealthPercent(Player) < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
+            if (false == recall && !Player.InShop() && getHealthPercent(Player) < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
             && turrett.Distance(Player.Position) > 2250 && emini.Distance(Player.Position) > 1500
             && RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
             {
