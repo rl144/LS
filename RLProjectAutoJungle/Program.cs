@@ -1187,11 +1187,11 @@ index = 14
         #endregion
 
         #region 현재 아이템 단계 설정 - 도중 리로드시 필요
-        if (buyThings.Any(h => Items.HasItem(Convert.ToInt32(h.needItem))))
+        if (buyThings.Any(h => Items.HasItem((int)(h.needItem))))
         {
-            if (buyThings.First().needItem != buyThings.Last(h => Items.HasItem(Convert.ToInt32(h.needItem))).needItem)
+            if (buyThings.First().needItem != buyThings.Last(h => Items.HasItem((int)(h.needItem))).needItem)
             {
-                var lastitem = buyThings.Last(h => Items.HasItem(Convert.ToInt32(h.needItem)));
+                var lastitem = buyThings.Last(h => Items.HasItem((int)(h.needItem)));
                 GamePrintChat("Find new ItemList");
                 List<ItemToShop> newlist = buyThings.Where(t => t.index >= lastitem.index).ToList();
                 buyThings.Clear();
@@ -1380,7 +1380,7 @@ index = 14
             {
                 if (Game.Time - gamestart >= 0)
                 {
-                    if(Items.HasItem(Convert.ToInt32(ItemId.Scrying_Orb_Trinket)))
+                    if(Items.HasItem((int)(ItemId.Scrying_Orb_Trinket)))
                     {
                     Player.IssueOrder(GameObjectOrder.MoveTo, MonsterList.First(t => t.order == 1).Position);
                             if (Player.ChampionName == "Nidalee")
@@ -1512,7 +1512,7 @@ index = 14
                 }
                 recall = false;
             }
-            if (level >= maxlv || Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
+            if (level >= maxlv || Items.HasItem((int)(ItemId.Sorcerers_Shoes)))
             {
                 IsOVER = true;
                 GamePrintChat("You're level is" + level + ". Now Going to be offense.");
@@ -1520,7 +1520,7 @@ index = 14
         }
         else
         {
-            if (level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) && !Items.HasItem(Convert.ToInt32(ItemId.Sorcerers_Shoes)))
+            if (level < maxlv && !Items.HasItem((int)(ItemId.Stalkers_Blade_Enchantment_Devourer)) && !Items.HasItem((int)(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) && !Items.HasItem((int)(ItemId.Sorcerers_Shoes)))
             {
                 GamePrintChat("You're under " + maxlv + "lv. Going back to farm.");
                 IsOVER = false;
@@ -1532,12 +1532,12 @@ index = 14
         foreach (var buff in Player.Buffs.Where(b => b.DisplayName == "Enchantment_Slayer_Stacks"))
         {
             int maxstacks = RLProjectAutoJungleMenu.Item("maxstacks").GetValue<Slider>().Value;
-            if (buff.Count >= maxstacks && !IsOVER || level >= maxlv)// || Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) //--테스트
+            if (buff.Count >= maxstacks && !IsOVER || level >= maxlv)// || Items.HasItem((int)(ItemId.Rangers_Trailblazer_Enchantment_Magus)) || Items.HasItem((int)(ItemId.Stalkers_Blade_Enchantment_Magus))) //--테스트
             {
                 IsOVER = true;
                 GamePrintChat("Your Stack Is  " + buff.Count + ". Now Going to be offense.");
             }
-            if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus))) // MaGUS
+            if (buff.Count < maxstacks && IsOVER && level < maxlv && !Items.HasItem((int)(ItemId.Rangers_Trailblazer_Enchantment_Magus)) && !Items.HasItem((int)(ItemId.Stalkers_Blade_Enchantment_Magus))) // MaGUS
             {
                 GamePrintChat("Stacks under " + maxstacks + ". Going back to farm.");
                 IsOVER = false;
@@ -1743,9 +1743,9 @@ index = 14
                 GamePrintChat("YOUR HP IS SO LOW. Back to RECALL!");
                 Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
                 if (Player.Distance(ehero.Position) <= 700 &&
-                    (Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade)) ||
-                    Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus)) ||
-                    Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Devourer))))
+                    (Items.HasItem((int)(ItemId.Stalkers_Blade)) ||
+                    Items.HasItem((int)(ItemId.Stalkers_Blade_Enchantment_Magus)) ||
+                    Items.HasItem((int)(ItemId.Stalkers_Blade_Enchantment_Devourer))))
                 {
                     smite.CastOnUnit(ehero);
                 }
@@ -1818,19 +1818,19 @@ index = 14
         #region 시작아이템 사기 // startup
         if (Player.InShop() || Player.IsDead)
         {
-            if (!(Items.HasItem(Convert.ToInt32(ItemId.Hunters_Machete)) ||
-            Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer)) ||
-            Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) ||
-            Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer_Enchantment_Magus)) ||
-            Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade)) ||
-            Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Magus)) ||
-            Items.HasItem(Convert.ToInt32(ItemId.Stalkers_Blade_Enchantment_Devourer))
+            if (!(Items.HasItem((int)ItemId.Hunters_Machete) ||
+            Items.HasItem((int)ItemId.Rangers_Trailblazer) ||
+            Items.HasItem((int)(ItemId.Rangers_Trailblazer_Enchantment_Devourer)) ||
+            Items.HasItem((int)(ItemId.Rangers_Trailblazer_Enchantment_Magus)) ||
+            Items.HasItem((int)(ItemId.Stalkers_Blade)) ||
+            Items.HasItem((int)(ItemId.Stalkers_Blade_Enchantment_Magus)) ||
+            Items.HasItem((int)(ItemId.Stalkers_Blade_Enchantment_Devourer))
             ))
             {
                 if (smiteSlot != SpellSlot.Unknown)
                 {
-                    Player.BuyItem(ItemId.Hunters_Machete);
-                    Player.BuyItem(ItemId.Scrying_Orb_Trinket);
+                    Player.BuyItem((ItemId)1039);
+                    Player.BuyItem((ItemId)3342);
                 }
             }
         #endregion
@@ -1840,11 +1840,11 @@ index = 14
             #region 아이템트리 올리기 // item build up
             if (buyThings.Any(t => t.item != ItemId.Unknown))
             {
-                if (Items.HasItem(Convert.ToInt32(buyThings.First().needItem)))
+                if (Items.HasItem((int)(buyThings.First().needItem)))
                 {
                     if (Player.Gold > buyThings.First().Price)
                     {
-                        Player.BuyItem(buyThings.First().item);
+                        Player.BuyItem((ItemId)(int)(buyThings.First().item));
                         buyThings.Remove(buyThings.First());
                     }
                 }
@@ -1852,11 +1852,11 @@ index = 14
             #endregion
             #region 포션 구매 - buy potions
             if (Player.Gold > 35f && !IsOVER && !Player.InventoryItems.Any(t => t.Id == ItemId.Health_Potion) && Player.Level <= 6)
-                Player.BuyItem(ItemId.Health_Potion);
+                Player.BuyItem((ItemId)2003);
             if (Player.InventoryItems.Any(t => t.Id == ItemId.Health_Potion))
             {
                 if (Player.InventoryItems.First(t => t.Id == ItemId.Health_Potion).Stacks <= 2 && Player.Level <= 6)
-                    Player.BuyItem(ItemId.Health_Potion);
+                    Player.BuyItem((ItemId)2003);
                 if (Player.Level > 6)
                     Player.SellItem(Player.InventoryItems.First(t => t.Id == ItemId.Health_Potion).Slot);
             }
@@ -2393,19 +2393,19 @@ index = 14
     }
     public static string smitetype()
     {
-        if (Player.InventoryItems.Any(item => SmiteBlue.Any(t => t == Convert.ToInt32(item.Id))))
+        if (Player.InventoryItems.Any(item => SmiteBlue.Any(t => t == (int)(item.Id))))
         {
             return "s5_summonersmiteplayerganker";
         }
-        if (Player.InventoryItems.Any(item => SmiteRed.Any(t => t == Convert.ToInt32(item.Id))))
+        if (Player.InventoryItems.Any(item => SmiteRed.Any(t => t == (int)(item.Id))))
         {
             return "s5_summonersmiteduel";
         }
-        if (Player.InventoryItems.Any(item => SmiteGrey.Any(t => t == Convert.ToInt32(item.Id))))
+        if (Player.InventoryItems.Any(item => SmiteGrey.Any(t => t == (int)(item.Id))))
         {
             return "s5_summonersmitequick";
         }
-        if (Player.InventoryItems.Any(item => SmitePurple.Any(t => t == Convert.ToInt32(item.Id))))
+        if (Player.InventoryItems.Any(item => SmitePurple.Any(t => t == (int)(item.Id))))
         {
             return "itemsmiteaoe";
         }
