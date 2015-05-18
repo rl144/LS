@@ -43,10 +43,11 @@ namespace RLProjectJunglePlay
 
 			internal static void Orbwalking_OnAttack(AttackableUnit unit, AttackableUnit target)
 			{
-				var Target = (Obj_AI_Hero)target;
-					
-				if (!unit.IsMe || Target == null)
-						return;
+                if(!unit.IsMe)
+                    return;
+				var Target = target as Obj_AI_Hero;	
+				if (Target == null)
+                    return;
 						
 					RS.Slot = smiteSlot;
 					if(smiteSlot.IsReady())
