@@ -1583,9 +1583,12 @@ index = 14
                         if(Player.Distance(emini.Position) < 650)
                         {Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));}
                         else
-                        recall = true;
+                        {
+                            Player.Spellbook.CastSpell(SpellSlot.Recall);
+                            recall = true;
+                        }
                         if(Player.Distance(aturret.Position) <= TRRange + 100)
-                IsAttackStart = true;
+                        IsAttackStart = true;
 //                    }
 /*                    else
                     {
@@ -1627,7 +1630,11 @@ index = 14
                     }*/
                 }
                 else
+                {
                 IsAttackStart = true;
+                    if(recall)
+                    recall = false;
+                }
                 //}
             }
             else
@@ -1833,6 +1840,8 @@ index = 14
                     Player.BuyItem((ItemId)3342);
                 }
             }
+            if(recall)
+            recall = false;
         #endregion
             //GamePrintChat("Gold:" + Player.Gold);
             //GamePrintChat("NeedItem:" + buyThings.First().needItem.ToString());
