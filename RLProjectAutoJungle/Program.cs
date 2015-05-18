@@ -1240,14 +1240,14 @@ index = 14
             {
                 var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
             int turretcount = GetEnemyList().Where(x => x.Distance(Player.Position) <= 20000).Count();
-                if (Player.InFountain() && getHealthPercent(Player) > 85)
+                if (Player.InShop() && getHealthPercent(Player) > 85)
                 {
                 //if(turretcount >= 1)
                 //    Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
                 //else
                     Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                 }
-                else if(!Player.InFountain() && !Player.InShop())
+                else if(!Player.InShop())
                     {
                     if(IsOVER && IsAttackStart && getHealthPercent(Player) > 50)
                     Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
@@ -1423,7 +1423,7 @@ index = 14
                     if (!recall)
                     {
                         //DoCast_Hero();
-                        if (!Player.InFountain() && !Player.InShop() && getHealthPercent(Player) < RLProjectAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
+                        if (!Player.InShop() && getHealthPercent(Player) < RLProjectAutoJungleMenu.Item("hpper").GetValue<Slider>().Value && !Player.IsDead//hpper
                         && RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
                         {
                             GamePrintChat("YOUR HP IS SO LOW. RECALL!");
@@ -1431,7 +1431,7 @@ index = 14
                             recall = true;
                             recallhp = Player.Health;
                         }
-                        else if (!Player.InFountain() && !Player.InShop() && Player.Gold > buyThings.First().Price
+                        else if (!Player.InShop() && Player.Gold > buyThings.First().Price
                         && RLProjectAutoJungleMenu.Item("autorecallitem").GetValue<Boolean>()
                         && Player.InventoryItems.Length < 9) // HP LESS THAN 25%
                         {
@@ -1442,7 +1442,7 @@ index = 14
                         }
                         else if (Player.Position.Distance(target.Position) > Player.AttackRange)
                         {
-                            if(Player.InFountain() && getHealthPercent(Player) > 85 || !Player.InFountain() && !Player.InShop())
+                            if(Player.InShop() && getHealthPercent(Player) > 85 || !Player.InShop())
                             {
                             Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
 
@@ -1498,7 +1498,7 @@ index = 14
                     }}
                 }
             }
-            if (Player.InFountain())
+            if (Player.InShop())
             {
                 if(RLProjectAutoJungleMenu.Item("Invade").GetValue<Boolean>())
                 {
@@ -1576,7 +1576,7 @@ index = 14
                     IsAttackStart = true;
                 else
                 {*/
-                if(!Player.InFountain() && !Player.InShop())
+                if(!Player.InShop())
                 {
 //                    if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
 //                    {
@@ -1638,7 +1638,7 @@ index = 14
                 //                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
                 if (IsOVER && !IsAttackedByTurret && getHealthPercent(Player) >= 35)
                 {
-                    if(Player.InFountain() && getHealthPercent(Player) >= 85 || !Player.InFountain() && !Player.InShop())
+                    if(Player.InShop() && getHealthPercent(Player) >= 85 || !Player.InShop())
                     {
                         if ((turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= s_ehro && face_ehro2 <= s_ehro2 && getHealthPercent(Player) >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= s_ehro2 && (face_ehro2LH > 1 || face_allye > 0) && getHealthPercent(Player) >= 35) 
                         && (CM > 1 || ehero.Distance(turret.Position) > TRRange && ehero.Distance(Player.Position) <= TRRange * 3 / 2 || face_ally > 0 || tminic > 1))
@@ -1781,7 +1781,7 @@ index = 14
                 }
                 afktime = 0;
             }
-            if (!Player.InFountain() && !Player.InShop() && getHealthPercent(Player) < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
+            if (!Player.InShop() && getHealthPercent(Player) < 35 && !Player.IsDead && ehero.Distance(Player.Position) > 2500//hpper
             && turrett.Distance(Player.Position) > 2250 && emini.Distance(Player.Position) > 1500
             && RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) // HP LESS THAN 25%
             {
@@ -1816,7 +1816,7 @@ index = 14
         #endregion
         #region 상점이용가능할때 // when you are in shop range or dead
         #region 시작아이템 사기 // startup
-        if (Player.InFountain() || Player.IsDead)
+        if (Player.InShop() || Player.IsDead)
         {
             if (!(Items.HasItem(Convert.ToInt32(ItemId.Hunters_Machete)) ||
             Items.HasItem(Convert.ToInt32(ItemId.Rangers_Trailblazer)) ||
@@ -1866,7 +1866,7 @@ index = 14
         }
         #endregion
         #region 자동포션사용 - auto use potions
-        if (getHealthPercent(Player) <= 60 && !Player.InFountain() && !Player.InShop())
+        if (getHealthPercent(Player) <= 60 && !Player.InShop())
         {
             ItemId item = ItemId.Health_Potion;
             if (Player.InventoryItems.Any(t => Convert.ToInt32(t.Id) == 2010))
