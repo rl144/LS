@@ -1570,8 +1570,8 @@ index = 14
             int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 900).Count();
             int CM = GetTMinionList().Where(x => x.Distance(Player.Position) <= 350).Count();
             int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();                
-            if(Player.InShop() && Player.HealthPercent < 85) //자동귀환취소.
-                Player.IssueOrder(GameObjectOrder.MoveTo, Player.ServerPosition);
+            //if(Player.InShop() && Player.HealthPercent < 85) //자동귀환취소.
+            //    Player.IssueOrder(GameObjectOrder.MoveTo, Player.ServerPosition);
             if (!IsAttackStart)
             {
                 /*if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
@@ -1592,6 +1592,7 @@ index = 14
                             {
                                 Player.Spellbook.CastSpell(SpellSlot.Recall);
                                 recall = true;
+                                IsAttackStart = true;
                             }
                         }
                         if(Player.Distance(aturret.Position) <= TRRange + 100)
