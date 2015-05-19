@@ -1730,6 +1730,9 @@ index = 14
                 
                 if (tminic < 1 && turret.Distance(Player.Position) <= TRRange + 250 && turret.Distance(Player.Position) > TRRange - 200)
                     Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+                    
+                if (Player.Distance(enemy_spawn) <= TRRange + 350)
+                    Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 
                 if (turret.Distance(Player.Position) > TRRange + 200)
                     IsAttackedByTurret = false;
