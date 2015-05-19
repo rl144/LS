@@ -1547,6 +1547,8 @@ index = 14
 
         
         #endregion
+        if(recall && Player.InShop()) //리콜은 ㄴㄴ
+        recall = false;
         #region 공격 모드 - offensive mode
         if (IsOVER)
         {
@@ -1568,6 +1570,8 @@ index = 14
             int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 900).Count();
             int CM = GetTMinionList().Where(x => x.Distance(Player.Position) <= 350).Count();
             int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();                
+            //if(Player.InShop() && Player.HealthPercent < 85) //자동귀환취소.
+            //    Player.IssueOrder(GameObjectOrder.MoveTo, Player.ServerPosition);
             if (!IsAttackStart)
             {
                 /*if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam)
@@ -1584,8 +1588,12 @@ index = 14
                         {Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));}
                         else
                         {
-                            Player.Spellbook.CastSpell(SpellSlot.Recall);
-                            recall = true;
+                            if(false == recall)
+                            {
+                                Player.Spellbook.CastSpell(SpellSlot.Recall);
+                                recall = true;
+                                IsAttackStart = true;
+                            }
                         }
                         if(Player.Distance(aturret.Position) <= TRRange + 100)
                         IsAttackStart = true;
@@ -1631,7 +1639,7 @@ index = 14
                 }
                 else
                 {
-                IsAttackStart = true;
+                    IsAttackStart = true;
                     if(recall)
                     recall = false;
                 }
@@ -1730,6 +1738,9 @@ index = 14
                 
                 if (tminic < 1 && turret.Distance(Player.Position) <= TRRange + 250 && turret.Distance(Player.Position) > TRRange - 200)
                     Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
+                    
+                if (Player.Distance(enemy_spawn) <= TRRange + 600)
+                    Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
 
                 if (turret.Distance(Player.Position) > TRRange + 200)
                     IsAttackedByTurret = false;
@@ -1738,6 +1749,8 @@ index = 14
                 if(turret.Distance(ehero.Position) <= TRRange - 50 && Player.Distance(ehero.Position) <= ehero.AttackRange / 2 + 700 && ehero.AttackRange > 50)
                 Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
                 afktime = 0;
+                
+
             }
 //도망가기용
             if ((getHealthPercent(Player) < 33 && !Player.IsDead && ehero.Distance(Player.Position) <= 1400//hpper
