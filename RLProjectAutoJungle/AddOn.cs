@@ -108,7 +108,6 @@ namespace RLProjectJunglePlay
 			internal static Items.Item H, T;
             internal static Spell Q, W, E, R;
 			internal static List<Items.Item> itemsList = new List<Items.Item>();
-            internal static void Wcancel() { Player.IssueOrder(GameObjectOrder.MoveTo, Player.ServerPosition); }
             internal static SpellDataInst Qdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.Q);
             internal static SpellDataInst Wdata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W);
             internal static SpellDataInst Edata = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.E);
@@ -151,15 +150,21 @@ namespace RLProjectJunglePlay
 			{
                 if (!unit.IsMe || target == null || target.IsDead || unit.IsDead || target.Type != GameObjectType.obj_AI_Hero) //target.Type != GameObjectType.obj_AI_Minion
                     return;
+				var Target = target as Obj_AI_Hero;	
                 S(H);
                 S(T);
-                if(Player.ChampionName == "MasterYi" && W.IsReady() && !H.IsReady() && !T.IsReady())
+                if(Player.ChampionName == "MasterYi" && W.IsReady() && !H.IsReady() && !T.IsReady() && Target.HealthPercent < 50 && Target.Distance(Player.ServerPosition) <= 175)
                 {
-                    W.Cast();
-                    Utility.DelayAction.Add(80, Orbwalking.ResetAutoAttackTimer);
-                    Utility.DelayAction.Add(80, Wcancel);
+                    W.Cast(); //W평캔 지존..
+                    Utility.DelayAction.Add(55, Orbwalking.ResetAutoAttackTimer);
+                    Utility.DelayAction.Add(55, MoveToT);
                 }
 			}
+            internal static void MoveToT()
+            {
+                Obj_AI_Hero Target = TargetSelector.GetTarget(200 , TargetSelector.DamageType.Physical);
+                Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(Target.ServerPosition, 75));
+            }
 		}
 		
 		internal class Combo
