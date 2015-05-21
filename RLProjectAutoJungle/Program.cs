@@ -54,6 +54,7 @@ public class Program
     public static float gamestart = 0, pastTime = 0, kiTime = 0, pastTimeAFK, afktime = 0;
     public static List<MonsterINFO> MonsterList = new List<MonsterINFO>();
     public static int now = 1, max = 20, num = 0;
+    public static float NonRCHP = 73;
     public static float recallhp = 0;
     public static bool recall = false, IsOVER = false, IsAttackedByTurret = false, IsAttackStart = false,
     IsCastW = false;
@@ -581,41 +582,41 @@ new ItemToShop()
 {
 Price = 1475,
 needItem = ItemId.Stalkers_Blade_Enchantment_Devourer,
-item = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
+item = ItemId.Berserkers_Greaves_Enchantment_Furor,
 index = 4
 },
 new ItemToShop()
 {
-Price = 1400,
-needItem = ItemId.Berserkers_Greaves_Enchantment_Homeguard,
-item = ItemId.Bilgewater_Cutlass,
-index = 5
-},
-new ItemToShop()
-{
-Price = 1800,
-needItem = ItemId.Bilgewater_Cutlass,
-item = ItemId.Blade_of_the_Ruined_King,
-index = 6
-},
-new ItemToShop()
-{
 Price = 875,
-needItem = ItemId.Blade_of_the_Ruined_King,
+needItem = ItemId.Berserkers_Greaves_Enchantment_Furor,
 item = ItemId.Pickaxe,
-index = 7
+index = 5
 },
 new ItemToShop()
 {
 Price = 1025,
 needItem = ItemId.Pickaxe,
 item = ItemId.Tiamat_Melee_Only,
+index = 6
+},
+new ItemToShop()
+{
+Price = 1400,
+needItem = ItemId.Tiamat_Melee_Only,
+item = ItemId.Bilgewater_Cutlass,
+index = 7
+},
+new ItemToShop()
+{
+Price = 1400,
+needItem = ItemId.Bilgewater_Cutlass,
+item = ItemId.Ravenous_Hydra_Melee_Only,
 index = 8
 },
 new ItemToShop()
 {
 Price = 1100,
-needItem = ItemId.Tiamat_Melee_Only,
+needItem = ItemId.Ravenous_Hydra_Melee_Only,
 item = ItemId.Zeal,
 index = 9
 },
@@ -628,15 +629,15 @@ index = 10
 },
 new ItemToShop()
 {
-Price = 1400,
+Price = 1800,
 needItem = ItemId.Phantom_Dancer,
-item = ItemId.Ravenous_Hydra_Melee_Only,
+item = ItemId.Blade_of_the_Ruined_King,
 index = 11
 },
 new ItemToShop()
 {
 Price = 1550,
-needItem = ItemId.Ravenous_Hydra_Melee_Only,
+needItem = ItemId.Blade_of_the_Ruined_King,
 item = ItemId.B_F_Sword,
 index = 12
 },
@@ -1220,10 +1221,18 @@ index = 14
         }*/
         return Target;
     }
+    public static bool CB()
+    {
+        bool b = false;
+        if (Target != null)
+        b = true;
+        return b;
+    }
     private static void Game_OnUpdate(EventArgs args) 
     {
     int maxlv = RLProjectAutoJungleMenu.Item("maxlv").GetValue<Slider>().Value;
     int level = Player.Level;    
+        Orbwalker.SetMovement(false);
         setSmiteSlot();
         Target = GetTarget();
         if (Player.ChampionName == "Nidalee")
@@ -1240,12 +1249,17 @@ index = 14
             {
                 var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
             int turretcount = GetEnemyList().Where(x => x.Distance(Player.Position) <= 20000).Count();
-                if (Player.InShop() && getHealthPercent(Player) > 85)
+                if (Player.InShop() && getHealthPercent(Player) > NonRCHP)
                 {
                 //if(turretcount >= 1)
                 //    Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
                 //else
                     Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+                    if(Player.Level > 6)
+                    {
+                        IsOVER = true;
+                        IsAttackStart = true;
+                    }
                 }
                 else if(!Player.InShop())
                     {
@@ -1430,6 +1444,7 @@ index = 14
                             recall = true;
                             Player.Spellbook.CastSpell(SpellSlot.Recall);
                             recallhp = Player.Health;
+                            afktime = 0;
                         }
                         else if (!Player.InShop() && Player.Gold > buyThings.First().Price
                         && RLProjectAutoJungleMenu.Item("autorecallitem").GetValue<Boolean>()
@@ -1439,24 +1454,25 @@ index = 14
                             recall = true;
                             Player.Spellbook.CastSpell(SpellSlot.Recall);
                             recallhp = Player.Health;
+                            afktime = 0;
                         }
                         else if (Player.Position.Distance(target.Position) > Player.AttackRange)
                         {
-                            if(Player.InShop() && getHealthPercent(Player) > 85 || !Player.InShop())
+                            if(Player.InShop() && getHealthPercent(Player) > NonRCHP || !Player.InShop())
                             {
-                            Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
+                                Player.IssueOrder(GameObjectOrder.MoveTo, target.Position);
 
-                            if (Player.ChampionName == "Nidalee")
-                            {
-                                if(!_cougarForm && Aspectofcougar.IsReady())
+                                if (Player.ChampionName == "Nidalee")
                                 {
-                                Aspectofcougar.Cast();
+                                    if(!_cougarForm && Aspectofcougar.IsReady())
+                                    {
+                                    Aspectofcougar.Cast();
+                                    }
+                                    if(Pounce.IsReady())
+                                    {
+                                    Pounce.Cast(target.Position);
+                                    }
                                 }
-                                if(Pounce.IsReady())
-                                {
-                                Pounce.Cast(target.Position);
-                                }
-                            }
                             afktime = 0;
                             }
                         }
@@ -1563,14 +1579,14 @@ index = 14
             var aturret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => !t.IsEnemy);
             int faceat = GetAllyTurretList().Where(x => x.Distance(ehero.Position) <= TRRange).Count();
             int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2100 && getHealthPercent(x) > 35).Count();
-            int face_ehro2LH = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2100 && getHealthPercent(x) < 65).Count();
+            int face_ehro2LH = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2100 && getHealthPercent(x) < 50).Count();
             int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 900 && getHealthPercent(x) > 35).Count();                
-            int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 900 || x.Distance(ehero.Position) <= 1200).Count() + faceat;
-            int face_allye = GetAllyList().Where(x => x.Distance(ehero.Position) <= 1200).Count();
+            int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 900 || x.Distance(ehero.Position) <= 800).Count() + faceat;
+            int face_allye = GetAllyList().Where(x => x.Distance(ehero.Position) <= 800).Count();
             int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 900).Count();
             int CM = GetTMinionList().Where(x => x.Distance(Player.Position) <= 350).Count();
             int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();                
-            //if(Player.InShop() && Player.HealthPercent < 85) //자동귀환취소.
+            //if(Player.InShop() && Player.HealthPercent < NonRCHP) //자동귀환취소.
             //    Player.IssueOrder(GameObjectOrder.MoveTo, Player.ServerPosition);
             if (!IsAttackStart)
             {
@@ -1585,14 +1601,19 @@ index = 14
 //                    if (!ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T2_C_05_A") && IsBlueTeam || !ObjectManager.Get<Obj_AI_Turret>().Any(t => t.Name == "Turret_T1_C_05_A") && !IsBlueTeam)
 //                    {
                         if(Player.Distance(emini.Position) < 650)
-                        {Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));}
+                        {
+                            Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
+                            afktime = 0;
+                        }
                         else
                         {
+                            afktime = 0;
                             if(false == recall)
                             {
                                 Player.Spellbook.CastSpell(SpellSlot.Recall);
                                 recall = true;
                                 IsAttackStart = true;
+                                afktime = 0;
                             }
                         }
                         if(Player.Distance(aturret.Position) <= TRRange + 100)
@@ -1640,6 +1661,7 @@ index = 14
                 else
                 {
                     IsAttackStart = true;
+                    afktime = 0;
                     if(recall)
                     recall = false;
                 }
@@ -1651,9 +1673,17 @@ index = 14
                 var amini = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => t.Distance(turret.Position)).First(t => t.IsAlly);
 
                 //                var am = ObjectManager.Get<Obj_AI_Base>().Where(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
+                if(false == recall && !Player.InShop() && Player.Gold > 2500 && face_ehro2 == 0 && turret.Distance(Player.Position) > TRRange + 100 && emini.Distance(Player.Position) > 1000)//템사러집가자
+                {
+                    GamePrintChat("Time To Recall Yeah!");
+                    Player.Spellbook.CastSpell(SpellSlot.Recall);
+                    recall = true;
+                    afktime = 0;
+                }
+                
                 if (IsOVER && !IsAttackedByTurret && getHealthPercent(Player) >= 35)
                 {
-                    if(Player.InShop() && getHealthPercent(Player) >= 85 || !Player.InShop())
+                    if(Player.InShop() && getHealthPercent(Player) >= NonRCHP || !Player.InShop())
                     {
                         if ((turret.Distance(Player.Position) > TRRange + 100 && face_ehro <= s_ehro && face_ehro2 <= s_ehro2 && getHealthPercent(Player) >= 35 || turret.Distance(Player.Position) > TRRange + 100 && face_ehro2 - face_ally <= s_ehro2 && (face_ehro2LH > 1 || face_allye > 0) && getHealthPercent(Player) >= 35) 
                         && (CM > 1 || ehero.Distance(turret.Position) > TRRange && ehero.Distance(Player.Position) <= TRRange * 3 / 2 || face_ally > 0 || tminic > 1))
@@ -1697,8 +1727,10 @@ index = 14
                             }
                         }*/
                             if(ehero.Distance(turret.Position) > TRRange)
-                            DoCast_Hero();
-                            DoLaneClear();
+                            {
+                                DoCast_Hero();
+                                DoLaneClear();
+                            }
                             
                         }
                         
@@ -1709,7 +1741,7 @@ index = 14
                             Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                             if(tminic > 2 && turret.Distance(Player.Position) <= TRRange)
                             {
-                            DoLaneClear();
+                                DoLaneClear();
                             }
                         }
                         
@@ -1885,6 +1917,12 @@ index = 14
             if (Player.Level > 6 && Items.HasItem(2010))
                 Player.SellItem(Player.InventoryItems.First(t => Convert.ToInt32(t.Id) == 2010).Slot);
             #endregion
+            #region 분노의 영약 구매.
+            if (Player.Gold > 400f && IsOVER && !Player.HasBuff("ElixirOfWrath") && !Player.InventoryItems.Any(t => t.Id == ItemId.Elixir_of_Wrath) && Player.Level >= 12)
+                Player.BuyItem((ItemId)ItemId.Elixir_of_Wrath);
+            #endregion
+            if(Player.HealthPercent < NonRCHP)//리코오오올
+            Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
         }
         #endregion
         #region 자동포션사용 - auto use potions
@@ -1990,9 +2028,9 @@ index = 14
     public static void DoSmite()//스마이트
     {
         var mob1 = GetNearest_big(Player.Position);
-        int badally = GetAllyList().Where(x => x.Distance(Player.Position) <= 500).Count(); //나쁜아군
+        int badally = GetAllyList().Where(x => x.Distance(Player.Position) <= 500 && !x.IsMe).Count(); //나쁜아군
         double smdmg = setSmiteDamage();
-        if (!IsStart && Player.Level > 1 && mob1.Health < smdmg && (mob1.Health > 200 || badally > 0))
+        if (!IsStart && Player.Level > 1 && mob1.Health < smdmg && (mob1.Health > (float)Player.GetAutoAttackDamage2(mob1, true)*3 || badally > 0))
         {
         if (mob1.IsValid)
             smite.CastOnUnit(mob1);
@@ -2008,7 +2046,7 @@ index = 14
         var mob1 = ObjectManager.Get<Obj_AI_Minion>().OrderBy(t => Player.Distance(t.Position)).First(t => t.IsEnemy & !t.IsDead);
         if (Player.ChampionName.ToUpper() == "NUNU" && Q.IsReady()) // 누누 Q버그수정 - Fix nunu Q bug
             Player.IssueOrder(GameObjectOrder.MoveTo, mob1.ServerPosition.Extend(Player.ServerPosition, 10));
-        if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1500) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange) && getManaPercent(Player) > 60)
+        if (!ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy & !t.IsDead && Player.Distance(t.Position) <= 1500) && ObjectManager.Get<Obj_AI_Minion>().Any(t => t.IsMinion && Player.Distance(t.Position) <= 500) && ObjectManager.Get<Obj_AI_Turret>().Any(t => t.IsEnemy && Player.Distance(t.Position) > TRRange) && getManaPercent(Player) > 75)
             castspell_laneclear(mob1);
     }
     public static void DoCast()
@@ -2031,17 +2069,16 @@ index = 14
             {
                 castspell_hero(Target);
                 //if(Environment.TickCount - kiTime < 70)
-                Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, 50));
-                Player.IssueOrder(GameObjectOrder.AttackUnit, Target);
+                Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, -50));
+                //Player.IssueOrder(GameObjectOrder.AttackUnit, Target); 오브워커로 대체
             }
             else if (Player.AttackRange >= 200 && turrr.Distance(Player.Position) > TRRange && !IsAttackedByTurret)
             {
                 castspell_hero(Target);
                 //if(Environment.TickCount - kiTime < 70)
                 Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, (Player.AttackRange + 450) / 2 - 100));            
-                
-                Player.IssueOrder(GameObjectOrder.AttackUnit, Target);
-                }
+                //Player.IssueOrder(GameObjectOrder.AttackUnit, Target); 오브워커로 대체
+            }
 /*                else if (turrr.Distance(tarrr.Position) <= 850)
             {
                 Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
@@ -2057,12 +2094,16 @@ index = 14
                     }
                 }
             }
-*/                else
+*/                
+            else
             {
             IsAttackStart = true;
             IsOVER = true;
             }
         }
+        if(Target == null)
+        Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+
     }
     public static void castspell(Obj_AI_Base mob1)
     {
@@ -2220,7 +2261,7 @@ index = 14
         }
         else if (Player.ChampionName.ToUpper() == "MASTERYI")
         {
-            if (Q.IsReady())
+            if (Q.IsReady() && (Player.Distance(mob1.ServerPosition) >= 180 || Player.HealthPercent < 50))
                 Q.CastOnUnit(mob1);
 //                if (W.IsReady() && getHealthPercent(Player) < 35
 //                    W.Cast();
