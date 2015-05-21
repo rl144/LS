@@ -156,38 +156,41 @@ namespace RLProjectJunglePlay
                 if(Player.ChampionName == "MasterYi" && W.IsReady() && !H.IsReady() && !T.IsReady() && Target.HealthPercent < 50 && Target.Distance(Player.ServerPosition) <= 175)
                 {
                     W.Cast(); //W평캔 지존..
-                    Utility.DelayAction.Add(55, Orbwalking.ResetAutoAttackTimer);
-                    Utility.DelayAction.Add(55, MoveToT);
+                    Utility.DelayAction.Add(85, Orbwalking.ResetAutoAttackTimer);
+                    Utility.DelayAction.Add(85, MoveToT);
                 }
 			}
             internal static void MoveToT()
             {
-                Obj_AI_Hero Target = TargetSelector.GetTarget(200 , TargetSelector.DamageType.Physical);
+                Obj_AI_Hero Target = TargetSelector.GetTarget(300 , TargetSelector.DamageType.Physical);
                 Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(Target.ServerPosition, 75));
             }
 		}
 		
 		internal class Combo
 		{
-			internal static Items.Item B, K, G;
+			internal static Items.Item B, K, G, W;
 			internal static List<Items.Item> itemsList = new List<Items.Item>();
 			internal static void Game_OnGameLoad(EventArgs args)
 			{
             B = new Items.Item(3144, 250f);
             K = new Items.Item(3153, 250f);
 			G = new Items.Item(3146, 250f);
+            W = new Items.Item(2140, 250f);
 			}
 			internal static void Game_OnUpdate(EventArgs args)
 			{
 			ST(B);
 			ST(K);
 			ST(G);
+            S(W);
 			}
 		}
 		
 		internal static void S(Items.Item spell)
 		{
-			if(spell.IsReady())
+			Obj_AI_Hero Target = TargetSelector.GetTarget(250 , TargetSelector.DamageType.Physical);
+			if(spell.IsReady() && Target != null)
 			spell.Cast();
 		}
 		internal static void ST(Items.Item spell)
