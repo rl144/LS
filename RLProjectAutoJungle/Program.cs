@@ -1423,6 +1423,12 @@ index = 14
                         now = 1;
                         GamePrintChat("START!");
                     }
+                    else
+                    {
+                        Game.SendEmote(Emote.Laugh); //시작할때 계속 웃기
+                        Console.WriteLine("Laugh");
+                    }
+
                 }
             }
             else
