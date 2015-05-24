@@ -1176,6 +1176,12 @@ index = 14
             GamePrintChat("Get Jinxed!!");
             Readini.GetSpelltree(new int[] { 1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 2, 3, 2, 3, 4, 2, 2 });
         }
+        else if (Player.ChampionName.ToUpper() == "VAYNE")
+        {
+            GetItemTree("ADC");
+            GamePrintChat("VAAAAAYYYYYYNNNNNNNEEEEEE!!");
+            Readini.GetSpelltree(new int[] { 1, 2, 3, 1, 1, 4, 1, 2, 1, 2, 4, 3, 2, 3, 2, 4, 3, 3 });
+        }
         else
         {
             #region Read ini
@@ -1242,24 +1248,19 @@ index = 14
         if (!RLProjectAutoJungleMenu.Item("isActive").GetValue<Boolean>() || smiteSlot == SpellSlot.Unknown)
             return;
         #region detect afk
-        if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling())
+        if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling() && IsOVER && IsAttackStart) //어짜피 IsOVER일때 말곤 그럴일없음.
         {
             afktime += 1;
             if (afktime > 5) // 잠수 5초 경과
             {
                 var turret = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(Player.Position)).First(t => t.IsEnemy);
-            int turretcount = GetEnemyList().Where(x => x.Distance(Player.Position) <= 20000).Count();
+            int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();
                 if (Player.InShop() && getHealthPercent(Player) > NonRCHP)
                 {
                 //if(turretcount >= 1)
                 //    Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
                 //else
                     Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-                    if(Player.Level > 6)
-                    {
-                        IsOVER = true;
-                        IsAttackStart = true;
-                    }
                 }
                 else if(!Player.InShop())
                     {
@@ -1438,7 +1439,7 @@ index = 14
                 if (Player.IsDead && now > 12)
                     now = 12;
                 MonsterINFO target = MonsterList.First(t => t.order == now);
-                if (Player.Position.Distance(target.Position) >= 700)
+                if (Player.Position.Distance(target.Position) >= 1000)
                 {
                     if (!recall)
                     {
@@ -1484,10 +1485,10 @@ index = 14
                         }
                     }
                 }
-                else if (Player.Position.Distance(target.Position) <= 500 && Player.Position.Distance(target.Position) > 250)
+                else if (Player.Position.Distance(target.Position) <= 700 && Player.Position.Distance(target.Position) > 250)
                 {
                     if(!recall)
-                    {if (CheckMonster(target.name, target.Position, 600)) //해당지점에 몬스터가 있는지
+                    {if (CheckMonster(target.name, target.Position, 800)) //해당지점에 몬스터가 있는지
                     {
                         DoCast();
                         Player.IssueOrder(GameObjectOrder.AttackUnit, GetNearest(Player.Position));
@@ -1986,18 +1987,18 @@ index = 14
             if (spell.Target.IsMe && sender.IsEnemy)
             {
                 string[] turrest =
-{
-"Turret_T2_C_01_A",
-"Turret_T2_C_02_A",
-"Turret_T2_L_01_A",
-"Turret_T2_C_03_A",
-"Turret_T2_R_01_A",
-"Turret_T1_C_01_A",
-"Turret_T1_C_02_A",
-"Turret_T1_C_06_A",
-"Turret_T1_C_03_A",
-"Turret_T1_C_07_A"
-};
+                    {
+                    "Turret_T2_C_01_A",
+                    "Turret_T2_C_02_A",
+                    "Turret_T2_L_01_A",
+                    "Turret_T2_C_03_A",
+                    "Turret_T2_R_01_A",
+                    "Turret_T1_C_01_A",
+                    "Turret_T1_C_02_A",
+                    "Turret_T1_C_06_A",
+                    "Turret_T1_C_03_A",
+                    "Turret_T1_C_07_A"
+                    };
                 if (turrest.Contains(sender.Name) && RLProjectAutoJungleMenu.Item("evading").GetValue<Boolean>())
                 {
                     Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
@@ -2199,6 +2200,13 @@ index = 14
             if (Q.IsReady() && Player.Level >= 3 && ((Player.AttackRange > 550 && eminic <= 2|| eminic > 2 && Player.AttackRange <= 550)))
                 Q.Cast();
         }
+        else if (Player.ChampionName.ToUpper() == "VAYNE")
+        {
+            if (Q.IsReady())
+                Q.Cast(Player.ServerPosition.Extend(mob1.Position, 50)); // For Vayne
+            if (E.IsReady())
+                E.Cast(mob1);
+        }
         else
         {
             foreach (var spell in cast2mob)
@@ -2310,6 +2318,15 @@ index = 14
             if (R.IsReady() && Player.Distance(mob1.Position) > 800 && rpred.Hitchance >= HitChance.High && getHealthPercent(mob1) < 20/*R.GetDamage(mob1) > mob1.Health*/)
             R.Cast(rpred.CastPosition);
         }
+        else if (Player.ChampionName.ToUpper() == "VAYNE")
+        {
+            if (Q.IsReady())
+                Q.Cast(Player.ServerPosition.Extend(mob1.Position, 40)); // For Vayne
+            if (E.IsReady())
+                E.Cast(mob1);
+            if (R.IsReady() && Player.HealthPercent > 40 && mob1.HealthPercent > 40)
+                R.Cast();
+        }
         else
         {
             foreach (var spell in cast2hero)
@@ -2396,6 +2413,11 @@ index = 14
         {
             if (Q.IsReady() && ((Player.AttackRange > 550  && eminic <= 5|| eminic > 5 && Player.AttackRange <= 550)))
                 Q.Cast();
+        }
+        else if (Player.ChampionName.ToUpper() == "VAYNE")
+        {
+            if (Q.IsReady())
+                Q.Cast(Player.ServerPosition.Extend(mob1.Position, 50)); // For Vayne
         }
         else
         {
