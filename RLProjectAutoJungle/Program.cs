@@ -1614,7 +1614,6 @@ index = 14
                         }
                         else
                         {
-                            afktime = 0;
                             if(false == recall)
                             {
                                 Player.Spellbook.CastSpell(SpellSlot.Recall);
@@ -1797,7 +1796,7 @@ index = 14
             getHealthPercent(Player) < 33 && !Player.IsDead && emini.Distance(Player.Position) <= 900//hpper
             && RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>() ||
             turrett.Distance(Player.Position) <= TRRange && getHealthPercent(Player) < 33
-            && RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>())) // HP LESS THAN 25%  //도망가!!!!!
+            && RLProjectAutoJungleMenu.Item("autorecallheal").GetValue<Boolean>()) && false == recall) // HP LESS THAN 25%  //도망가!!!!!
             {
                 GamePrintChat("YOUR HP IS SO LOW. Back to RECALL!");
                 Player.IssueOrder(GameObjectOrder.MoveTo, spawn);
