@@ -580,73 +580,87 @@ index = 3
 },
 new ItemToShop()
 {
-Price = 1475,
+Price = 325,
+needItem = ItemId.Stalkers_Blade_Enchantment_Devourer,
+item = ItemId.Boots_of_Speed,
+index = 4
+},
+new ItemToShop()
+{
+Price = 675,
+needItem = ItemId.Boots_of_Speed,
+item = ItemId.Berserkers_Greaves,
+index = 5
+},
+new ItemToShop()
+{
+Price = 1475 - 325 - 675,
 needItem = ItemId.Stalkers_Blade_Enchantment_Devourer,
 item = ItemId.Berserkers_Greaves_Enchantment_Furor,
-index = 4
+index = 6
 },
 new ItemToShop()
 {
 Price = 875,
 needItem = ItemId.Berserkers_Greaves_Enchantment_Furor,
 item = ItemId.Pickaxe,
-index = 5
+index = 7
 },
 new ItemToShop()
 {
 Price = 1025,
 needItem = ItemId.Pickaxe,
 item = ItemId.Tiamat_Melee_Only,
-index = 6
+index = 8
 },
 new ItemToShop()
 {
 Price = 1400,
 needItem = ItemId.Tiamat_Melee_Only,
 item = ItemId.Bilgewater_Cutlass,
-index = 7
+index = 9
 },
 new ItemToShop()
 {
 Price = 1400,
 needItem = ItemId.Bilgewater_Cutlass,
 item = ItemId.Ravenous_Hydra_Melee_Only,
-index = 8
+index = 10
 },
 new ItemToShop()
 {
 Price = 1100,
 needItem = ItemId.Ravenous_Hydra_Melee_Only,
 item = ItemId.Zeal,
-index = 9
+index = 11
 },
 new ItemToShop()
 {
 Price = 1700,
 needItem = ItemId.Zeal,
 item = ItemId.Phantom_Dancer,
-index = 10
+index = 12
 },
 new ItemToShop()
 {
 Price = 1800,
 needItem = ItemId.Phantom_Dancer,
 item = ItemId.Blade_of_the_Ruined_King,
-index = 11
+index = 13
 },
 new ItemToShop()
 {
 Price = 1550,
 needItem = ItemId.Blade_of_the_Ruined_King,
 item = ItemId.B_F_Sword,
-index = 12
+index = 14
 },
 new ItemToShop()
 {
 Price = 2250,
 needItem = ItemId.B_F_Sword,
 item = ItemId.Infinity_Edge,
-index = 13
+index = 15
 }
 };
     #endregion
@@ -1248,7 +1262,7 @@ index = 14
         if (!RLProjectAutoJungleMenu.Item("isActive").GetValue<Boolean>() || smiteSlot == SpellSlot.Unknown)
             return;
         #region detect afk
-        if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling() && IsOVER && IsAttackStart) //어짜피 IsOVER일때 말곤 그럴일없음.
+        if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling() && IsOVER && IsAttackStart && false == recall) //어짜피 IsOVER일때 말곤 그럴일없음.
         {
             afktime += 1;
             if (afktime > 5) // 잠수 5초 경과
@@ -1264,10 +1278,10 @@ index = 14
                 }
                 else if(!Player.InShop())
                     {
-                    if(IsOVER && IsAttackStart && getHealthPercent(Player) > 50)
-                    Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-                    else
-                    Player.Spellbook.CastSpell(SpellSlot.Recall);
+                        if(IsOVER && IsAttackStart && getHealthPercent(Player) > 50)
+                            Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
+                        else
+                            Player.Spellbook.CastSpell(SpellSlot.Recall);
                     }
                 afktime = 0;
             }
@@ -1614,12 +1628,12 @@ index = 14
                         }
                         else
                         {
+                            afktime = 0;
                             if(false == recall)
                             {
                                 Player.Spellbook.CastSpell(SpellSlot.Recall);
                                 recall = true;
-                                IsAttackStart = true;
-                                afktime = 0;
+                                //IsAttackStart = true;
                             }
                         }
                         if(Player.Distance(aturret.Position) <= TRRange + 100)
@@ -2065,27 +2079,31 @@ index = 14
     }
     public static void DoCast_Hero()
     {
-        if (IsOVER && ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy && !t.IsDead && !t.IsInvulnerable && Player.Distance(t.Position) <= 1000))
+        if (IsOVER && ObjectManager.Get<Obj_AI_Hero>().Any(t => t.IsEnemy && !t.IsDead && !t.IsInvulnerable && Player.Distance(t.Position) <= 1000) && Target != null)
         {
             var tarrr = ObjectManager.Get<Obj_AI_Hero>().OrderBy(t => t.Distance(Player.Position)).
-            Where(x => x.IsEnemy && !x.IsMe && !x.IsDead && !x.IsInvulnerable).First(); // 플레이어와 가장 가까운타겟
+            Where(x => x.IsEnemy && !x.IsMe && !x.IsDead && !x.IsInvulnerable && x.Distance(Player.ServerPosition) <= 2000).First(); // 플레이어와 가장 가까운타겟
             var turrr = ObjectManager.Get<Obj_AI_Turret>().OrderBy(t => t.Distance(tarrr.Position)).
             Where(x => x.IsEnemy && !x.IsDead).First(); // 타겟과 가장 가까운터렛
-            if (Player.AttackRange < 200 && !IsAttackedByTurret && turrr.Distance(Player.Position) > TRRange && Target.Distance(turrr.Position) > TRRange) // 터렛 사정거리 밖에있어야만 공격함.
+            var tp = turrr != null ? turrr.ServerPosition : enemy_spawn;
+            if(tarrr == null)
+            return;
+            
+            if (Player.AttackRange < 200 && !IsAttackedByTurret && tp.Distance(Player.Position) > TRRange && Target.Distance(tp) > TRRange) // 터렛 사정거리 밖에있어야만 공격함.
             {
                 castspell_hero(Target);
                 //if(Environment.TickCount - kiTime < 70)
                 Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, -50));
                 //Player.IssueOrder(GameObjectOrder.AttackUnit, Target); 오브워커로 대체
             }
-            else if (Player.AttackRange >= 200 && turrr.Distance(Player.Position) > TRRange && !IsAttackedByTurret)
+            else if (Player.AttackRange >= 200 && tp.Distance(Player.Position) > TRRange && !IsAttackedByTurret)
             {
                 castspell_hero(Target);
                 //if(Environment.TickCount - kiTime < 70)
                 Player.IssueOrder(GameObjectOrder.MoveTo, Target.ServerPosition.Extend(Player.ServerPosition, (Player.AttackRange + 450) / 2 - 100));            
                 //Player.IssueOrder(GameObjectOrder.AttackUnit, Target); 오브워커로 대체
             }
-/*                else if (turrr.Distance(tarrr.Position) <= 850)
+/*                else if (tp.Distance(tarrr.Position) <= 850)
             {
                 Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
                 if (Player.ChampionName == "Nidalee")
@@ -2103,8 +2121,8 @@ index = 14
 */                
             else
             {
-            IsAttackStart = true;
-            IsOVER = true;
+                IsAttackStart = true;
+                IsOVER = true;
             }
         }
         if(Target == null)
