@@ -1602,8 +1602,8 @@ index = 14
             int face_ehro2 = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2100 && getHealthPercent(x) > 35).Count();
             int face_ehro2LH = GetEnemyList().Where(x => x.Distance(Player.Position) <= 2100 && getHealthPercent(x) < 50).Count();
             int face_ehro = GetEnemyList().Where(x => x.Distance(Player.Position) <= 900 && getHealthPercent(x) > 35).Count();                
-            int face_ally = GetAllyList().Where(x => x.Distance(Player.Position) <= 900 || x.Distance(ehero.Position) <= 800).Count() + faceat;
-            int face_allye = GetAllyList().Where(x => x.Distance(ehero.Position) <= 800).Count();
+            int face_ally = GetAllyList().Where(x => (x.Distance(Player.Position) <= 900 || x.Distance(ehero.Position) <= 800) && !x.IsMe).Count() + faceat;
+            int face_allye = GetAllyList().Where(x => x.Distance(ehero.Position) <= 800 && !x.IsMe).Count();
             int tminic = GetTMinionList().Where(x => x.Distance(turrett.Position) <= 900).Count();
             int CM = GetTMinionList().Where(x => x.Distance(Player.Position) <= 350).Count();
             int turretcount = GetEnemyTurretList().Where(x => x.Distance(Player.Position) <= 20000).Count();                
