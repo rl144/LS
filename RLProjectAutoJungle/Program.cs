@@ -1638,6 +1638,9 @@ index = 14
                         }
                         if(Player.Distance(aturret.Position) <= TRRange + 100)
                         IsAttackStart = true;
+                        
+                        if(recall && !Player.IsRecalling())//리콜
+                        recall = false;
 //                    }
 /*                    else
                     {
@@ -1700,6 +1703,9 @@ index = 14
                     recall = true;
                     afktime = 0;
                 }
+                
+                if(recall && !Player.IsRecalling())//리콜
+                recall = false;
                 
                 if (IsOVER && !IsAttackedByTurret && getHealthPercent(Player) >= 35)
                 {
