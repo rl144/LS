@@ -1262,7 +1262,7 @@ index = 14
         if (!RLProjectAutoJungleMenu.Item("isActive").GetValue<Boolean>() || smiteSlot == SpellSlot.Unknown)
             return;
         #region detect afk
-        if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling() && IsOVER && IsAttackStart && false == recall) //어짜피 IsOVER일때 말곤 그럴일없음.
+        if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling() && IsOVER && false == recall) //어짜피 IsOVER일때 말곤 그럴일없음.
         {
             afktime += 1;
             if (afktime > 5) // 잠수 5초 경과
@@ -1274,15 +1274,19 @@ index = 14
                 //if(turretcount >= 1)
                 //    Player.IssueOrder(GameObjectOrder.AttackTo, turret.Position.Extend(Player.Position, 10));
                 //else
+                    IsAttackStart = true;
                     Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                 }
                 else if(!Player.InShop())
+                {
+                    if(IsOVER && getHealthPercent(Player) > 50)
                     {
-                        if(IsOVER && IsAttackStart && getHealthPercent(Player) > 50)
-                            Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
-                        else
-                            Player.Spellbook.CastSpell(SpellSlot.Recall);
+                        IsAttackStart = true;
+                        Player.IssueOrder(GameObjectOrder.AttackTo, enemy_spawn);
                     }
+                    else
+                        Player.Spellbook.CastSpell(SpellSlot.Recall);
+                }
                 afktime = 0;
             }
             pastTimeAFK = Game.Time;
@@ -1787,7 +1791,7 @@ index = 14
                                 }
                         }
                         
-                    afktime = 0;
+                    //afktime = 0;
                     }
                 }
                 
@@ -1806,7 +1810,7 @@ index = 14
                     IsAttackedByTurret = false; //터렛앞에서 깝죽 ㄴㄴ
                 if(turret.Distance(ehero.Position) <= TRRange - 50 && Player.Distance(ehero.Position) <= ehero.AttackRange / 2 + 700 && ehero.AttackRange > 50)
                 Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(spawn, 855));
-                afktime = 0;
+                //afktime = 0;
                 
 
             }
