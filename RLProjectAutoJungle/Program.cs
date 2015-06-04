@@ -1262,7 +1262,7 @@ index = 14
         if (!RLProjectAutoJungleMenu.Item("isActive").GetValue<Boolean>() || smiteSlot == SpellSlot.Unknown)
             return;
         #region detect afk
-        if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling() && IsOVER && false == recall) //어짜피 IsOVER일때 말곤 그럴일없음.
+        if (Game.Time - pastTimeAFK >= 1 && !Player.IsDead && !Player.IsRecalling() && IsOVER && false == recall && !Player.IsMoving) //어짜피 IsOVER일때 말곤 그럴일없음.
         {
             afktime += 1;
             if (afktime > 5) // 잠수 5초 경과
