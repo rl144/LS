@@ -2199,8 +2199,6 @@ index = 14
                 Q.Cast();
             if (W.IsReady())
                 W.Cast();
-            if (E.IsReady())
-                E.CastOnUnit(mob1);
         }
         else if (Player.ChampionName.ToUpper() == "MASTERYI")
         {
