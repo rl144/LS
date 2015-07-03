@@ -999,6 +999,8 @@ index = 14
         RLProjectAutoJungleMenu.AddItem(new MenuItem("k_dragon", "Add Dragon to Route on Lv").SetValue(new Slider(10, 1, 18)));
         if (Player.ChampionName == "MasterYi")
             RLProjectAutoJungleMenu.AddItem(new MenuItem("yi_W", "Cast MasterYi-W(%)").SetValue(new Slider(58, 0, 100)));
+        if (Player.ChampionName == "Warwick")
+            RLProjectAutoJungleMenu.AddItem(new MenuItem("ww_Q", "Cast WW-Q(%)").SetValue(new Slider(77, 0, 100)));
         Orbwalker = new Orbwalking.Orbwalker(RLProjectAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Orbwalker", "Orbwalker")));
         TargetSelector.AddToMenu(RLProjectAutoJungleMenu.AddSubMenu(new Menu(Player.ChampionName + ": Target Selector", "Target Selector")));
             RLProjectAutoJungleMenu.AddToMainMenu();
@@ -2186,12 +2188,10 @@ index = 14
         }
         else if (Player.ChampionName.ToUpper() == "WARWICK")
         {
-            if (Q.IsReady())
+            if (Q.IsReady() && getHealthPercent(Player) < RLProjectAutoJungleMenu.Item("ww_Q").GetValue<Slider>().Value)
                 Q.CastOnUnit(mob1);
             if (W.IsReady())
                 W.Cast();
-            if (R.IsReady())
-                R.CastOnUnit(mob1);
         }
         else if (Player.ChampionName.ToUpper() == "XINZHAO")
         {
