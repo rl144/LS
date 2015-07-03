@@ -2193,6 +2193,13 @@ index = 14
             if (R.IsReady())
                 R.CastOnUnit(mob1);
         }
+        else if (Player.ChampionName.ToUpper() == "XINZHAO")
+        {
+            if (Q.IsReady())
+                Q.Cast();
+            if (W.IsReady())
+                W.Cast();
+        }
         else if (Player.ChampionName.ToUpper() == "MASTERYI")
         {
             if (Q.IsReady())
@@ -2299,6 +2306,17 @@ index = 14
                 W.Cast();
             if (R.IsReady())
                 R.CastOnUnit(mob1);
+        }
+        else if (Player.ChampionName.ToUpper() == "XINZHAO")
+        {
+            if (Q.IsReady())
+                Q.Cast();
+            if (W.IsReady())
+                W.Cast();
+            if (E.IsReady())
+                E.CastOnUnit(mob1);
+            if (R.IsReady() && Player.Distance(mob1.Position) < 300 && R.GetDamage(mob1) > mob1.Health)
+            R.Cast();
         }
         else if (Player.ChampionName.ToUpper() == "MASTERYI")
         {
